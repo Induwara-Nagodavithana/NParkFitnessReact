@@ -156,7 +156,7 @@ const currentDate = new Date().toISOString().slice(0, 10);
 const AttendDetails = ({ size, data }) => {
     theme = useTheme();
     const classes = useStyles();
-    console.log(data);
+    // console.log(data);
     const memberData = data;
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
