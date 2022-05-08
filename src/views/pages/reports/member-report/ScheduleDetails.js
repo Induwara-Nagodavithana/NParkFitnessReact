@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'hidden',
         position: 'relative',
         width: '755px',
-        // border: '5px solid #916BD8',
         boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)'
     },
     mainCard: {
