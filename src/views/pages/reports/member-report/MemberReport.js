@@ -37,6 +37,7 @@ import AttendDetails from './AttendDetails';
 import ScheduleDetails from './ScheduleDetails';
 import DietDetails from './DietDetails';
 import GoalDetails from './GoalDetails';
+import BMIChart from './BMIChart';
 
 // assets
 
@@ -185,6 +186,7 @@ const Report = ({ size, memberData, weightData, attendanceData, scheduleData, di
                 <GoalDetails data={goalData} />
                 <ScheduleDetails data={scheduleData} />
                 <WeightDetails data={weightData} />
+                <BMIChart data={weightData} />
                 <AttendDetails data={attendanceData} />
                 <DietDetails data={dietData} />
             </SubCard>
