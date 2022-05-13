@@ -95,7 +95,14 @@ function ServiceType() {
             });
     };
 
-    const [newServiceData, setNewServiceData] = useState();
+    const [serviceName, setServiceName] = React.useState();
+    const [serviceStatus, setServiceStatus] = React.useState(null);
+    const [bodyPart, setBodyPart] = React.useState(null);
+    const [addButton, setAddButtonDisable] = useState(true);
+    const [editableServiceName, setEditableServiceName] = React.useState();
+    const [editableServiceStatus, setEditableServiceStatus] = React.useState(null);
+    const [editableBodyPart, setEditableBodyPart] = React.useState(null);
+
     const [statusValue, setStatusValue] = React.useState(null);
     const [bodyPartValue, setBodyPartValue] = React.useState(null);
     const [editedValue, setEditedValue] = useState();
@@ -108,27 +115,42 @@ function ServiceType() {
 
     const [editServiceId, setEditServiceId] = React.useState(null);
 
-    const handlAddFormChange = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...newServiceData };
-        newFormData[fieldName] = fieldValue;
-
-        setNewServiceData(newFormData);
-        console.log(newServiceData);
+    const handleServiceName = (event) => {
+        setServiceName(event.target.value);
     };
+
+    const handleServiceStatus = (event, newValue) => {
+        console.log(newValue);
+        setServiceStatus(newValue);
+    };
+
+    const handleBodyPart = (event, newValue) => {
+        setBodyPart(newValue);
+        if (serviceName != null && serviceStatus != null) {
+            setAddButtonDisable(false);
+        }
+    };
+
+    // const handlAddFormChange = (event) => {
+    //     const fieldName = event.target.getAttribute('name');
+    //     const fieldValue = event.target.value;
+
+    //     const newFormData = { ...newServiceData };
+    //     newFormData[fieldName] = fieldValue;
+
+    //     setNewServiceData(newFormData);
+    //     console.log(newServiceData);
+    // };
 
     const handleAddFormSubmit = () => {
         HttpCommon.post('/api/serviceType/', {
-            name: newServiceData.name,
-            status: statusValue,
-            bodyPart: bodyPartValue,
+            name: serviceName,
+            status: serviceStatus,
+            bodyPart,
             branchId: BranchId
         })
             .then((res) => {
                 handleSearch();
-                setNewServiceData(null);
 
                 Store.addNotification({
                     title: 'Successfully Done!',
@@ -163,6 +185,10 @@ function ServiceType() {
                     width: 500
                 });
             });
+
+        setServiceName(null);
+        setServiceStatus(null);
+        setBodyPart(null);
     };
 
     const handleEditFormChange = (event) => {
@@ -181,9 +207,9 @@ function ServiceType() {
         const url = link + key;
 
         HttpCommon.put(url, {
-            name: editFormData.name,
-            status: editFormData.status,
-            bodyPart: editedValue
+            name: editableServiceName,
+            status: editableServiceStatus,
+            bodyPart: editableBodyPart
         })
             .then((res) => {
                 handleSearch();
@@ -228,12 +254,9 @@ function ServiceType() {
     const handleEditClick = (event, row) => {
         setEditServiceId(row.id);
 
-        const formValues = {
-            name: row.name,
-            status: row.status,
-            bodyPart: row.bodyPart
-        };
-        setEditFormData(formValues);
+        setEditableServiceName(row.name);
+        setEditableServiceStatus(row.status);
+        setEditableBodyPart(row.bodyPart);
     };
 
     const handleCancelClick = () => {
@@ -300,11 +323,14 @@ function ServiceType() {
                                     <React.Fragment key={row.id}>
                                         {editServiceId === row.id ? (
                                             <EditableRow
-                                                editFormData={editFormData}
-                                                setEditedValue={setEditedValue}
-                                                handleEditFormChange={handleEditFormChange}
-                                                handleEditFormSubmit={handleEditFormSubmit}
+                                                editableServiceName={editableServiceName}
+                                                editableServiceStatus={editableServiceStatus}
+                                                editableBodyPart={editableBodyPart}
+                                                setEditableServiceName={setEditableServiceName}
+                                                setEditableServiceStatus={setEditableServiceStatus}
+                                                setEditableBodyPart={setEditableBodyPart}
                                                 handleCancelClick={handleCancelClick}
+                                                handleEditFormSubmit={handleEditFormSubmit}
                                             />
                                         ) : (
                                             <ReadOnlyRow row={row} handleEditClick={handleEditClick} />
@@ -320,14 +346,11 @@ function ServiceType() {
             </MainCard>
             <div style={{ height: 10 }} />
             <MainCard title="Add New Service" ref={myRef}>
-                <TextField required fullWidth onChange={handlAddFormChange} label="Name" margin="dense" name="name" />
+                <TextField required fullWidth value={serviceName} onChange={handleServiceName} label="Name" margin="dense" name="name" />
 
                 <Autocomplete
-                    value={statusValue}
-                    onChange={(event, newValue) => {
-                        console.log(newValue);
-                        setStatusValue(newValue);
-                    }}
+                    value={serviceStatus}
+                    onChange={handleServiceStatus}
                     id="controllable-states-demo"
                     options={status}
                     renderInput={(params) => (
@@ -336,11 +359,8 @@ function ServiceType() {
                 />
 
                 <Autocomplete
-                    value={bodyPartValue}
-                    onChange={(event, newValue) => {
-                        console.log(newValue);
-                        setBodyPartValue(newValue);
-                    }}
+                    value={bodyPart}
+                    onChange={handleBodyPart}
                     id="controllable-states-demo"
                     options={bodyparts}
                     renderInput={(params) => (
@@ -356,7 +376,7 @@ function ServiceType() {
                             size="medium"
                             variant="contained"
                             color="primary"
-                            disabled={!newServiceData}
+                            disabled={addButton}
                         >
                             Add
                         </Button>
