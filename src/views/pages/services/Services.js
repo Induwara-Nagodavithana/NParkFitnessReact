@@ -103,16 +103,6 @@ function ServiceType() {
     const [editableServiceStatus, setEditableServiceStatus] = React.useState(null);
     const [editableBodyPart, setEditableBodyPart] = React.useState(null);
 
-    const [statusValue, setStatusValue] = React.useState(null);
-    const [bodyPartValue, setBodyPartValue] = React.useState(null);
-    const [editedValue, setEditedValue] = useState();
-
-    const [editFormData, setEditFormData] = React.useState({
-        name: '',
-        status: '',
-        bodyPart: ''
-    });
-
     const [editServiceId, setEditServiceId] = React.useState(null);
 
     const handleServiceName = (event) => {
@@ -130,17 +120,6 @@ function ServiceType() {
             setAddButtonDisable(false);
         }
     };
-
-    // const handlAddFormChange = (event) => {
-    //     const fieldName = event.target.getAttribute('name');
-    //     const fieldValue = event.target.value;
-
-    //     const newFormData = { ...newServiceData };
-    //     newFormData[fieldName] = fieldValue;
-
-    //     setNewServiceData(newFormData);
-    //     console.log(newServiceData);
-    // };
 
     const handleAddFormSubmit = () => {
         HttpCommon.post('/api/serviceType/', {
@@ -189,16 +168,6 @@ function ServiceType() {
         setServiceName(null);
         setServiceStatus(null);
         setBodyPart(null);
-    };
-
-    const handleEditFormChange = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...editFormData };
-        newFormData[fieldName] = fieldValue;
-
-        setEditFormData(newFormData);
     };
 
     const handleEditFormSubmit = () => {
