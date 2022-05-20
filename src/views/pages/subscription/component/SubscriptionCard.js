@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
@@ -9,6 +9,9 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
 import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2 } from '@tabler/icons';
+import { loadStripe } from '@stripe/stripe-js';
+import HttpCommon from 'utils/http-common';
+import { Store } from 'react-notifications-component';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +68,21 @@ const useStyles = makeStyles((theme) => ({
 
 // ===========================|| PROFILE MENU - UPGRADE PLAN CARD ||=========================== //
 
+let stripePromise;
+
+const getStripe = () => {
+    if (!stripePromise) {
+        console.log('process.env.REACT_APP_STRIPE_KEY');
+        console.log(process.env);
+        console.log(process.env.REACT_APP_STRIPE_KEY);
+        stripePromise = loadStripe(
+            'pk_test_51L19WVJhj4XbjMCUjUPHPmrjOP1pGg3V0AsCzYmg3K1ujl2Fkilm02pxTyz4aqm8Hg3748CK5PA9VorUgSdJrtYg005Gcku3Rl'
+        );
+    }
+
+    return stripePromise;
+};
+
 const SubscriptionCard = (subscriptionData) => {
     const classes = useStyles();
     console.log(subscriptionData);
@@ -75,6 +93,111 @@ const SubscriptionCard = (subscriptionData) => {
     } else {
         status = 'InsActive';
     }
+
+    const [stripeError, setStripeError] = useState(null);
+    const [isLoading, setLoading] = useState(false);
+    // const item = {
+    //     price: 'price_1L1SmyJhj4XbjMCUTgAPOMO8',
+    //     quantity: 1
+    // };
+
+    const redirectToCheckout = async () => {
+        setLoading(true);
+        console.log('redirectToCheckout');
+        const item = {
+            price: 'price_1L1SmyJhj4XbjMCUTgAPOMO8',
+            quantity: 1
+        };
+        switch (subscriptionData.subscriptionData.subscriptionType.type) {
+            case 'Gold':
+                item.price = 'price_1L1ReTJhj4XbjMCUpgapZYHB';
+                break;
+
+            case 'Silver':
+                item.price = 'price_1L1SmyJhj4XbjMCUTgAPOMO8';
+                break;
+
+            default:
+                break;
+        }
+
+        HttpCommon.post('/payhere/createStripeSession', {
+            metadata: { userId: subscriptionData.subscriptionData.userId },
+            line_items: item,
+            success_url: `${window.location.origin}/pages/subscription`,
+            cancel_url: `${window.location.origin}/pages/subscription`
+        })
+            .then(async (res) => {
+                console.log('session');
+                console.log(res.data.data);
+                const stripe = await getStripe();
+                const { error } = await stripe.redirectToCheckout({ sessionId: res.data.data.id });
+                console.log('Stripe checkout error', error);
+                if (error) setStripeError(error.message);
+                if (!error) {
+                    Store.addNotification({
+                        title: 'Successful!',
+                        message: 'Payment succesfully done.',
+                        type: 'success',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 5000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                } else {
+                    Store.addNotification({
+                        title: 'Payment Error Occured!',
+                        message: error.message,
+                        type: 'danger',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 5000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                Store.addNotification({
+                    title: 'Payment Error Occured!',
+                    message: err.message,
+                    type: 'danger',
+                    insert: 'top',
+                    container: 'top-right',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    },
+                    width: 500
+                });
+            });
+
+        // const stripe = await getStripe();
+        // const session = await stripe.checkout.sessions.create({
+        //     customer: subscriptionData.subscriptionData.userId,
+        //     success_url: `${window.location.origin}/pages/subscription`,
+        //     cancel_url: `${window.location.origin}/pages/subscription`,
+        //     line_items: [item],
+        //     mode: 'payment'
+        // });
+        // console.log('session');
+        // console.log(session);
+
+        setLoading(false);
+    };
+
     return (
         <Card className={classes.card}>
             <CardContent justifyContent="center" alignItems="center">
@@ -119,7 +242,13 @@ const SubscriptionCard = (subscriptionData) => {
                             {subscriptionData !== null ? subscriptionData.subscriptionData.subscriptionType.amount : 'NotFound'}
                         </Typography>
                     </div>
-                    <form method="post" action="https://sandbox.payhere.lk/pay/checkout">
+                    <AnimateButton>
+                        <Button type="button" variant="contained" onClick={redirectToCheckout} className={classes.button}>
+                            Pay
+                        </Button>
+                    </AnimateButton>
+
+                    {/* <form method="post" action="https://sandbox.payhere.lk/pay/checkout">
                         <div style={{ display: 'none' }}>
                             <input type="hidden" name="merchant_id" value="1217402" />
                             <input type="hidden" name="return_url" value="http://localhost:3000/pages/subscription" />
@@ -150,7 +279,6 @@ const SubscriptionCard = (subscriptionData) => {
                             <input type="hidden" name="custom_1" value={subscriptionData.subscriptionData.userId} />
                             <br />
                             <br />
-                            {/* <input type="submit" value="Buy Now" /> */}
                         </div>
                         {subscriptionData.subscriptionData.subscriptionType.amount < 1 ||
                         subscriptionData.subscriptionData.subscriptionType.amount == null ? (
@@ -161,11 +289,8 @@ const SubscriptionCard = (subscriptionData) => {
                                     Pay
                                 </Button>
                             </AnimateButton>
-                            // <ButtonMaterial type="submit" variant="contained" className={classes.buttonMaterial2}>
-                            //     Payment
-                            // </ButtonMaterial>
                         )}
-                    </form>
+                    </form> */}
                 </Grid>
             </CardContent>
         </Card>

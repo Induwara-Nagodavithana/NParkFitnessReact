@@ -22,6 +22,7 @@ import { Store } from 'react-notifications-component';
 
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import SquareCard from 'views/pages/reports/trainer-report/SquareCard';
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 
 const defaultOptions = {
@@ -154,7 +155,13 @@ const TrainerDashboard = () => {
                             </Grid>
                             <Grid item lg={4} md={12} sm={12} xs={12}>
                                 <Grid container spacing={gridSpacing}>
-                                    <Grid item sm={6} xs={12} md={12} lg={12}>
+                                    <Grid item xs={6}>
+                                        <SquareCard title="Pending Schedules" amount={pendingScheduleCount} icon="schedule" />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <SquareCard title="Pending DietPlan" amount={pendingDietCount} isPrimary icon="diet" />
+                                    </Grid>
+                                    {/* <Grid item sm={6} xs={12} md={12} lg={12}>
                                         <SmallDarkCard
                                             isLoading={isLoading}
                                             amount={`${serviceCount} Services`}
@@ -167,21 +174,21 @@ const TrainerDashboard = () => {
                                             amount={`${pendingScheduleCount} Schedules`}
                                             title="Total Pending Schedules"
                                         />
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
-                            <Grid item xs={12} sm={12} md={12} lg={4}>
+                            <Grid item xs={12} sm={12} md={12} lg={6}>
                                 <MemberCard isLoading={isLoading} data={memberData} />
                             </Grid>
 
-                            <Grid item xs={12} sm={12} md={12} lg={4}>
+                            <Grid item xs={12} sm={12} md={12} lg={6}>
                                 <ServiceCard isLoading={isLoading} data={serviceData} />
                             </Grid>
-                            <Grid item lg={4} md={12} sm={12} xs={12}>
+                            {/* <Grid item lg={4} md={12} sm={12} xs={12}>
                                 <Grid container spacing={gridSpacing}>
                                     <Grid item sm={6} xs={12} md={12} lg={12}>
                                         <SmallDarkCard
@@ -198,7 +205,7 @@ const TrainerDashboard = () => {
                                         />
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                 </Grid>
