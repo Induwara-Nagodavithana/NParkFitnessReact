@@ -171,6 +171,14 @@ const pages = {
             url: '/pages/attendance',
             icon: IconUsers,
             breadcrumbs: false
+        },
+        {
+            id: 'gym',
+            title: 'Gym',
+            type: 'item',
+            url: '/pages/gym',
+            icon: IconUsers,
+            breadcrumbs: false
         }
     ]
 };

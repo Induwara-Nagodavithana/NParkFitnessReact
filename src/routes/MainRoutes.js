@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { lazy } from 'react';
 
 // project imports
@@ -21,6 +22,8 @@ const SubscriptionTypes = Loadable(lazy(() => import('views/pages/subscriptionTy
 const EmployeeManagement = Loadable(lazy(() => import('views/pages/employee-management/EmployeeManagement')));
 const Attendance = Loadable(lazy(() => import('views/pages/attendance/Attendance')));
 const Account = Loadable(lazy(() => import('views/pages/account/Account')));
+const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
+
 
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
@@ -128,7 +131,11 @@ const MainRoutes = {
         {
             path: '/sample-page',
             element: <SamplePage />
-        }
+        },
+        {
+            path: '/gym',
+            element: <Gym />
+        },
     ]
 };
 
