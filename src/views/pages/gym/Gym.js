@@ -119,7 +119,7 @@ function Gym() {
 
                 Store.addNotification({
                     title: 'Successfully Done!',
-                    message: 'Gym Edited Successfully',
+                    message: 'Gym Updated Successfully',
                     type: 'success',
                     insert: 'top',
                     container: 'top-right',
