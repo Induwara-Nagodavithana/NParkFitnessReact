@@ -119,7 +119,7 @@ function Gym() {
 
                 Store.addNotification({
                     title: 'Successfully Done!',
-                    message: 'Service Edited Successfully',
+                    message: 'Gym Edited Successfully',
                     type: 'success',
                     insert: 'top',
                     container: 'top-right',
@@ -169,7 +169,6 @@ function Gym() {
         setEditContctId(null);
     };
 
-    // Create and get my reference in Add New Subscription type
     const myRef = useRef(null);
 
     // Scroll to myRef view
