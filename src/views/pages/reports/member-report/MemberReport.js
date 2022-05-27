@@ -196,7 +196,7 @@ const Report = ({ size, memberData, weightData, attendanceData, scheduleData, di
 
 //= ===============================|| Payment Success Page ||================================//
 
-const MemberReport = () => {
+const MemberReport = ({ memberid }) => {
     const theme = useTheme();
     const classes = useStyles();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -209,8 +209,8 @@ const MemberReport = () => {
     const [scheduleData, setScheduleData] = React.useState(null);
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
-
-    const memberId = 1;
+    const { state } = useLocation();
+    const memberId = state !== null ? state.memberid : 1;
     const userId = 1;
     function getMemberDetails() {
         // let arr = [];

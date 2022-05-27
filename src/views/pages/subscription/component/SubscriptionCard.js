@@ -17,7 +17,7 @@ import { Store } from 'react-notifications-component';
 const useStyles = makeStyles((theme) => ({
     card: {
         paddingTop: '20px',
-        background: theme.palette.warning.main,
+        background: '#E9C7FC',
         marginTop: '16px',
         marginBottom: '16px',
         overflow: 'hidden',
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
             width: '200px',
             height: '200px',
             border: '19px solid ',
-            borderColor: theme.palette.warning.dark,
+            borderColor: theme.palette.secondary.dark,
             borderRadius: '50%',
             top: '65px',
             right: '-150px'
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
             width: '200px',
             height: '200px',
             border: '3px solid ',
-            borderColor: theme.palette.warning.dark,
+            borderColor: theme.palette.secondary.dark,
             borderRadius: '50%',
             top: '145px',
             right: '-70px',
