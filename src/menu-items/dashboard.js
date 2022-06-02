@@ -9,8 +9,8 @@ const icons = {
 
 // ===========================|| DASHBOARD MENU ITEMS ||=========================== //
 
-const type = localStorage.getItem('type');
 function dashboardRoute() {
+    const type = localStorage.getItem('type');
     switch (type) {
         case 'Admin':
             return {
@@ -50,21 +50,34 @@ function dashboardRoute() {
             };
         default:
             return {
-                id: 'default',
-                title: 'Admin Dashboard',
+                id: 'trainer',
+                title: 'Trainer Dashboard',
                 type: 'item',
-                url: '/pages/dashboard/admin',
+                url: '/pages/dashboard/trainer',
                 icon: icons.IconDashboard,
                 breadcrumbs: false
             };
     }
 }
 
-const dashboard = {
-    id: 'dashboard',
-    title: 'Dashboard',
-    type: 'group',
-    children: [dashboardRoute()]
+const dashboard = () => {
+    // const type = localStorage.getItem('type');
+    // console.log('type');
+    // console.log(type);
+    const dashboard = {
+        id: 'dashboard',
+        title: 'Dashboard',
+        type: 'group',
+        children: [dashboardRoute()]
+    };
+    return dashboard;
 };
+
+// const dashboard = {
+//     id: 'dashboard',
+//     title: 'Dashboard',
+//     type: 'group',
+//     children: [dashboardRoute()]
+// };
 
 export default dashboard;

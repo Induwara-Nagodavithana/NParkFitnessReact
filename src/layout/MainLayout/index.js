@@ -122,7 +122,7 @@ const MainLayout = () => {
                 ])}
             >
                 {/* breadcrumb */}
-                <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
+                <Breadcrumbs separator={IconChevronRight} navigation={navigation()} icon title rightAlign />
                 <Outlet />
             </main>
             <Customization />

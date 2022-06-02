@@ -139,7 +139,7 @@ const NotificationCard = (notificationData) => {
     const db = getDatabase();
     const userId = 1;
     let time = '';
-    console.log(notificationData);
+    // console.log(notificationData);
     // console.log(subscriptionData.subscriptionData.id);
     // let status;
     // if (subscriptionData.subscriptionData.isActive) {

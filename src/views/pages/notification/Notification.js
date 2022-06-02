@@ -77,8 +77,8 @@ const Notification = () => {
 
             setNotifications(notificationArr.slice(0, 6));
             //   updateStarCount(postElement, data);
-            console.log(notificationArr.slice(0, 6));
-            console.log(data);
+            // console.log(notificationArr.slice(0, 6));
+            // console.log(data);
         });
     }
 

@@ -139,6 +139,7 @@ const AttendanceCard = ({ isLoading, data }) => {
                 width: 3
             },
             yaxis: {
+                show: false,
                 min: 0
             },
             tooltip: {
@@ -156,6 +157,14 @@ const AttendanceCard = ({ isLoading, data }) => {
                 },
                 marker: {
                     show: false
+                },
+                grid: {
+                    padding: {
+                        top: 7,
+                        right: 10,
+                        bottom: 5,
+                        left: 10
+                    }
                 }
             }
         },
@@ -189,6 +198,7 @@ const AttendanceCard = ({ isLoading, data }) => {
                 width: 3
             },
             yaxis: {
+                show: false,
                 min: 0
             },
             markers: {

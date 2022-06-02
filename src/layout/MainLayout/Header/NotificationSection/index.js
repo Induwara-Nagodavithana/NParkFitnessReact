@@ -185,7 +185,7 @@ const NotificationSection = () => {
                     tempUnReadCount += 1;
                 }
                 notificationArr.unshift(childData);
-                console.log(childData);
+                // console.log(childData);
 
                 // ...
             });
@@ -194,8 +194,8 @@ const NotificationSection = () => {
             setSelectNotifications(notificationArr.slice(0, 6));
             setUnReadCount(tempUnReadCount);
             //   updateStarCount(postElement, data);
-            console.log(notificationArr);
-            console.log(data);
+            // console.log(notificationArr);
+            // console.log(data);
         });
     }
 

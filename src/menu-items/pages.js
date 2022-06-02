@@ -26,9 +26,9 @@ const icons = {
 };
 
 // ===========================|| EXTRA PAGES MENU ITEMS ||=========================== //
-const type = localStorage.getItem('type');
 
 function pagesRoute() {
+    const type = localStorage.getItem('type');
     switch (type) {
         case 'Admin':
             return [
@@ -325,12 +325,23 @@ function pagesRoute() {
     }
 }
 
-const pages = {
-    id: 'pages',
-    title: 'Pages',
-    caption: 'Pages Caption',
-    type: 'group',
-    children: pagesRoute()
+const pages = () => {
+    const pages = {
+        id: 'pages',
+        title: 'Pages',
+        caption: 'Pages Caption',
+        type: 'group',
+        children: pagesRoute()
+    };
+    return pages;
 };
+
+// const pages = {
+//     id: 'pages',
+//     title: 'Pages',
+//     caption: 'Pages Caption',
+//     type: 'group',
+//     children: pagesRoute()
+// };
 
 export default pages;

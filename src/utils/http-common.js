@@ -27,8 +27,8 @@ instance.interceptors.request.use(
     (config) => {
         // Do something before request is sent
         const token = localStorage.getItem('token');
-        console.log('token');
-        console.log(token);
+        // console.log('token');
+        // console.log(token);
         config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
@@ -43,7 +43,7 @@ instance.interceptors.response.use(
     (response) => {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
-        console.log(response);
+        // console.log(response);
         console.log(response.status);
         return response;
     },

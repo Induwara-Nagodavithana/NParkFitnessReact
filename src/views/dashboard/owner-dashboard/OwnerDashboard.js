@@ -35,25 +35,27 @@ const defaultOptions = {
 const OwnerDashboard = () => {
     const [isLoading, setLoading] = useState(false);
     const [isDataLoading, setDataLoading] = useState(true);
-    const [memberCount, setMemberCount] = useState();
-    const [serviceCount, setServiceCount] = useState();
-    const [exMemberCount, setExMemberCount] = useState();
-    const [branchCount, setBranchCount] = useState();
-    const [trainerCount, setTrainerCount] = useState();
-    const [managerCount, setManagerCount] = useState();
-    const [attendanceCount, setAttendanceCount] = useState();
-    const [incomeCount, setIncomeCount] = useState();
+    const [memberCount, setMemberCount] = useState(0);
+    const [serviceCount, setServiceCount] = useState(0);
+    const [exMemberCount, setExMemberCount] = useState(0);
+    const [branchCount, setBranchCount] = useState(0);
+    const [trainerCount, setTrainerCount] = useState(0);
+    const [managerCount, setManagerCount] = useState(0);
+    const [attendanceCount, setAttendanceCount] = useState(0);
+    const [incomeCount, setIncomeCount] = useState(0);
     const [branchesData, setBranchesData] = useState();
+    // const [userId, setUserId] = useState();
 
     const gymId = 1;
 
-    function getManagerDashboard() {
+    function getOwnerDashboard() {
         // let arr = [];
-
-        HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${gymId}`).then((response1) => {
+        const userId = localStorage.getItem('userID');
+        console.log(userId);
+        HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${userId}`).then((response1) => {
             console.log(response1.data.data);
             setBranchesData(response1.data.data);
-            HttpCommon.get(`api/dashboard/getOwnerDashboardData/${gymId}`).then(async (response) => {
+            HttpCommon.get(`api/dashboard/getOwnerDashboardData/${userId}`).then(async (response) => {
                 console.log(response.data.data);
                 console.log(response.data.data.staffCount);
                 setMemberCount(response.data.data.memberCount);
@@ -108,6 +110,7 @@ const OwnerDashboard = () => {
                         return 0;
                     })
                 );
+                console.log(response.data.data.incomeCount);
                 console.log(incomeArr);
                 setIncomeCount(incomeArr);
                 console.log('Is It Done2');
@@ -118,21 +121,22 @@ const OwnerDashboard = () => {
     }
 
     useEffect(() => {
-        const calorieInstance = axios.create({
-            baseURL: 'https://identitytoolkit.googleapis.com/v1',
-            timeout: 10000
-        });
-        calorieInstance
-            .post('/accounts:signInWithPassword?key=AIzaSyDqSwxdurpJuoKWgGufwGKzU69EWr4TirQ', {
-                email: 'kamal@gmail.com',
-                password: '123456',
-                returnSecureToken: true
-            })
-            .then((response) => {
-                console.log(response.data);
-                localStorage.setItem('token', response.data.idToken);
-            });
-        getManagerDashboard();
+        // const calorieInstance = axios.create({
+        //     baseURL: 'https://identitytoolkit.googleapis.com/v1',
+        //     timeout: 10000
+        // });
+        // calorieInstance
+        //     .post('/accounts:signInWithPassword?key=AIzaSyDqSwxdurpJuoKWgGufwGKzU69EWr4TirQ', {
+        //         email: 'kamal@gmail.com',
+        //         password: '123456',
+        //         returnSecureToken: true
+        //     })
+        //     .then((response) => {
+        //         console.log(response.data);
+        //         localStorage.setItem('token', response.data.idToken);
+        //     });
+        // setUserId(localStorage.getItem('userID'));
+        getOwnerDashboard();
     }, []);
 
     return (

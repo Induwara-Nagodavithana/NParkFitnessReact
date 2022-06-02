@@ -72,6 +72,39 @@ const FirebaseLogin = ({ ...others }) => {
         setShowPassword(!showPassword);
     };
 
+    function navigateDashboard(type) {
+        switch (type) {
+            case 'Admin':
+                navigate('/pages/dashboard/admin');
+                break;
+            case 'Owner':
+                navigate('/pages/dashboard/owner');
+                break;
+            case 'Manager':
+                navigate('/pages/dashboard/manager');
+                break;
+            case 'Trainer':
+                navigate('/pages/dashboard/trainer');
+                break;
+            default:
+                Store.addNotification({
+                    title: 'Error Occured!',
+                    message: `${type} type clients cannot enter this system. `,
+                    type: 'danger',
+                    insert: 'top',
+                    container: 'top-right',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    },
+                    width: 500
+                });
+                break;
+        }
+    }
+
     const onSubmitHandler = (event) => {
         setDataLoading(true);
         event.preventDefault();
@@ -97,9 +130,14 @@ const FirebaseLogin = ({ ...others }) => {
                     console.log(response);
                     setDataLoading(false);
                     if (response.data.success) {
-                        localStorage.setItem('type', response.data.data.type);
-                        localStorage.setItem('userID', response.data.data.id);
-                        navigate('/pages/dashboard/admin');
+                        // localStorage.setItem('type', response.data.data.type);
+                        // localStorage.setItem('userID', response.data.data.id);
+                        await Promise.all([
+                            localStorage.setItem('type', response.data.data.type),
+                            localStorage.setItem('userID', response.data.data.id)
+                        ]);
+                        navigateDashboard(response.data.data.type);
+                        // navigate('/pages/dashboard/admin');
                     } else {
                         Store.addNotification({
                             title: 'Error Occured!',
@@ -179,7 +217,8 @@ const FirebaseLogin = ({ ...others }) => {
                     if (response.data.success) {
                         localStorage.setItem('type', response.data.data.type);
                         localStorage.setItem('userID', response.data.data.id);
-                        navigate('/pages/dashboard/admin');
+                        navigateDashboard(response.data.data.type);
+                        // navigate('/pages/dashboard/admin');
                     } else {
                         localStorage.clear();
                         window.location.reload();
