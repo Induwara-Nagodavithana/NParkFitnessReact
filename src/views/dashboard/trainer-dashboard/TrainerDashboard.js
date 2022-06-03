@@ -37,7 +37,7 @@ const defaultOptions = {
 const TrainerDashboard = () => {
     const [isLoading, setLoading] = useState(false);
     const [isDataLoading, setDataLoading] = useState(true);
-    const [memberCount, setMemberCount] = useState();
+    const [memberCount, setMemberCount] = useState(0);
     const [serviceCount, setServiceCount] = useState();
     const [exMemberCount, setExMemberCount] = useState();
     const [trainerCount, setTrainerCount] = useState();
@@ -45,83 +45,114 @@ const TrainerDashboard = () => {
     const [attendanceCount, setAttendanceCount] = useState();
     const [incomeCount, setIncomeCount] = useState();
     const [serviceData, setServiceData] = useState();
-    const [pendingScheduleCount, setPendingScheduleCount] = useState();
-    const [pendingDietCount, setPendingDietCount] = useState();
+    const [pendingScheduleCount, setPendingScheduleCount] = useState(0);
+    const [pendingDietCount, setPendingDietCount] = useState(0);
 
-    const branchId = 1;
-    const userId = 4;
+    // const branchId = 1;
+    // const userId = 4;
 
     function getTrainerDashboard() {
         // let arr = [];
+        const userId = localStorage.getItem('userID');
+        HttpCommon.get(`/api/user/${userId}`).then((response0) => {
+            console.log(response0.data.data);
+            const { branchId } = response0.data.data;
+            if (branchId > 0) {
+                HttpCommon.get(`/api/serviceType/getServiceTypeByBranchId/${branchId}`).then((response1) => {
+                    console.log(response1.data.data);
+                    setServiceData(response1.data.data);
+                    HttpCommon.post(`api/dashboard/getMemberDetails/${userId}`, { branchId }).then(async (response) => {
+                        console.log(response.data.data);
+                        setMemberCount(response.data.data.memberCount);
+                        setServiceCount(response.data.data.serviceCount);
+                        setExMemberCount(response.data.data.exMemberCount);
+                        setMemberData(response.data.data.memberData);
 
-        HttpCommon.get(`/api/serviceType/getServiceTypeByBranchId/${branchId}`).then((response1) => {
-            console.log(response1.data.data);
-            setServiceData(response1.data.data);
-            HttpCommon.post(`api/dashboard/getMemberDetails/${userId}`, { branchId }).then(async (response) => {
-                console.log(response.data.data);
-                setMemberCount(response.data.data.memberCount);
-                setServiceCount(response.data.data.serviceCount);
-                setExMemberCount(response.data.data.exMemberCount);
-                setMemberData(response.data.data.memberData);
+                        let body = {
+                            chartMonthData: [],
+                            chartYearData: [],
+                            monthCount: 0,
+                            yearCount: 0
+                        };
+                        if (response.data.data.attendanceCount !== null) {
+                            const monthArr = [];
+                            const yearArr = [];
+                            let monthCount = 0;
+                            let yearCount = 0;
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceMonth.map((element) => {
+                                    monthCount += element.count;
+                                    return monthArr.push(element.count);
+                                })
+                            );
 
-                let body = {
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceYear.map((element) => {
+                                    yearCount += element.count;
+                                    return yearArr.push(element.count);
+                                })
+                            );
+
+                            body = { monthArr, yearArr, monthCount, yearCount };
+                        }
+
+                        setAttendanceCount(body);
+                        let tempScheduleCount = 0;
+                        let tempDietCount = 0;
+                        await Promise.all(
+                            response.data.data.memberData.map((element) => {
+                                if (!element.isDietAvailable) {
+                                    tempDietCount += 1;
+                                }
+                                if (element.scheduleExpireDate !== null) {
+                                    const d1 = Date.parse(element.scheduleExpireDate);
+                                    const today = new Date().toISOString().slice(0, 10);
+                                    console.log('element.scheduleExpireDate<today');
+                                    console.log(element.scheduleExpireDate < today);
+                                    if (element.scheduleExpireDate < today) {
+                                        tempScheduleCount += 1;
+                                    }
+                                } else {
+                                    tempScheduleCount += 1;
+                                }
+                                return 0;
+                            })
+                        );
+                        setPendingDietCount(tempDietCount);
+                        setPendingScheduleCount(tempScheduleCount);
+
+                        console.log('Is It Done2');
+
+                        setDataLoading(false);
+                        // setLoading(false);
+                    });
+                });
+            } else {
+                const body = {
                     chartMonthData: [],
                     chartYearData: [],
                     monthCount: 0,
                     yearCount: 0
                 };
-                if (response.data.data.attendanceCount !== null) {
-                    const monthArr = [];
-                    const yearArr = [];
-                    let monthCount = 0;
-                    let yearCount = 0;
-                    await Promise.all(
-                        response.data.data.attendanceCount.attendanceMonth.map((element) => {
-                            monthCount += element.count;
-                            return monthArr.push(element.count);
-                        })
-                    );
-
-                    await Promise.all(
-                        response.data.data.attendanceCount.attendanceYear.map((element) => {
-                            yearCount += element.count;
-                            return yearArr.push(element.count);
-                        })
-                    );
-
-                    body = { monthArr, yearArr, monthCount, yearCount };
-                }
 
                 setAttendanceCount(body);
-                let tempScheduleCount = 0;
-                let tempDietCount = 0;
-                await Promise.all(
-                    response.data.data.memberData.map((element) => {
-                        if (!element.isDietAvailable) {
-                            tempDietCount += 1;
-                        }
-                        if (element.scheduleExpireDate !== null) {
-                            const d1 = Date.parse(element.scheduleExpireDate);
-                            const today = new Date().toISOString().slice(0, 10);
-                            console.log('element.scheduleExpireDate<today');
-                            console.log(element.scheduleExpireDate < today);
-                            if (element.scheduleExpireDate < today) {
-                                tempScheduleCount += 1;
-                            }
-                        } else {
-                            tempScheduleCount += 1;
-                        }
-                        return 0;
-                    })
-                );
-                setPendingDietCount(tempDietCount);
-                setPendingScheduleCount(tempScheduleCount);
 
-                console.log('Is It Done2');
-
+                Store.addNotification({
+                    title: 'Error Occured!',
+                    message: 'User is not registered to a branch.',
+                    type: 'danger',
+                    insert: 'top',
+                    container: 'top-right',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    },
+                    width: 500
+                });
                 setDataLoading(false);
-                // setLoading(false);
-            });
+            }
         });
     }
 

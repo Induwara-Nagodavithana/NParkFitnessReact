@@ -36,7 +36,7 @@ import SmallCard from '../trainer-report/SmallCard';
 import TotalGrowthBarChart from 'views/dashboard/dashboard-component/TotalGrowthBarChart';
 import AttendanceChart from '../branch-report/AttendanceChart';
 import PopularCard from 'views/dashboard/dashboard-component/PopularCard';
-import GymDetails from './GymDetails';
+import SubTypeCard from 'views/dashboard/dashboard-component/SubTypeCard';
 
 // assets
 
@@ -142,17 +142,16 @@ const useStyles = makeStyles((theme) => ({
 let theme;
 
 const Report = ({
-    gymData,
     memberCount,
     serviceCount,
     exMemberCount,
+    branchCount,
+    inActiveBranchCount,
     trainerCount,
     managerCount,
-    attendanceCount,
+    gymCount,
     incomeCount,
-    rawPayment,
-    branchesData,
-    branchCount
+    subTypeData
 }) => {
     theme = useTheme();
     const classes = useStyles();
@@ -183,13 +182,9 @@ const Report = ({
                 >
                     Gym Report
                 </Typography>
-                <Typography variant="h4" fontSize="18px" textAlign="center">
-                    {gymData.name}
-                </Typography>
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
                     NPartFitness
                 </Typography>
-                {/* <GymDetails data={gymData} /> */}
                 <Grid container sx={{ mb: 2, mt: '2px' }} spacing={gridSpacing}>
                     <Grid item xs={4}>
                         <SquareCard title="Member Count" amount={memberCount} isPrimary icon="person" />
@@ -200,17 +195,30 @@ const Report = ({
                     <Grid item xs={4}>
                         <SquareCard title="Managers Count" amount={managerCount} isPrimary icon="manager" />
                     </Grid>
-                    <Grid item xs={6}>
-                        <SmallCard title="Expired Memberships" amount={exMemberCount} />
+                    <Grid item xs={4}>
+                        <SquareCard title="Active Members" amount={branchCount} icon="active" />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <SquareCard
+                            title="InActive Members"
+                            amount={inActiveBranchCount === undefined ? 0 : inActiveBranchCount}
+                            isPrimary
+                            icon="inactive"
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <SquareCard title="Service Count" amount={serviceCount} icon="service" />
                     </Grid>
                     <Grid item xs={6}>
-                        <SmallCard title="Branches In Gym" amount={branchCount} isPrimary />
+                        <SmallCard title="Expired Memberships" amount={exMemberCount === undefined ? 0 : exMemberCount} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <SmallCard title="Gym Count" amount={gymCount} isPrimary />
                     </Grid>
                 </Grid>
-                <AttendanceChart data={attendanceCount.yearArr} />
-                <TotalGrowthBarChart incomeData={incomeCount} rawData={rawPayment} />
+                <TotalGrowthBarChart incomeData={incomeCount} />
                 <div style={{ height: '10px' }} />
-                <PopularCard data={branchesData} />
+                <SubTypeCard data={subTypeData} />
             </SubCard>
         </>
     );
@@ -218,7 +226,7 @@ const Report = ({
 
 //= ===============================|| Payment Success Page ||================================//
 
-const BranchReport = () => {
+const PaymentReport = () => {
     const theme = useTheme();
     const classes = useStyles();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -226,14 +234,13 @@ const BranchReport = () => {
     const [memberCount, setMemberCount] = React.useState();
     const [serviceCount, setServiceCount] = React.useState();
     const [exMemberCount, setExMemberCount] = React.useState();
+    const [branchCount, setBranchCount] = React.useState();
+    const [inActiveBranchCount, setInActiveBranchCount] = React.useState();
     const [trainerCount, setTrainerCount] = React.useState();
     const [managerCount, setManagerCount] = React.useState();
-    const [attendanceCount, setAttendanceCount] = React.useState();
+    const [gymCount, setGymCount] = React.useState();
     const [incomeCount, setIncomeCount] = React.useState();
-    const [rawPayment, setRawPayment] = React.useState(0);
-    const [gymData, setGymData] = React.useState();
-    const [branchesData, setBranchesData] = React.useState();
-    const [branchCount, setBranchCount] = React.useState();
+    const [subTypeData, setSubTypeData] = React.useState();
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
 
@@ -241,88 +248,64 @@ const BranchReport = () => {
     // const userId = 1;
     const gymId = 1;
 
-    function getManagerData() {
-        const userId = localStorage.getItem('userID');
-        HttpCommon.get(`/api/gym/${gymId}`).then((response0) => {
-            console.log(response0.data.data);
-            setGymData(response0.data.data);
-            HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${userId}`).then((response1) => {
-                console.log(response1.data.data);
-                setBranchesData(response1.data.data);
-                HttpCommon.get(`api/dashboard/getOwnerDashboardData/${userId}`).then(async (response) => {
-                    console.log(response.data.data);
-                    console.log(response.data.data.staffCount);
-                    setMemberCount(response.data.data.memberCount);
-                    setServiceCount(response.data.data.serviceCount);
-                    setBranchCount(response.data.data.branchCount);
-                    setExMemberCount(response.data.data.exMemberCount);
+    function getAdminDashboard() {
+        // let arr = [];
 
-                    await Promise.all(
-                        await response.data.data.staffCount.map((element) => {
-                            if (element.type === 'Manager') {
-                                setManagerCount(element.count);
-                            } else if (element.type === 'Trainer') {
-                                setTrainerCount(element.count);
-                            }
-                            return 0;
-                        })
-                    );
+        HttpCommon.get(`api/dashboard/getAdminDashboardData`).then(async (response) => {
+            console.log(response.data.data);
+            setServiceCount(response.data.data.serviceCount);
+            setBranchCount(response.data.data.branchCount);
+            setGymCount(response.data.data.gymCount);
+            setSubTypeData(response.data.data.subscriptionType);
 
-                    let body = {
-                        chartMonthData: [],
-                        chartYearData: [],
-                        monthCount: 0,
-                        yearCount: 0
-                    };
-                    if (response.data.data.attendanceCount !== null) {
-                        const monthArr = [];
-                        const yearArr = [];
-                        let monthCount = 0;
-                        let yearCount = 0;
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceMonth.map((element) => {
-                                monthCount += element.count;
-                                return monthArr.push(element.count);
-                            })
-                        );
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceYear.map((element) => {
-                                yearCount += element.count;
-                                return yearArr.push(element.count);
-                            })
-                        );
-
-                        body = { monthArr, yearArr, monthCount, yearCount };
+            await Promise.all(
+                await response.data.data.branchCount.map((element) => {
+                    if (element.isActive) {
+                        setBranchCount(element.count);
+                    } else {
+                        setInActiveBranchCount(element.count);
                     }
+                    return 0;
+                })
+            );
 
-                    setAttendanceCount(body);
-                    const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                    await Promise.all(
-                        response.data.data.incomeCount.map((element) => {
-                            const month = parseInt(element.date.slice(5, 7), 10);
-                            incomeArr[month - 1] = element.totalAmount;
-                            return 0;
-                        })
-                    );
-                    console.log(incomeArr);
-                    setIncomeCount(incomeArr);
+            let totalMemberCount = 0;
+            await Promise.all(
+                await response.data.data.memberCount.map((element) => {
+                    totalMemberCount += element.count;
+                    if (!element.isActive) {
+                        setExMemberCount(element.count);
+                    }
+                    return 0;
+                })
+            );
+            setMemberCount(totalMemberCount);
 
-                    const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
-                    await Promise.all(
-                        response.data.data.rawPaymentData.map((element) => {
-                            const month = parseInt(element.date.slice(5, 7), 10);
-                            rawPaymentArr[month - 1].push(element);
-                            return 0;
-                        })
-                    );
-                    console.log(rawPaymentArr);
-                    setRawPayment(rawPaymentArr);
+            await Promise.all(
+                await response.data.data.userCount.map((element) => {
+                    if (element.type === 'Manager') {
+                        setManagerCount(element.count);
+                    } else if (element.type === 'Trainer') {
+                        setTrainerCount(element.count);
+                    }
+                    return 0;
+                })
+            );
 
-                    console.log('Is It Done2');
+            const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            await Promise.all(
+                response.data.data.payment.map((element) => {
+                    const month = parseInt(element.date.slice(5, 7), 10);
+                    incomeArr[month - 1] = element.totalAmount;
+                    return 0;
+                })
+            );
+            console.log(incomeArr);
+            setIncomeCount(incomeArr);
+            console.log('Is It Done2');
 
-                    setDataLoading(false);
-                });
-            });
+            setDataLoading(false);
+            // setLoading(false);
         });
     }
 
@@ -336,11 +319,7 @@ const BranchReport = () => {
 
     useEffect(async () => {
         setDataLoading(true);
-
-        console.log(gymId);
-        if (gymId !== undefined) {
-            getManagerData();
-        }
+        getAdminDashboard();
     }, []);
 
     return (
@@ -374,17 +353,16 @@ const BranchReport = () => {
                                         }}
                                     > */}
                                     <Report
-                                        gymData={gymData}
                                         memberCount={memberCount}
                                         serviceCount={serviceCount}
                                         exMemberCount={exMemberCount}
+                                        branchCount={branchCount}
+                                        inActiveBranchCount={inActiveBranchCount}
                                         trainerCount={trainerCount}
                                         managerCount={managerCount}
-                                        attendanceCount={attendanceCount}
+                                        gymCount={gymCount}
                                         incomeCount={incomeCount}
-                                        rawPayment={rawPayment}
-                                        branchesData={branchesData}
-                                        branchCount={branchCount}
+                                        subTypeData={subTypeData}
                                     />
                                     {/* </SubCard> */}
                                     <div style={{ textAlign: 'right' }}>
@@ -407,17 +385,16 @@ const BranchReport = () => {
                                             </Typography>
                                             <ComponentToPrint
                                                 ref={componentRef}
-                                                gymData={gymData}
                                                 memberCount={memberCount}
                                                 serviceCount={serviceCount}
                                                 exMemberCount={exMemberCount}
+                                                branchCount={branchCount}
+                                                inActiveBranchCount={inActiveBranchCount}
                                                 trainerCount={trainerCount}
                                                 managerCount={managerCount}
-                                                attendanceCount={attendanceCount}
+                                                gymCount={gymCount}
                                                 incomeCount={incomeCount}
-                                                rawPayment={rawPayment}
-                                                branchesData={branchesData}
-                                                branchCount={branchCount}
+                                                subTypeData={subTypeData}
                                                 classes={classes}
                                             />
                                         </div>
@@ -439,17 +416,16 @@ export class ComponentToPrint extends React.PureComponent {
     render() {
         // const classes = this.props;
         const {
-            gymData,
             memberCount,
             serviceCount,
             exMemberCount,
+            branchCount,
+            inActiveBranchCount,
             trainerCount,
             managerCount,
-            attendanceCount,
+            gymCount,
             incomeCount,
-            rawPayment,
-            branchesData,
-            branchCount,
+            subTypeData,
             classes
         } = this.props;
         // console.log(this.props.centerPayData); // result: 'some_value'
@@ -470,17 +446,16 @@ export class ComponentToPrint extends React.PureComponent {
                         > */}
                         <div>
                             <Report
-                                gymData={gymData}
                                 memberCount={memberCount}
                                 serviceCount={serviceCount}
                                 exMemberCount={exMemberCount}
+                                branchCount={branchCount}
+                                inActiveBranchCount={inActiveBranchCount}
                                 trainerCount={trainerCount}
                                 managerCount={managerCount}
-                                attendanceCount={attendanceCount}
+                                gymCount={gymCount}
                                 incomeCount={incomeCount}
-                                rawPayment={rawPayment}
-                                branchesData={branchesData}
-                                branchCount={branchCount}
+                                subTypeData={subTypeData}
                             />
                         </div>
                         {/* </SubCard> */}
@@ -491,4 +466,4 @@ export class ComponentToPrint extends React.PureComponent {
     }
 }
 
-export default BranchReport;
+export default PaymentReport;

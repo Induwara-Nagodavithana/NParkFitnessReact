@@ -43,6 +43,7 @@ const OwnerDashboard = () => {
     const [managerCount, setManagerCount] = useState(0);
     const [attendanceCount, setAttendanceCount] = useState(0);
     const [incomeCount, setIncomeCount] = useState(0);
+    const [rawPayment, setRawPayment] = useState(0);
     const [branchesData, setBranchesData] = useState();
     // const [userId, setUserId] = useState();
 
@@ -113,6 +114,17 @@ const OwnerDashboard = () => {
                 console.log(response.data.data.incomeCount);
                 console.log(incomeArr);
                 setIncomeCount(incomeArr);
+
+                const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                await Promise.all(
+                    response.data.data.rawPaymentData.map((element) => {
+                        const month = parseInt(element.date.slice(5, 7), 10);
+                        rawPaymentArr[month - 1].push(element);
+                        return 0;
+                    })
+                );
+                console.log(rawPaymentArr);
+                setRawPayment(rawPaymentArr);
                 console.log('Is It Done2');
 
                 setDataLoading(false);
@@ -186,7 +198,7 @@ const OwnerDashboard = () => {
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={8}>
-                                <TotalGrowthBarChart isLoading={isLoading} incomeData={incomeCount} />
+                                <TotalGrowthBarChart isLoading={isLoading} incomeData={incomeCount} rawData={rawPayment} />
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Grid container spacing={gridSpacing}>

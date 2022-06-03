@@ -167,7 +167,11 @@ const ServiceCard = ({ isLoading, data }) => {
                                         ))}
                                     </>
                                 ) : (
-                                    <></>
+                                    <>
+                                        <Typography variant="subtitle1" color="inherit">
+                                            No Service Found.
+                                        </Typography>
+                                    </>
                                 )}
                             </Grid>
                         </Grid>

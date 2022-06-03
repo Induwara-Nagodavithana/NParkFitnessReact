@@ -47,6 +47,7 @@ const AdminDashboard = () => {
     const [gymCount, setGymCount] = useState();
     const [incomeCount, setIncomeCount] = useState();
     const [subTypeData, setSubTypeData] = useState();
+    const [rawPayment, setRawPayment] = useState(0);
     const customization = useSelector((state) => state.customization);
     function getAdminDashboard() {
         // let arr = [];
@@ -102,6 +103,18 @@ const AdminDashboard = () => {
             );
             console.log(incomeArr);
             setIncomeCount(incomeArr);
+
+            const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+            await Promise.all(
+                response.data.data.rawPaymentData.map((element) => {
+                    const month = parseInt(element.date.slice(5, 7), 10);
+                    rawPaymentArr[month - 1].push(element);
+                    return 0;
+                })
+            );
+            console.log(rawPaymentArr);
+            setRawPayment(rawPaymentArr);
+
             console.log('Is It Done2');
 
             setDataLoading(false);
@@ -183,7 +196,7 @@ const AdminDashboard = () => {
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={8}>
-                                <TotalGrowthBarChart isLoading={isLoading} incomeData={incomeCount} />
+                                <TotalGrowthBarChart isLoading={isLoading} incomeData={incomeCount} rawData={rawPayment} />
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Grid container spacing={gridSpacing}>
