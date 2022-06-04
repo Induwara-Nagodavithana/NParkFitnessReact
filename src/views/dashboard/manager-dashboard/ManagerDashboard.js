@@ -114,16 +114,22 @@ const ManagerDashboard = () => {
                         console.log(incomeArr);
                         setIncomeCount(incomeArr);
 
-                        const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                        const rawCardPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                        const rawCashPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
                         await Promise.all(
                             response.data.data.rawPaymentData.map((element) => {
                                 const month = parseInt(element.date.slice(5, 7), 10);
-                                rawPaymentArr[month - 1].push(element);
+                                if (element.method === 'cash') {
+                                    rawCashPaymentArr[month - 1].push(element);
+                                } else {
+                                    rawCardPaymentArr[month - 1].push(element);
+                                }
                                 return 0;
                             })
                         );
-                        console.log(rawPaymentArr);
-                        setRawPayment(rawPaymentArr);
+                        console.log(rawCardPaymentArr);
+                        console.log(rawCashPaymentArr);
+                        setRawPayment({ rawCardPaymentArr, rawCashPaymentArr });
 
                         console.log('Is It Done2');
 

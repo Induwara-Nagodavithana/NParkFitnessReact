@@ -35,6 +35,8 @@ const status = [
 
 const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
     const [value, setValue] = React.useState('year');
+    const [isloading, setIsloading] = React.useState(false);
+    const [isCardAvailable, setIsCardAvailable] = React.useState(false);
     const [chartValues, setChartValue] = React.useState(incomeData);
     const [categoryValues, setCategoryValue] = React.useState([
         'Jan',
@@ -54,7 +56,9 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
     const month = parseInt(new Date().toISOString().slice(5, 7), 10);
     const date = parseInt(new Date().toISOString().slice(8, 10), 10);
     let rawMonthArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let rawCardMonthArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     const rawHourArr = [0, 0, 0, 0, 0, 0, 0, 0];
+    const rawCardHourArr = [0, 0, 0, 0, 0, 0, 0, 0];
     const dateArr = [];
 
     console.log(incomeData);
@@ -67,53 +71,129 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
         const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
         console.log(daysInCurrentMonth);
         rawMonthArr = rawMonthArr.slice(0, daysInCurrentMonth);
-        if (rawData !== null || rawData.length > 0) {
-            await Promise.all(
-                rawData[month - 1].map((element) => {
-                    const day = parseInt(element.date.slice(8, 10), 10);
-                    rawMonthArr[day - 1] += parseFloat(element.amount);
-                    return 0;
-                })
-            );
-            await Promise.all(
-                rawData[month - 1].map((element) => {
-                    const day = parseInt(element.date.slice(8, 10), 10);
-                    const elementMonth = parseInt(element.date.slice(5, 7), 10);
-                    const elementTime = parseInt(element.CreatedAt.slice(11, 13), 10) + 5;
-                    if (month === elementMonth && date === day) {
-                        if (elementTime >= 0 && elementTime < 3) {
-                            rawHourArr[0] += parseFloat(element.amount);
-                        } else if (elementTime >= 3 && elementTime < 6) {
-                            rawHourArr[1] += parseFloat(element.amount);
-                        } else if (elementTime >= 6 && elementTime < 9) {
-                            rawHourArr[2] += parseFloat(element.amount);
-                        } else if (elementTime >= 9 && elementTime < 12) {
-                            rawHourArr[3] += parseFloat(element.amount);
-                        } else if (elementTime >= 12 && elementTime < 15) {
-                            rawHourArr[4] += parseFloat(element.amount);
-                        } else if (elementTime >= 15 && elementTime < 18) {
-                            rawHourArr[5] += parseFloat(element.amount);
-                        } else if (elementTime >= 18 && elementTime < 21) {
-                            rawHourArr[6] += parseFloat(element.amount);
-                        } else if (elementTime >= 21 && elementTime < 24) {
-                            rawHourArr[7] += parseFloat(element.amount);
-                        }
-                    }
-                    return 0;
-                })
-            );
-            console.log(rawMonthArr);
-            console.log(rawHourArr);
-        }
-
+        rawCardMonthArr = rawCardMonthArr.slice(0, daysInCurrentMonth);
         let index = 0;
         while (index < daysInCurrentMonth) {
-            dateArr.push(index + 1);
+            const dateString = (index + 1).toString();
+            dateArr.push(dateString);
             index += 1;
         }
-    }
 
-    filterMonthRawData();
+        if (rawData !== null || rawData.length > 0) {
+            if (rawData.rawCardPaymentArr !== undefined) {
+                // setIsCardAvailable(true);
+                await Promise.all(
+                    rawData.rawCardPaymentArr[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        rawCardMonthArr[day - 1] += parseFloat(element.amount);
+                        return 0;
+                    })
+                );
+                await Promise.all(
+                    rawData.rawCashPaymentArr[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        rawMonthArr[day - 1] += parseFloat(element.amount);
+                        return 0;
+                    })
+                );
+                await Promise.all(
+                    rawData.rawCardPaymentArr[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        const elementMonth = parseInt(element.date.slice(5, 7), 10);
+                        const elementTime = parseInt(element.CreatedAt.slice(11, 13), 10) + 5;
+                        if (month === elementMonth && date === day) {
+                            if (elementTime >= 0 && elementTime < 3) {
+                                rawCardHourArr[0] += parseFloat(element.amount);
+                            } else if (elementTime >= 3 && elementTime < 6) {
+                                rawCardHourArr[1] += parseFloat(element.amount);
+                            } else if (elementTime >= 6 && elementTime < 9) {
+                                rawCardHourArr[2] += parseFloat(element.amount);
+                            } else if (elementTime >= 9 && elementTime < 12) {
+                                rawCardHourArr[3] += parseFloat(element.amount);
+                            } else if (elementTime >= 12 && elementTime < 15) {
+                                rawCardHourArr[4] += parseFloat(element.amount);
+                            } else if (elementTime >= 15 && elementTime < 18) {
+                                rawCardHourArr[5] += parseFloat(element.amount);
+                            } else if (elementTime >= 18 && elementTime < 21) {
+                                rawCardHourArr[6] += parseFloat(element.amount);
+                            } else if (elementTime >= 21 && elementTime < 24) {
+                                rawCardHourArr[7] += parseFloat(element.amount);
+                            }
+                        }
+                        return 0;
+                    })
+                );
+                await Promise.all(
+                    rawData.rawCashPaymentArr[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        const elementMonth = parseInt(element.date.slice(5, 7), 10);
+                        const elementTime = parseInt(element.CreatedAt.slice(11, 13), 10) + 5;
+                        if (month === elementMonth && date === day) {
+                            if (elementTime >= 0 && elementTime < 3) {
+                                rawHourArr[0] += parseFloat(element.amount);
+                            } else if (elementTime >= 3 && elementTime < 6) {
+                                rawHourArr[1] += parseFloat(element.amount);
+                            } else if (elementTime >= 6 && elementTime < 9) {
+                                rawHourArr[2] += parseFloat(element.amount);
+                            } else if (elementTime >= 9 && elementTime < 12) {
+                                rawHourArr[3] += parseFloat(element.amount);
+                            } else if (elementTime >= 12 && elementTime < 15) {
+                                rawHourArr[4] += parseFloat(element.amount);
+                            } else if (elementTime >= 15 && elementTime < 18) {
+                                rawHourArr[5] += parseFloat(element.amount);
+                            } else if (elementTime >= 18 && elementTime < 21) {
+                                rawHourArr[6] += parseFloat(element.amount);
+                            } else if (elementTime >= 21 && elementTime < 24) {
+                                rawHourArr[7] += parseFloat(element.amount);
+                            }
+                        }
+                        return 0;
+                    })
+                );
+                console.log(rawMonthArr);
+                console.log(rawCardMonthArr);
+                console.log(rawHourArr);
+                console.log(rawCardHourArr);
+            } else {
+                await Promise.all(
+                    rawData[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        rawMonthArr[day - 1] += parseFloat(element.amount);
+                        return 0;
+                    })
+                );
+                await Promise.all(
+                    rawData[month - 1].map((element) => {
+                        const day = parseInt(element.date.slice(8, 10), 10);
+                        const elementMonth = parseInt(element.date.slice(5, 7), 10);
+                        const elementTime = parseInt(element.CreatedAt.slice(11, 13), 10) + 5;
+                        if (month === elementMonth && date === day) {
+                            if (elementTime >= 0 && elementTime < 3) {
+                                rawHourArr[0] += parseFloat(element.amount);
+                            } else if (elementTime >= 3 && elementTime < 6) {
+                                rawHourArr[1] += parseFloat(element.amount);
+                            } else if (elementTime >= 6 && elementTime < 9) {
+                                rawHourArr[2] += parseFloat(element.amount);
+                            } else if (elementTime >= 9 && elementTime < 12) {
+                                rawHourArr[3] += parseFloat(element.amount);
+                            } else if (elementTime >= 12 && elementTime < 15) {
+                                rawHourArr[4] += parseFloat(element.amount);
+                            } else if (elementTime >= 15 && elementTime < 18) {
+                                rawHourArr[5] += parseFloat(element.amount);
+                            } else if (elementTime >= 18 && elementTime < 21) {
+                                rawHourArr[6] += parseFloat(element.amount);
+                            } else if (elementTime >= 21 && elementTime < 24) {
+                                rawHourArr[7] += parseFloat(element.amount);
+                            }
+                        }
+                        return 0;
+                    })
+                );
+                console.log(rawMonthArr);
+                console.log(rawHourArr);
+            }
+        }
+    }
 
     const { primary } = theme.palette.text;
     const grey200 = theme.palette.grey[200];
@@ -201,19 +281,29 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
         ]
     };
 
-    const handleChange = (data) => {
+    const handleChange = async (data) => {
         setValue(data);
+        setIsloading(true);
+        await filterMonthRawData();
+
         switch (data) {
             case 'year':
                 setChartValue([...incomeData]);
                 setCategoryValue(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
                 break;
             case 'month':
-                setChartValue([...rawMonthArr]);
                 setCategoryValue([...dateArr]);
+                if (rawData.rawCardPaymentArr !== undefined) {
+                    const tempArr = [];
+                    tempArr.push(rawMonthArr);
+                    tempArr.push(rawCardMonthArr);
+                    setChartValue(tempArr);
+                } else {
+                    setChartValue([...rawMonthArr]);
+                }
+
                 break;
             case 'today':
-                setChartValue([...rawHourArr]);
                 setCategoryValue([
                     '12A.M - 3A.M',
                     '3A.M - 6A.M',
@@ -224,19 +314,53 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
                     '6P.M - 9P.M',
                     '9P.M - 12A.M'
                 ]);
+                if (rawData.rawCardPaymentArr !== undefined) {
+                    const tempArr = [];
+                    tempArr.push(rawHourArr);
+                    tempArr.push(rawCardHourArr);
+                    setChartValue(tempArr);
+                } else {
+                    setChartValue([...rawHourArr]);
+                }
                 break;
             default:
                 setChartValue(incomeData);
                 setCategoryValue(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
                 break;
         }
+        setIsloading(false);
         console.log(chartValues);
     };
+    // React.useEffect(() => {
+    //     console.log('Starting');
+    //     filterMonthRawData();
+    // }, []);
 
     React.useEffect(() => {
         console.log('chartValues');
         console.log(chartValues);
         console.log(categoryValues);
+        const chartValueArr = [];
+        const chartCategoryValuesArr = [];
+        if (rawData.rawCardPaymentArr !== undefined && value !== 'year') {
+            chartValueArr.push({
+                name: 'Cash',
+                data: chartValues[0]
+            });
+            chartValueArr.push({
+                name: 'Card',
+                data: chartValues[1]
+            });
+            // chartCategoryValuesArr.push(categoryValues);
+            // chartCategoryValuesArr.push(categoryValues);
+        } else {
+            chartValueArr.push({
+                name: 'Income',
+                data: chartValues
+            });
+            // chartCategoryValuesArr.push(categoryValues);
+        }
+        console.log(chartValueArr);
         const newChartData = {
             ...chartData.options,
             colors: [secondaryMain, primaryDark, secondaryMain, secondaryLight],
@@ -267,23 +391,31 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
                     colors: grey500
                 }
             },
-            series: [
-                {
-                    name: 'Income',
-                    data: chartValues
-                }
-            ]
+            series: chartValueArr
         };
 
         // do not load chart when loading
-        if (!isLoading) {
+        if (!isLoading && !isloading) {
             ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
         }
-    }, [secondaryMain, primaryDark, secondaryMain, secondaryLight, primary, grey200, isLoading, grey500, chartValues]);
+    }, [
+        secondaryMain,
+        primaryDark,
+        secondaryMain,
+        secondaryLight,
+        primary,
+        grey200,
+        isLoading,
+        isloading,
+        grey500,
+        categoryValues,
+        chartValues,
+        value
+    ]);
 
     return (
         <>
-            {isLoading ? (
+            {isLoading && isloading ? (
                 <SkeletonTotalGrowthBarChart />
             ) : (
                 <MainCard>
