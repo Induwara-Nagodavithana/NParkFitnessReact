@@ -12,7 +12,8 @@ import {
     IconUsers,
     IconReportAnalytics,
     IconReceipt,
-    IconToolsKitchen2
+    IconToolsKitchen2,
+    IconToolsKitchen1
 } from '@tabler/icons';
 
 // constant
@@ -361,6 +362,14 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/notification',
                     icon: IconBellRinging,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'dietPlan',
+                    title: 'Diet Plan',
+                    type: 'item',
+                    url: '/pages/dietPlan',
+                    icon: IconToolsKitchen2,
                     breadcrumbs: false
                 },
                 {
