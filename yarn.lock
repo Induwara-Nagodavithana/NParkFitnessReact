@@ -2711,10 +2711,10 @@
     "@svgr/plugin-svgo" "^5.5.0"
     "loader-utils" "^2.0.0"
 
-"@tabler/icons@^1.39.1":
-  "integrity" "sha512-X6cQmMC24hiwg0p2BzasvU3IeCCdOk0f/9d6gNNtJM4lzG2TCloTns1bVvU5MAFkITGukxUqjPFE3Ecd6kGsfw=="
-  "resolved" "https://registry.npmjs.org/@tabler/icons/-/icons-1.41.2.tgz"
-  "version" "1.41.2"
+"@tabler/icons@^1.68.0":
+  "integrity" "sha512-UseBEEhv7r+Drl3iZih7rkwqkfJJZscjd5ZvK1WdIIulQsBa+qE8WBDGdAO0RtjkCclEK88z9kC0s5wiVPIvkw=="
+  "resolved" "https://registry.npmjs.org/@tabler/icons/-/icons-1.68.0.tgz"
+  "version" "1.68.0"
 
 "@testing-library/dom@^7.28.1":
   "integrity" "sha512-3UqjCpey6HiTZT92vODYLPxTBWlM8ZOOjr3LX5F37/VRipW2M1kX6I/Cm4VXzteZqfGfagg8yXywpcOgQBlNsQ=="

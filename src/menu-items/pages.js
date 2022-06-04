@@ -171,6 +171,14 @@ const pages = {
             url: '/pages/attendance',
             icon: IconUsers,
             breadcrumbs: false
+        },
+        {
+            id: 'dietPlan',
+            title: 'Diet Plan',
+            type: 'item',
+            url: '/pages/diet-plan',
+            icon: IconToolsKitchen2,
+            breadcrumbs: false
         }
     ]
 };

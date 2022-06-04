@@ -21,6 +21,7 @@ const SubscriptionTypes = Loadable(lazy(() => import('views/pages/subscriptionTy
 const EmployeeManagement = Loadable(lazy(() => import('views/pages/employee-management/EmployeeManagement')));
 const Attendance = Loadable(lazy(() => import('views/pages/attendance/Attendance')));
 const Account = Loadable(lazy(() => import('views/pages/account/Account')));
+const DietPlan = Loadable(lazy(() => import('views/pages/dietPlan/DietPlan')));
 
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
@@ -103,6 +104,10 @@ const MainRoutes = {
         {
             path: '/account',
             element: <Account />
+        },
+        {
+            path: '/diet-plan',
+            element: <DietPlan />
         },
         {
             path: '/utils/util-typography',
