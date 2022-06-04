@@ -37,6 +37,14 @@ import TotalGrowthBarChart from 'views/dashboard/dashboard-component/TotalGrowth
 import AttendanceChart from '../branch-report/AttendanceChart';
 import PopularCard from 'views/dashboard/dashboard-component/PopularCard';
 import SubTypeCard from 'views/dashboard/dashboard-component/SubTypeCard';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 
 // assets
 
@@ -141,18 +149,27 @@ const useStyles = makeStyles((theme) => ({
 
 let theme;
 
-const Report = ({
-    memberCount,
-    serviceCount,
-    exMemberCount,
-    branchCount,
-    inActiveBranchCount,
-    trainerCount,
-    managerCount,
-    gymCount,
-    incomeCount,
-    subTypeData
-}) => {
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.common.white
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14
+    }
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0
+    }
+}));
+
+const Report = ({ paymentData }) => {
     theme = useTheme();
     const classes = useStyles();
 
@@ -180,45 +197,39 @@ const Report = ({
                     gutterBottom
                     variant="h3"
                 >
-                    Gym Report
+                    Payment Report
                 </Typography>
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
                     NPartFitness
                 </Typography>
-                <Grid container sx={{ mb: 2, mt: '2px' }} spacing={gridSpacing}>
-                    <Grid item xs={4}>
-                        <SquareCard title="Member Count" amount={memberCount} isPrimary icon="person" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <SquareCard title="Trainers Count" amount={trainerCount} icon="trainer" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <SquareCard title="Managers Count" amount={managerCount} isPrimary icon="manager" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <SquareCard title="Active Members" amount={branchCount} icon="active" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <SquareCard
-                            title="InActive Members"
-                            amount={inActiveBranchCount === undefined ? 0 : inActiveBranchCount}
-                            isPrimary
-                            icon="inactive"
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <SquareCard title="Service Count" amount={serviceCount} icon="service" />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <SmallCard title="Expired Memberships" amount={exMemberCount === undefined ? 0 : exMemberCount} />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <SmallCard title="Gym Count" amount={gymCount} isPrimary />
+                <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
+                    <Grid align="center" item xs={12}>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                                <TableHead>
+                                    <TableRow>
+                                        <StyledTableCell style={{ marginLeft: '50px' }}>Date</StyledTableCell>
+                                        <StyledTableCell align="center">Method</StyledTableCell>
+                                        <StyledTableCell align="center">Amount</StyledTableCell>
+                                        <StyledTableCell align="center">Membership</StyledTableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {paymentData.map((row) => (
+                                        <StyledTableRow key={row.name}>
+                                            <StyledTableCell style={{ marginLeft: '50px' }} component="th" scope="row">
+                                                {row.date}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="center">{row.method}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.amount}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.membershipId}</StyledTableCell>
+                                        </StyledTableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
                 </Grid>
-                <TotalGrowthBarChart incomeData={incomeCount} />
-                <div style={{ height: '10px' }} />
-                <SubTypeCard data={subTypeData} />
             </SubCard>
         </>
     );
@@ -231,82 +242,31 @@ const PaymentReport = () => {
     const classes = useStyles();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
     const componentRef = useRef(null);
-    const [memberCount, setMemberCount] = React.useState();
-    const [serviceCount, setServiceCount] = React.useState();
-    const [exMemberCount, setExMemberCount] = React.useState();
-    const [branchCount, setBranchCount] = React.useState();
-    const [inActiveBranchCount, setInActiveBranchCount] = React.useState();
-    const [trainerCount, setTrainerCount] = React.useState();
-    const [managerCount, setManagerCount] = React.useState();
-    const [gymCount, setGymCount] = React.useState();
-    const [incomeCount, setIncomeCount] = React.useState();
-    const [subTypeData, setSubTypeData] = React.useState();
+    const [paymentData, setPaymentData] = React.useState();
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
-
+    const { state } = useLocation();
+    const type = state !== null ? state.type : 'gym';
     // const trainerId = 4;
     // const userId = 1;
     const gymId = 1;
+    const branchId = 1;
 
     function getAdminDashboard() {
         // let arr = [];
-
-        HttpCommon.get(`api/dashboard/getAdminDashboardData`).then(async (response) => {
-            console.log(response.data.data);
-            setServiceCount(response.data.data.serviceCount);
-            setBranchCount(response.data.data.branchCount);
-            setGymCount(response.data.data.gymCount);
-            setSubTypeData(response.data.data.subscriptionType);
-
-            await Promise.all(
-                await response.data.data.branchCount.map((element) => {
-                    if (element.isActive) {
-                        setBranchCount(element.count);
-                    } else {
-                        setInActiveBranchCount(element.count);
-                    }
-                    return 0;
-                })
-            );
-
-            let totalMemberCount = 0;
-            await Promise.all(
-                await response.data.data.memberCount.map((element) => {
-                    totalMemberCount += element.count;
-                    if (!element.isActive) {
-                        setExMemberCount(element.count);
-                    }
-                    return 0;
-                })
-            );
-            setMemberCount(totalMemberCount);
-
-            await Promise.all(
-                await response.data.data.userCount.map((element) => {
-                    if (element.type === 'Manager') {
-                        setManagerCount(element.count);
-                    } else if (element.type === 'Trainer') {
-                        setTrainerCount(element.count);
-                    }
-                    return 0;
-                })
-            );
-
-            const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            await Promise.all(
-                response.data.data.payment.map((element) => {
-                    const month = parseInt(element.date.slice(5, 7), 10);
-                    incomeArr[month - 1] = element.totalAmount;
-                    return 0;
-                })
-            );
-            console.log(incomeArr);
-            setIncomeCount(incomeArr);
-            console.log('Is It Done2');
-
-            setDataLoading(false);
-            // setLoading(false);
-        });
+        if (type === 'branch') {
+            HttpCommon.get(`api/dashboard/getBranchRawMonthlyTotalIncome/${branchId}`).then(async (response) => {
+                console.log(response.data.data);
+                setPaymentData(response.data.data);
+                setDataLoading(false);
+            });
+        } else {
+            HttpCommon.get(`api/dashboard/getGymRawMonthlyTotalIncome/${gymId}`).then(async (response) => {
+                console.log(response.data.data);
+                setPaymentData(response.data.data);
+                setDataLoading(false);
+            });
+        }
     }
 
     const handleDisplay = () => {
@@ -337,12 +297,13 @@ const PaymentReport = () => {
                     <Lottie options={defaultOptions} height={400} width={400} />
                 </div>
             ) : (
-                <AuthWrapper1>
-                    <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ minHeight: '100vh' }}>
-                        <Grid container xs={12} sm={12} md={8} lg={8} style={{ maxWidth: 900, minWidth: 100 }}>
-                            <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
-                                <Grid item sx={{ m: { xs: 2, sm: 6 }, mb: 0 }}>
-                                    {/* <SubCard
+                <>
+                    <AuthWrapper1>
+                        <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ minHeight: '100vh' }}>
+                            <Grid container xs={12} sm={12} md={8} lg={8} style={{ maxWidth: 900, minWidth: 100 }}>
+                                <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
+                                    <Grid item sx={{ m: { xs: 2, sm: 6 }, mb: 0 }}>
+                                        {/* <SubCard
                                         className={classes.mainCard}
                                         sx={{
                                             color: 'white',
@@ -352,61 +313,38 @@ const PaymentReport = () => {
                                             alignItems: 'center'
                                         }}
                                     > */}
-                                    <Report
-                                        memberCount={memberCount}
-                                        serviceCount={serviceCount}
-                                        exMemberCount={exMemberCount}
-                                        branchCount={branchCount}
-                                        inActiveBranchCount={inActiveBranchCount}
-                                        trainerCount={trainerCount}
-                                        managerCount={managerCount}
-                                        gymCount={gymCount}
-                                        incomeCount={incomeCount}
-                                        subTypeData={subTypeData}
-                                    />
-                                    {/* </SubCard> */}
-                                    <div style={{ textAlign: 'right' }}>
-                                        <ReactToPrint
-                                            documentTitle="Branch Report"
-                                            trigger={() => (
-                                                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '50px' }}>
-                                                    <AnimateButton>
-                                                        <Button variant="contained" className={classes.button}>
-                                                            Print Report
-                                                        </Button>
-                                                    </AnimateButton>
-                                                </div>
-                                            )}
-                                            content={() => componentRef.current}
-                                        />
-                                        <div style={{ visibility: 'hidden' }}>
-                                            <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
-                                                Print Preview
-                                            </Typography>
-                                            <ComponentToPrint
-                                                ref={componentRef}
-                                                memberCount={memberCount}
-                                                serviceCount={serviceCount}
-                                                exMemberCount={exMemberCount}
-                                                branchCount={branchCount}
-                                                inActiveBranchCount={inActiveBranchCount}
-                                                trainerCount={trainerCount}
-                                                managerCount={managerCount}
-                                                gymCount={gymCount}
-                                                incomeCount={incomeCount}
-                                                subTypeData={subTypeData}
-                                                classes={classes}
+                                        <Report paymentData={paymentData} />
+                                        {/* </SubCard> */}
+                                        <div style={{ textAlign: 'right' }}>
+                                            <ReactToPrint
+                                                documentTitle="Branch Report"
+                                                trigger={() => (
+                                                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '50px' }}>
+                                                        <AnimateButton>
+                                                            <Button variant="contained" className={classes.button}>
+                                                                Print Report
+                                                            </Button>
+                                                        </AnimateButton>
+                                                    </div>
+                                                )}
+                                                content={() => componentRef.current}
                                             />
+                                            <div style={{ visibility: 'hidden' }}>
+                                                <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
+                                                    Print Preview
+                                                </Typography>
+                                                <ComponentToPrint ref={componentRef} paymentData={paymentData} classes={classes} />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid item xs={12} sx={{ m: 3, mt: 1 }}>
+                                <AuthFooter />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} sx={{ m: 3, mt: 1 }}>
-                            <AuthFooter />
-                        </Grid>
-                    </Grid>
-                </AuthWrapper1>
+                    </AuthWrapper1>
+                </>
             )}
         </>
     );
@@ -415,19 +353,7 @@ const PaymentReport = () => {
 export class ComponentToPrint extends React.PureComponent {
     render() {
         // const classes = this.props;
-        const {
-            memberCount,
-            serviceCount,
-            exMemberCount,
-            branchCount,
-            inActiveBranchCount,
-            trainerCount,
-            managerCount,
-            gymCount,
-            incomeCount,
-            subTypeData,
-            classes
-        } = this.props;
+        const { paymentData, classes } = this.props;
         // console.log(this.props.centerPayData); // result: 'some_value'
         // console.log(this.props); // result: 'some_value'
         return (
@@ -445,18 +371,7 @@ export class ComponentToPrint extends React.PureComponent {
                             }}
                         > */}
                         <div>
-                            <Report
-                                memberCount={memberCount}
-                                serviceCount={serviceCount}
-                                exMemberCount={exMemberCount}
-                                branchCount={branchCount}
-                                inActiveBranchCount={inActiveBranchCount}
-                                trainerCount={trainerCount}
-                                managerCount={managerCount}
-                                gymCount={gymCount}
-                                incomeCount={incomeCount}
-                                subTypeData={subTypeData}
-                            />
+                            <Report paymentData={paymentData} />
                         </div>
                         {/* </SubCard> */}
                     </Grid>

@@ -114,6 +114,15 @@ function pagesRoute() {
                             external: true,
                             target: true,
                             breadcrumbs: false
+                        },
+                        {
+                            id: 'payment-report',
+                            title: 'Payment Report',
+                            type: 'item',
+                            url: '/pages/report/paymentReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
                         }
                     ]
                 }
@@ -215,6 +224,15 @@ function pagesRoute() {
                             title: 'Admin Report',
                             type: 'item',
                             url: '/pages/report/adminReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
+                        },
+                        {
+                            id: 'payment-report',
+                            title: 'Payment Report',
+                            type: 'item',
+                            url: '/pages/report/paymentReport',
                             external: true,
                             target: true,
                             breadcrumbs: false
@@ -322,6 +340,15 @@ function pagesRoute() {
                             external: true,
                             target: true,
                             breadcrumbs: false
+                        },
+                        {
+                            id: 'payment-report',
+                            title: 'Payment Report',
+                            type: 'item',
+                            url: '/pages/report/paymentReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
                         }
                     ]
                 }
@@ -407,6 +434,15 @@ function pagesRoute() {
                             title: 'Admin Report',
                             type: 'item',
                             url: '/pages/report/adminReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
+                        },
+                        {
+                            id: 'payment-report',
+                            title: 'Payment Report',
+                            type: 'item',
+                            url: '/pages/report/paymentReport',
                             external: true,
                             target: true,
                             breadcrumbs: false
@@ -503,6 +539,15 @@ function pagesRoute() {
                             title: 'Admin Report',
                             type: 'item',
                             url: '/pages/report/adminReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
+                        },
+                        {
+                            id: 'payment-report',
+                            title: 'Payment Report',
+                            type: 'item',
+                            url: '/pages/report/paymentReport',
                             external: true,
                             target: true,
                             breadcrumbs: false
