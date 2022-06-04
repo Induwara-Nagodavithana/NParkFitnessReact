@@ -315,6 +315,8 @@ function Attendance() {
                             <TableRow>
                                 <TableCell align="center">Attendance ID</TableCell>
                                 <TableCell align="center">Date</TableCell>
+                                <TableCell align="center">In</TableCell>
+                                <TableCell align="center">Out</TableCell>
                                 <TableCell align="center">Member ID</TableCell>
                                 <TableCell align="left" />
                             </TableRow>
@@ -375,6 +377,11 @@ function Attendance() {
 }
 
 function ReadOnlyRow({ row, handleViewClick }) {
+    const minutesToAdd = 330;
+    const inDate = new Date(row.CreatedAt);
+    const outDate = new Date(row.UpdatedAt);
+    const futureinDate = new Date(inDate.getTime() + minutesToAdd * 60000);
+    const futureOutDate = new Date(outDate.getTime() + minutesToAdd * 60000);
     return (
         <>
             <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -382,6 +389,8 @@ function ReadOnlyRow({ row, handleViewClick }) {
                     {row.id}
                 </TableCell>
                 <TableCell align="center">{row.date}</TableCell>
+                <TableCell align="center">{futureinDate.toISOString().slice(11, 16)}</TableCell>
+                <TableCell align="center">{row.isTrue ? futureOutDate.toISOString().slice(11, 16) : 'Not Found'}</TableCell>
                 <TableCell align="center">{row.membershipId}</TableCell>
                 <TableCell align="center">
                     <AnimateButton>
