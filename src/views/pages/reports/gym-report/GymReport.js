@@ -249,56 +249,11 @@ const BranchReport = () => {
             HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${userId}`).then((response1) => {
                 console.log(response1.data.data);
                 setBranchesData(response1.data.data);
-                HttpCommon.get(`api/dashboard/getOwnerDashboardData/${userId}`).then(async (response) => {
-                    console.log(response.data.data);
-                    console.log(response.data.data.staffCount);
-                    setMemberCount(response.data.data.memberCount);
-                    setServiceCount(response.data.data.serviceCount);
-                    setBranchCount(response.data.data.branchCount);
-                    setExMemberCount(response.data.data.exMemberCount);
-
-                    await Promise.all(
-                        await response.data.data.staffCount.map((element) => {
-                            if (element.type === 'Manager') {
-                                setManagerCount(element.count);
-                            } else if (element.type === 'Trainer') {
-                                setTrainerCount(element.count);
-                            }
-                            return 0;
-                        })
-                    );
-
-                    let body = {
-                        chartMonthData: [],
-                        chartYearData: [],
-                        monthCount: 0,
-                        yearCount: 0
-                    };
-                    if (response.data.data.attendanceCount !== null) {
-                        const monthArr = [];
-                        const yearArr = [];
-                        let monthCount = 0;
-                        let yearCount = 0;
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceMonth.map((element) => {
-                                monthCount += element.count;
-                                return monthArr.push(element.count);
-                            })
-                        );
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceYear.map((element) => {
-                                yearCount += element.count;
-                                return yearArr.push(element.count);
-                            })
-                        );
-
-                        body = { monthArr, yearArr, monthCount, yearCount };
-                    }
-
-                    setAttendanceCount(body);
+                HttpCommon.get(`/api/dashboard/getGymTotalIncome/${gymId}`).then(async (response1) => {
+                    console.log(response1.data.data);
                     const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     await Promise.all(
-                        response.data.data.incomeCount.map((element) => {
+                        response1.data.data.payment.map((element) => {
                             const month = parseInt(element.date.slice(5, 7), 10);
                             incomeArr[month - 1] = element.totalAmount;
                             return 0;
@@ -309,7 +264,7 @@ const BranchReport = () => {
 
                     const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
                     await Promise.all(
-                        response.data.data.rawPaymentData.map((element) => {
+                        response1.data.data.rawPayment.map((element) => {
                             const month = parseInt(element.date.slice(5, 7), 10);
                             rawPaymentArr[month - 1].push(element);
                             return 0;
@@ -317,10 +272,79 @@ const BranchReport = () => {
                     );
                     console.log(rawPaymentArr);
                     setRawPayment(rawPaymentArr);
+                    HttpCommon.get(`api/dashboard/getOwnerDashboardData/${userId}`).then(async (response) => {
+                        console.log(response.data.data);
+                        console.log(response.data.data.staffCount);
+                        setMemberCount(response.data.data.memberCount);
+                        setServiceCount(response.data.data.serviceCount);
+                        setBranchCount(response.data.data.branchCount);
+                        setExMemberCount(response.data.data.exMemberCount);
 
-                    console.log('Is It Done2');
+                        await Promise.all(
+                            await response.data.data.staffCount.map((element) => {
+                                if (element.type === 'Manager') {
+                                    setManagerCount(element.count);
+                                } else if (element.type === 'Trainer') {
+                                    setTrainerCount(element.count);
+                                }
+                                return 0;
+                            })
+                        );
 
-                    setDataLoading(false);
+                        let body = {
+                            chartMonthData: [],
+                            chartYearData: [],
+                            monthCount: 0,
+                            yearCount: 0
+                        };
+                        if (response.data.data.attendanceCount !== null) {
+                            const monthArr = [];
+                            const yearArr = [];
+                            let monthCount = 0;
+                            let yearCount = 0;
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceMonth.map((element) => {
+                                    monthCount += element.count;
+                                    return monthArr.push(element.count);
+                                })
+                            );
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceYear.map((element) => {
+                                    yearCount += element.count;
+                                    return yearArr.push(element.count);
+                                })
+                            );
+
+                            body = { monthArr, yearArr, monthCount, yearCount };
+                        }
+
+                        setAttendanceCount(body);
+                        // const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        // await Promise.all(
+                        //     response.data.data.incomeCount.map((element) => {
+                        //         const month = parseInt(element.date.slice(5, 7), 10);
+                        //         incomeArr[month - 1] = element.totalAmount;
+                        //         return 0;
+                        //     })
+                        // );
+                        // console.log(incomeArr);
+                        // setIncomeCount(incomeArr);
+
+                        // const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                        // await Promise.all(
+                        //     response.data.data.rawPaymentData.map((element) => {
+                        //         const month = parseInt(element.date.slice(5, 7), 10);
+                        //         rawPaymentArr[month - 1].push(element);
+                        //         return 0;
+                        //     })
+                        // );
+                        // console.log(rawPaymentArr);
+                        // setRawPayment(rawPaymentArr);
+
+                        console.log('Is It Done2');
+
+                        setDataLoading(false);
+                    });
                 });
             });
         });
