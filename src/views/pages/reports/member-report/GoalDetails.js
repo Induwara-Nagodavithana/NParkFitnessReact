@@ -117,7 +117,7 @@ const GoalDetails = ({ size, data }) => {
     theme = useTheme();
     const classes = useStyles();
     console.log(data);
-    const memberData = data === undefined ? {} : data;
+    const memberData = data === null ? {} : data;
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
     return (

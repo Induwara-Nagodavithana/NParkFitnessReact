@@ -182,13 +182,21 @@ const Report = ({ size, memberData, weightData, attendanceData, scheduleData, di
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
                     NPartFitness
                 </Typography>
-                <MemberDetails data={memberData} />
+                {memberData !== undefined && memberData !== null ? <MemberDetails data={memberData} /> : <></>}
+                {goalData !== undefined && goalData !== null ? <GoalDetails data={goalData} /> : <></>}
+                {scheduleData !== undefined && scheduleData !== null ? <ScheduleDetails data={scheduleData} /> : <></>}
+                {weightData !== undefined && weightData !== null ? <WeightDetails data={weightData} /> : <></>}
+                {weightData !== undefined && weightData !== null ? <BMIChart data={weightData} /> : <></>}
+                {attendanceData !== undefined && attendanceData !== null ? <AttendDetails data={attendanceData} /> : <></>}
+                {dietData !== undefined && dietData !== null ? <DietDetails data={dietData} /> : <></>}
+
+                {/* <MemberDetails data={memberData} />
                 <GoalDetails data={goalData} />
                 <ScheduleDetails data={scheduleData} />
                 <WeightDetails data={weightData} />
                 <BMIChart data={weightData} />
                 <AttendDetails data={attendanceData} />
-                <DietDetails data={dietData} />
+                <DietDetails data={dietData} /> */}
             </SubCard>
         </>
     );
@@ -261,6 +269,7 @@ const MemberReport = ({ memberid }) => {
                     });
                 });
             });
+            setDataLoading(false);
 
             if (response.data.data.member === null) {
                 Store.addNotification({

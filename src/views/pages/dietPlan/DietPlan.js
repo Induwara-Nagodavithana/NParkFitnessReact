@@ -83,6 +83,7 @@ function DietPlan() {
     const handleShowProfile = () => {
         // <MemberReport memberid={2} />;
         navigate('/pages/report/memberReport', { state: { memberid: memberId } });
+        // window.open(url, '_blank', 'noopener,noreferrer')
     };
 
     const handleAddNewDietPlan = () => {
