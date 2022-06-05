@@ -14,8 +14,10 @@ import { Chip } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
+const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }) => {
     const [foodItem, setFoodItem] = useState();
+    const [portionType, setPortionType] = useState('');
+
     // const [items, setItems] = useState([]);
     // const [amount, SetAmount] = useState();
 
@@ -27,7 +29,7 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
         console.log(foodItem);
         if (foodItem !== undefined && foodItem !== '') {
             const arr = items;
-            arr.push({ foodItem });
+            arr.push({ foodItem, portionType });
             setItems(arr);
             // setItems([
             //     ...items,
@@ -37,6 +39,7 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
             // ]);
             console.log(arr);
             setFoodItem('');
+            setPortionType(null);
             console.log(items);
             console.log(foodItem);
         }
@@ -45,6 +48,11 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
     const handleMealType = (event) => {
         console.log(event.target.value);
         setMealType(event.target.value);
+    };
+
+    const handlePortionType = (event) => {
+        console.log(event.target.value);
+        setPortionType(event.target.value);
     };
 
     const handleFoodItem = (event) => {
@@ -88,12 +96,37 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
                         <div style={{ textAlign: 'left' }}>Calorie Amount for the Meal :</div>
                     </Grid>
                     <Grid item sm={12} xs={12} md={6} lg={4}>
-                        <TextField fullWidth id="calories" label="Amount" variant="outlined" onChange={handleAmount} />
+                        <TextField
+                            fullWidth
+                            id="calories"
+                            label="Amount (cal)"
+                            defaultValue={amount}
+                            variant="outlined"
+                            onChange={handleAmount}
+                        />
                     </Grid>
-                    <Grid item sm={12} xs={12} md={6} lg={6}>
+                    <Grid item sm={12} xs={12} md={6} lg={4}>
                         <TextField fullWidth id="food" label="Food Item" value={foodItem} variant="outlined" onChange={handleFoodItem} />
                     </Grid>
-                    <Grid item sm={12} xs={12} md={6} lg={6}>
+                    <Grid item sm={12} xs={12} md={6} lg={4}>
+                        <Box sx={{ minWidth: 120 }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="meal-type-select-label">Portion</InputLabel>
+                                <Select
+                                    labelId="meal-type-select-label"
+                                    id="meal-type-select"
+                                    value={portionType}
+                                    label="Portion"
+                                    onChange={handlePortionType}
+                                >
+                                    <MenuItem value="High">High</MenuItem>
+                                    <MenuItem value="Medium">Medium</MenuItem>
+                                    <MenuItem value="Low">Low</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Grid>
+                    <Grid item sm={12} xs={12} md={6} lg={4}>
                         <Button
                             variant="contained"
                             color="secondary"
@@ -111,7 +144,12 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
                         <Stack direction="row" spacing={1}>
                             {/* <Chip label={data} color="primary" size="small" onDelete={handleDelete} /> */}
                             {items.map((item) => (
-                                <Chip key={item.foodItem} label={item.foodItem} onDelete={() => handleDelete(item.foodItem)} />
+                                <Chip
+                                    color="secondary"
+                                    key={item.foodItem}
+                                    label={`${item.foodItem} - ${item.portionType}`}
+                                    onDelete={() => handleDelete(item.foodItem)}
+                                />
                             ))}
                         </Stack>
                     ) : (

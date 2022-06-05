@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
@@ -28,6 +28,17 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 
 import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2, IconFileDescription } from '@tabler/icons';
 import { Avatar } from '@mui/material';
+import Lottie from 'react-lottie';
+import * as success from 'assets/images/loading.json';
+
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: success.default,
+    rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+    }
+};
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -142,8 +153,23 @@ const rows = [createData('Frozen yoghurt', 159, 6.0), createData('Ice cream sand
 const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
     const classes = useStyles();
     console.log(dietPlanSuggestionData);
-    console.log(dietPlanSuggestionData.dietPlanSuggestionData.name);
     const theme = useTheme();
+    const [totalCalAmount, setTotalCalAmount] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(async () => {
+        setIsLoading(true);
+        let tempCalAmount = 0;
+        await Promise.all(
+            dietPlanSuggestionData.dietPlanSuggestionData.map((item, index) => {
+                tempCalAmount += item.calorie;
+                return 0;
+            })
+        );
+        console.log(tempCalAmount);
+        setTotalCalAmount(tempCalAmount);
+        setIsLoading(false);
+    }, [dietPlanSuggestionData]);
     // let status;
     // if (dietPlanData.dietPlanData.isActive) {
     //     status = 'Active';
@@ -153,52 +179,68 @@ const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
     return (
         <Card className={classes.card}>
             <CardContent justifyContent="center" alignItems="center">
-                <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
-                    <div style={{ justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <Typography
-                            color={theme.palette.secondary.main}
-                            style={{
-                                textShadow: '0px 0px 5px #D0B7FF',
-                                textAlign: 'center',
-                                marginTop: '-20px',
-                                marginBottom: '0px'
-                            }}
-                            gutterBottom
-                            variant="h4"
-                        >
-                            Total Calorie
-                        </Typography>
-                        <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
-                            150 cal
-                        </Typography>
-                        {/* <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                {isLoading ? (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '500px',
+                            width: '100%'
+                        }}
+                    >
+                        <Lottie options={defaultOptions} height={400} width={400} />
+                    </div>
+                ) : (
+                    <>
+                        <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
+                            <div style={{ justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
+                                <Typography
+                                    color={theme.palette.secondary.main}
+                                    style={{
+                                        textShadow: '0px 0px 5px #D0B7FF',
+                                        textAlign: 'center',
+                                        marginTop: '-20px',
+                                        marginBottom: '0px'
+                                    }}
+                                    gutterBottom
+                                    variant="h4"
+                                >
+                                    Total Calorie
+                                </Typography>
+                                <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
+                                    {totalCalAmount} cal
+                                </Typography>
+                                {/* <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Total Calorie
                         </Typography>
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                             150 cal
                         </Typography> */}
-                    </div>
-                </Grid>
-                <div style={{ height: '20px' }} />
-                {dietPlanSuggestionData.dietPlanSuggestionData.map((item, index) => (
-                    <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                            <Avatar variant="rounded" className={classes.avatarFirst}>
-                                <Avatar variant="rounded" className={classes.avatarSecond} />
-                            </Avatar>
-                            <div style={{ width: '20px' }} />
-                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                                {dietPlanSuggestionData !== null ? item.food : 'NotFound'}
-                            </Typography>
-                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                                {dietPlanSuggestionData !== null ? item.amount.concat(' g') : 'NotFound'}
-                            </Typography>
-                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                                {dietPlanSuggestionData !== null ? item.calAmount.concat(' cal') : 'NotFound'}
-                            </Typography>
-                        </div>
-                    </Grid>
-                ))}
+                            </div>
+                        </Grid>
+                        <div style={{ height: '20px' }} />
+                        {dietPlanSuggestionData.dietPlanSuggestionData.map((item, index) => (
+                            <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
+                                    <Avatar variant="rounded" className={classes.avatarFirst}>
+                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                    </Avatar>
+                                    <div style={{ width: '20px' }} />
+                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                                        {item.name !== undefined ? item.name : 'NotFound'}
+                                    </Typography>
+                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                                        {item.amount !== undefined ? item.amount.toString().concat(' g') : 'NotFound'}
+                                    </Typography>
+                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                                        {item.calorie !== undefined ? item.calorie.toString().concat(' cal') : 'NotFound'}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                        ))}
+                    </>
+                )}
             </CardContent>
         </Card>
     );

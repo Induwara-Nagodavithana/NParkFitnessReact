@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setStreet, setLane, setCity, setProvince }) => {
+const ThirdStep = ({ mealType, setMealType, portionType, setPortionType, items, setItems, amount, setAmount }) => {
     const classes = useStyles();
     const handlechange = () => {
         console.log('Hello');

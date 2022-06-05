@@ -12,6 +12,17 @@ import SecondStep from './component/SecondStep';
 import ThirdStep from './component/ThirdStep';
 import { Box } from '@material-ui/system';
 import { makeStyles } from '@material-ui/styles';
+import Lottie from 'react-lottie';
+import * as success from 'assets/images/loading.json';
+
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: success.default,
+    rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+    }
+};
 
 const dietPlanArray = [];
 const steps = ['Food Items', 'Diet Plan Suggestions', 'Diet Plan Details'];
@@ -26,6 +37,7 @@ function DietPlan() {
     const [memberId, setMemberId] = useState();
     const [dietPlanData, setDietPlanData] = useState([]);
     const [showButton, setShowButton] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [disableSearch, setDisableSearch] = useState(true);
     const [openAddNewDietPlanDialog, setOpenAddNewDietPlanDialog] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
@@ -33,6 +45,7 @@ function DietPlan() {
     const [items, setItems] = useState([]);
     const [amount, setAmount] = useState();
     const [mealType, setMealType] = useState('');
+    const [portionType, setPortionType] = useState('');
 
     const navigate = useNavigate();
 
@@ -51,6 +64,9 @@ function DietPlan() {
                 console.log(res);
                 console.log(res.data.data);
                 setDietPlanData(res.data.data);
+                setShowButton(true);
+
+                setIsLoading(false);
             })
             .catch((err) => {
                 console.log(err);
@@ -58,7 +74,7 @@ function DietPlan() {
     }
 
     const handleSearch = () => {
-        setShowButton(true);
+        setIsLoading(true);
         getDietPlans();
     };
 
@@ -96,11 +112,44 @@ function DietPlan() {
     function showStep(step) {
         switch (step) {
             case 0:
-                return <FirstStep mealType={mealType} setMealType={setMealType} items={items} setItems={setItems} setAmount={setAmount} />;
+                return (
+                    <FirstStep
+                        mealType={mealType}
+                        setMealType={setMealType}
+                        portionType={portionType}
+                        setPortionType={setPortionType}
+                        items={items}
+                        setItems={setItems}
+                        amount={amount}
+                        setAmount={setAmount}
+                    />
+                );
             case 1:
-                return <SecondStep />;
+                return (
+                    <SecondStep
+                        mealType={mealType}
+                        setMealType={setMealType}
+                        portionType={portionType}
+                        setPortionType={setPortionType}
+                        items={items}
+                        setItems={setItems}
+                        amount={amount}
+                        setAmount={setAmount}
+                    />
+                );
             case 2:
-                return <ThirdStep />;
+                return (
+                    <ThirdStep
+                        mealType={mealType}
+                        setMealType={setMealType}
+                        portionType={portionType}
+                        setPortionType={setPortionType}
+                        items={items}
+                        setItems={setItems}
+                        amount={amount}
+                        setAmount={setAmount}
+                    />
+                );
             default:
                 return <></>;
         }
@@ -149,6 +198,21 @@ function DietPlan() {
                     )}
                 </Grid>
             </MainCard>
+            {isLoading ? (
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '500px',
+                        width: '100%'
+                    }}
+                >
+                    <Lottie options={defaultOptions} height={400} width={400} />
+                </div>
+            ) : (
+                <></>
+            )}
             <Dialog fullWidth maxWidth="xl" open={openAddNewDietPlanDialog} onClose={handleCloseAddNewDietPlan}>
                 <DialogTitle>Add New Diet Plan</DialogTitle>
                 <DialogContent>
