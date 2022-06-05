@@ -166,8 +166,8 @@ const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
                 return 0;
             })
         );
-        console.log(tempCalAmount);
-        setTotalCalAmount(tempCalAmount);
+        console.log(tempCalAmount.toFixed(2));
+        setTotalCalAmount(tempCalAmount.toFixed(2));
         setIsLoading(false);
     }, [dietPlanSuggestionData]);
     // let status;
@@ -228,7 +228,7 @@ const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
                                     </Avatar>
                                     <div style={{ width: '20px' }} />
                                     <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                                        {item.name !== undefined ? item.name : 'NotFound'}
+                                        {item.name !== undefined ? item.name.charAt(0).toUpperCase() + item.name.slice(1) : 'NotFound'}
                                     </Typography>
                                     <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                                         {item.amount !== undefined ? item.amount.toString().concat(' g') : 'NotFound'}

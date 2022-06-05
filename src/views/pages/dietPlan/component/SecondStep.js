@@ -18,14 +18,17 @@ const defaultOptions = {
     }
 };
 
-const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items, setItems, amount, setAmount }) => {
+const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items, setItems, amount, setAmount, dietPlanData }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [foodData, setFoodData] = useState([]);
+    const [extrafoodData, setExtraFoodData] = useState([]);
     const [finalFoodData, setFinalFoodData] = useState([]);
+    const [sugestionArr, setSugestionArr] = useState([]);
 
     console.log(mealType);
     console.log(items);
     console.log(amount);
+    console.log(dietPlanData);
     const searchText = [...items];
     const data = [
         {
@@ -50,6 +53,10 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
         timeout: 10000,
         headers: { 'X-Api-Key': '6RwQbquEzm9YBP6n/M5AVA==Nv6Oh56eUK2Oc1lv' }
     });
+
+    function getRndInteger(max) {
+        return Math.floor(Math.random() * (max - 1));
+    }
 
     async function findCalorie(search, type) {
         console.log(search);
@@ -97,6 +104,17 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
                     })
                 );
                 if (type === 'final') {
+                    // console.log(extrafoodData);
+                    // const foodIndex = getRndInteger(extrafoodData.length);
+                    // // const foodIndex = Math.floor(Math.random() * (extrafoodData.length - 1));
+                    // console.log('foodIndexFinal');
+                    // console.log(foodIndex);
+                    // console.log(extrafoodData[foodIndex]);
+                    // temp.push({
+                    //     name: extrafoodData[foodIndex].foodName,
+                    //     amount: extrafoodData[foodIndex].amount,
+                    //     calorie: extrafoodData[foodIndex].calAmount
+                    // });
                     setFinalFoodData(temp);
                     console.log('Final');
                     console.log(temp);
@@ -144,7 +162,7 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
             })
         );
         findCalorie(tempFoodData, 'final');
-        setFinalFoodData(tempFoodData);
+        // setFinalFoodData(tempFoodData);
     }
 
     async function analizeDietData() {
@@ -153,12 +171,57 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
     }
 
     useEffect(async () => {
+        const tempExtraFoodArr = [];
+        await Promise.all(
+            dietPlanData.map(async (element, index) => {
+                if (element.mealItemData.length > 0) {
+                    const foodIndex = getRndInteger(element.mealItemData.length);
+                    console.log('foodIndex');
+                    console.log(foodIndex);
+                    console.log(element.mealItemData[foodIndex]);
+                    tempExtraFoodArr.push(element.mealItemData[foodIndex]);
+                }
+            })
+        );
+        console.log(tempExtraFoodArr);
+        setExtraFoodData(tempExtraFoodArr);
         analizeDietData();
     }, [items]);
 
     useEffect(async () => {
         createDietSuggestion(foodData);
     }, [foodData]);
+
+    useEffect(async () => {
+        let count = 0;
+        console.log(extrafoodData);
+        const tempArr = [];
+        if (extrafoodData.length > 0) {
+            while (count < 3) {
+                const tempFinalFoodData = [...finalFoodData];
+
+                // if (count > finalFoodData.length - 1) {
+                //     tempFinalFoodData.push(finalFoodData[finalFoodData.length - 1]);
+                // } else {
+                //     tempFinalFoodData.push(finalFoodData[count]);
+                // }
+                const foodIndex = getRndInteger(extrafoodData.length);
+                console.log('foodIndexFinal');
+                console.log(foodIndex);
+                console.log(extrafoodData[foodIndex]);
+                console.log(tempFinalFoodData);
+                tempFinalFoodData.push({
+                    name: extrafoodData[foodIndex].foodName,
+                    amount: extrafoodData[foodIndex].amount,
+                    calorie: extrafoodData[foodIndex].calAmount
+                });
+                tempArr.push(tempFinalFoodData);
+                count += 1;
+            }
+        }
+        console.log(tempArr);
+        setSugestionArr(tempArr);
+    }, [finalFoodData]);
 
     const hansleSelect = () => {
         console.log('Hello');
@@ -183,7 +246,12 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
                     <div>
                         <Grid container alignItems="center" justifyContent="center" spacing={2}>
                             <div style={{ hight: 10 }} />
-                            <Grid item sm={12} xs={12} md={6} lg={4}>
+                            {sugestionArr.map((element) => (
+                                <Grid item sm={12} xs={12} md={6} lg={4}>
+                                    <DietPlanSuggestionCard dietPlanSuggestionData={element} />
+                                </Grid>
+                            ))}
+                            {/* <Grid item sm={12} xs={12} md={6} lg={4}>
                                 <DietPlanSuggestionCard dietPlanSuggestionData={finalFoodData} />
                             </Grid>
                             <Grid item sm={12} xs={12} md={6} lg={4}>
@@ -191,7 +259,7 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
                             </Grid>
                             <Grid item sm={12} xs={12} md={6} lg={4}>
                                 <DietPlanSuggestionCard dietPlanSuggestionData={finalFoodData} />
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </div>
                 </>

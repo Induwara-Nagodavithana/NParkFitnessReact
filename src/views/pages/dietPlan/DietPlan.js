@@ -135,6 +135,7 @@ function DietPlan() {
                         setItems={setItems}
                         amount={amount}
                         setAmount={setAmount}
+                        dietPlanData={dietPlanData}
                     />
                 );
             case 2:
