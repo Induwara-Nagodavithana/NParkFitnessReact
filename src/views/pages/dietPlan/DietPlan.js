@@ -43,6 +43,7 @@ function DietPlan() {
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
     const [items, setItems] = useState([]);
+    const [selectedFoodData, setSelectedFoodData] = useState([]);
     const [amount, setAmount] = useState();
     const [mealType, setMealType] = useState('');
     const [portionType, setPortionType] = useState('');
@@ -136,6 +137,9 @@ function DietPlan() {
                         amount={amount}
                         setAmount={setAmount}
                         dietPlanData={dietPlanData}
+                        selectedFoodData={selectedFoodData}
+                        setSelectedFoodData={setSelectedFoodData}
+                        handleNext={handleNext}
                     />
                 );
             case 2:
@@ -149,6 +153,8 @@ function DietPlan() {
                         setItems={setItems}
                         amount={amount}
                         setAmount={setAmount}
+                        selectedFoodData={selectedFoodData}
+                        setSelectedFoodData={setSelectedFoodData}
                     />
                 );
             default:

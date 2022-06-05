@@ -18,7 +18,20 @@ const defaultOptions = {
     }
 };
 
-const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items, setItems, amount, setAmount, dietPlanData }) => {
+const SecondStep = ({
+    mealType,
+    setMealType,
+    portionType,
+    setPortionType,
+    items,
+    setItems,
+    amount,
+    setAmount,
+    dietPlanData,
+    selectedFoodData,
+    setSelectedFoodData,
+    handleNext
+}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [foodData, setFoodData] = useState([]);
     const [extrafoodData, setExtraFoodData] = useState([]);
@@ -76,7 +89,7 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
 
         calorieInstance.get(`/nutrition?query=${foodText}`).then(async (response) => {
             console.log(response.data);
-            if (response.data.items.length < 1) {
+            if (response.data.items.length === 0) {
                 Store.addNotification({
                     title: 'Error Occured!',
                     message: 'Enter Foods Cannot Find',
@@ -246,11 +259,26 @@ const SecondStep = ({ mealType, setMealType, portionType, setPortionType, items,
                     <div>
                         <Grid container alignItems="center" justifyContent="center" spacing={2}>
                             <div style={{ hight: 10 }} />
-                            {sugestionArr.map((element) => (
+                            {sugestionArr.length > 0 ? (
+                                <>
+                                    {sugestionArr.map((element) => (
+                                        <Grid item sm={12} xs={12} md={6} lg={4}>
+                                            <DietPlanSuggestionCard
+                                                dietPlanSuggestionData={element}
+                                                setSelectedFoodData={setSelectedFoodData}
+                                                handleNext={handleNext}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                            {/* {sugestionArr.map((element) => (
                                 <Grid item sm={12} xs={12} md={6} lg={4}>
-                                    <DietPlanSuggestionCard dietPlanSuggestionData={element} />
+                                    <DietPlanSuggestionCard dietPlanSuggestionData={element} setSelectedFoodData={setSelectedFoodData} />
                                 </Grid>
-                            ))}
+                            ))} */}
                             {/* <Grid item sm={12} xs={12} md={6} lg={4}>
                                 <DietPlanSuggestionCard dietPlanSuggestionData={finalFoodData} />
                             </Grid>

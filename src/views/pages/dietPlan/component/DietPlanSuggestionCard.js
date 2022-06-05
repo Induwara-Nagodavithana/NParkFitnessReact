@@ -150,22 +150,30 @@ const rows = [createData('Frozen yoghurt', 159, 6.0), createData('Ice cream sand
 
 // ===========================|| PROFILE MENU - UPGRADE PLAN CARD ||=========================== //
 
-const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
+const DietPlanSuggestionCard = ({ dietPlanSuggestionData, setSelectedFoodData, handleNext }) => {
     const classes = useStyles();
     console.log(dietPlanSuggestionData);
     const theme = useTheme();
     const [totalCalAmount, setTotalCalAmount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleSelect = () => {
+        setSelectedFoodData(dietPlanSuggestionData);
+        handleNext();
+    };
+
     useEffect(async () => {
         setIsLoading(true);
         let tempCalAmount = 0;
-        await Promise.all(
-            dietPlanSuggestionData.dietPlanSuggestionData.map((item, index) => {
-                tempCalAmount += item.calorie;
-                return 0;
-            })
-        );
+        if (dietPlanSuggestionData !== undefined) {
+            await Promise.all(
+                dietPlanSuggestionData.map((item, index) => {
+                    tempCalAmount += item.calorie;
+                    return 0;
+                })
+            );
+        }
+
         console.log(tempCalAmount.toFixed(2));
         setTotalCalAmount(tempCalAmount.toFixed(2));
         setIsLoading(false);
@@ -220,25 +228,44 @@ const DietPlanSuggestionCard = (dietPlanSuggestionData) => {
                             </div>
                         </Grid>
                         <div style={{ height: '20px' }} />
-                        {dietPlanSuggestionData.dietPlanSuggestionData.map((item, index) => (
-                            <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
-                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                                    <Avatar variant="rounded" className={classes.avatarFirst}>
-                                        <Avatar variant="rounded" className={classes.avatarSecond} />
-                                    </Avatar>
-                                    <div style={{ width: '20px' }} />
-                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                                        {item.name !== undefined ? item.name.charAt(0).toUpperCase() + item.name.slice(1) : 'NotFound'}
-                                    </Typography>
-                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                                        {item.amount !== undefined ? item.amount.toString().concat(' g') : 'NotFound'}
-                                    </Typography>
-                                    <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                                        {item.calorie !== undefined ? item.calorie.toString().concat(' cal') : 'NotFound'}
-                                    </Typography>
+                        {dietPlanSuggestionData !== undefined ? (
+                            <>
+                                {dietPlanSuggestionData.map((item, index) => (
+                                    <Grid container justifyContent="center" alignItems="center" direction="column" spacing={1}>
+                                        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
+                                            <Avatar variant="rounded" className={classes.avatarFirst}>
+                                                <Avatar variant="rounded" className={classes.avatarSecond} />
+                                            </Avatar>
+                                            <div style={{ width: '20px' }} />
+                                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                                                {item.name !== undefined
+                                                    ? item.name.charAt(0).toUpperCase() + item.name.slice(1)
+                                                    : 'NotFound'}
+                                            </Typography>
+                                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                                                {item.amount !== undefined ? item.amount.toString().concat(' g') : 'NotFound'}
+                                            </Typography>
+                                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                                                {item.calorie !== undefined ? item.calorie.toString().concat(' cal') : 'NotFound'}
+                                            </Typography>
+                                        </div>
+                                    </Grid>
+                                ))}
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        onClick={handleSelect}
+                                        // disabled={disableSearch}
+                                    >
+                                        Select
+                                    </Button>
                                 </div>
-                            </Grid>
-                        ))}
+                            </>
+                        ) : (
+                            <></>
+                        )}
                     </>
                 )}
             </CardContent>
