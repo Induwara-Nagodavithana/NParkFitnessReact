@@ -1,6 +1,6 @@
 import { TextField, Button, Box, InputLabel, Select, MenuItem, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import MuiPhoneNumber from 'material-ui-phone-number';
 import { IconFileAnalytics } from '@tabler/icons';
@@ -8,7 +8,18 @@ import { IconFileAnalytics } from '@tabler/icons';
 import { Avatar } from '@mui/material';
 import { Store } from 'react-notifications-component';
 import axios from 'axios';
+import HttpCommon from 'utils/http-common';
+import Lottie from 'react-lottie';
+import * as success from 'assets/images/loading.json';
 
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: success.default,
+    rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+    }
+};
 // style constant
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -107,11 +118,15 @@ const ThirdStep = ({
     amount,
     setAmount,
     selectedFoodData,
-    setSelectedFoodData
+    setSelectedFoodData,
+    memberId,
+    getDietPlans,
+    setOpenAddNewDietPlanDialog
 }) => {
     const classes = useStyles();
     console.log('selectedFoodData');
     console.log(selectedFoodData);
+    const [isDataLoading, setDataLoading] = useState(false);
 
     const handleFoodChange = (index) => (event) => {
         const list = [...selectedFoodData];
@@ -131,17 +146,62 @@ const ThirdStep = ({
         setSelectedFoodData(list);
     };
 
-    const handleSave = (index) => (event) => {
+    const handleSave = () => {
         console.log('Save');
-        // const list = [...selectedFoodData];
-        // list.splice(index, 1);
-        // setSelectedFoodData(list);
+        setDataLoading(true);
+
+        HttpCommon.post(`/api/dietPlan/createDietAndMealItem`, {
+            memberId,
+            mealType,
+            mealData: selectedFoodData
+        }).then((response) => {
+            console.log(response.data.data);
+            if (response.data.success) {
+                getDietPlans();
+                setOpenAddNewDietPlanDialog(false);
+                Store.addNotification({
+                    title: 'Saved!',
+                    message: 'Diet Plan Uploaded',
+                    type: 'success',
+                    insert: 'top',
+                    container: 'top-right',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    },
+                    width: 500
+                });
+                // window.location.reload(false);
+            } else {
+                Store.addNotification({
+                    title: 'Error!',
+                    message: 'Diet Plan Not Created',
+                    type: 'danger',
+                    insert: 'top',
+                    container: 'top-right',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    },
+                    width: 500
+                });
+            }
+            setDataLoading(false);
+        });
     };
 
     const handleRemove = (index) => (event) => {
         const list = [...selectedFoodData];
         list.splice(index, 1);
         setSelectedFoodData(list);
+    };
+
+    const handleAddClick = () => {
+        setSelectedFoodData([...selectedFoodData, { name: '', amount: '', calorie: '' }]);
     };
 
     const handleVerify = (index) => (event) => {
@@ -179,93 +239,120 @@ const ThirdStep = ({
     // };
 
     return (
-        <div style={{ paddingLeft: 40, paddingRight: 40 }}>
-            <div style={{ height: 20 }} />
-            {selectedFoodData !== undefined ? (
-                <>
-                    {selectedFoodData.map((element, index) => (
-                        <>
-                            <Grid container justifyContent="center" alignItems="center" direction="column" spacing={2}>
-                                <Grid container justifyContent="center" alignItems="center" direction="row" spacing={1}>
-                                    <Grid item sm={10} xs={10} md={4} lg={4}>
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <Avatar style={{ marginRight: 40 }} variant="rounded" className={classes.avatarFirst}>
-                                                <Avatar variant="rounded" className={classes.avatarSecond} />
-                                            </Avatar>
-                                            <TextField
-                                                style={{ marginRight: 40 }}
-                                                fullWidth
-                                                id="outlined-basic"
-                                                label="Food"
-                                                variant="outlined"
-                                                value={element.name}
-                                                onChange={handleFoodChange(index)}
-                                            />
-                                        </div>
-                                    </Grid>
-                                    <Grid item sm={12} xs={12} md={4} lg={4}>
-                                        <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            label="Amount (g)"
-                                            variant="outlined"
-                                            value={element.amount}
-                                            onChange={handleAmountChange(index)}
-                                        />
-                                    </Grid>
-                                    <Grid item sm={12} xs={12} md={2} lg={2}>
-                                        <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            label="Calorie (cal)"
-                                            variant="outlined"
-                                            value={element.calorie}
-                                            onChange={handleCalorieChange(index)}
-                                        />
-                                    </Grid>
-                                    <Grid item sm={12} xs={12} md={1} lg={1}>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            size="small"
-                                            onClick={handleVerify(index)}
-                                            // disabled={disableSearch}
-                                        >
-                                            Verify
-                                        </Button>
-                                    </Grid>
-                                    <Grid item sm={12} xs={12} md={1} lg={1}>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            size="small"
-                                            onClick={handleRemove(index)}
-                                            // disabled={disableSearch}
-                                        >
-                                            Remove
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <div style={{ height: 40 }} />
-                        </>
-                    ))}
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="large"
-                            onClick={handleSave}
-                            // disabled={disableSearch}
-                        >
-                            Save Plan
-                        </Button>
-                    </div>
-                </>
+        <>
+            {isDataLoading ? (
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                        width: '100%'
+                    }}
+                >
+                    <Lottie options={defaultOptions} height={400} width={400} />
+                </div>
             ) : (
-                <></>
+                <div style={{ paddingLeft: 40, paddingRight: 40 }}>
+                    <div style={{ height: 20 }} />
+                    {selectedFoodData !== undefined ? (
+                        <>
+                            {selectedFoodData.map((element, index) => (
+                                <>
+                                    <Grid container justifyContent="center" alignItems="center" direction="column" spacing={2}>
+                                        <Grid container justifyContent="center" alignItems="center" direction="row" spacing={1}>
+                                            <Grid item sm={10} xs={10} md={4} lg={4}>
+                                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <Avatar style={{ marginRight: 40 }} variant="rounded" className={classes.avatarFirst}>
+                                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                                    </Avatar>
+                                                    <TextField
+                                                        style={{ marginRight: 40 }}
+                                                        fullWidth
+                                                        id="outlined-basic"
+                                                        label="Food"
+                                                        variant="outlined"
+                                                        value={element.name}
+                                                        onChange={handleFoodChange(index)}
+                                                    />
+                                                </div>
+                                            </Grid>
+                                            <Grid item sm={12} xs={12} md={4} lg={4}>
+                                                <TextField
+                                                    fullWidth
+                                                    id="outlined-basic"
+                                                    label="Amount (g)"
+                                                    variant="outlined"
+                                                    value={element.amount}
+                                                    onChange={handleAmountChange(index)}
+                                                />
+                                            </Grid>
+                                            <Grid item sm={12} xs={12} md={2} lg={2}>
+                                                <TextField
+                                                    fullWidth
+                                                    id="outlined-basic"
+                                                    label="Calorie (cal)"
+                                                    variant="outlined"
+                                                    value={element.calorie}
+                                                    onChange={handleCalorieChange(index)}
+                                                />
+                                            </Grid>
+                                            <Grid item sm={12} xs={12} md={1} lg={1}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    size="small"
+                                                    onClick={handleVerify(index)}
+                                                    // disabled={disableSearch}
+                                                >
+                                                    Verify
+                                                </Button>
+                                            </Grid>
+                                            <Grid item sm={12} xs={12} md={1} lg={1}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    size="small"
+                                                    onClick={handleRemove(index)}
+                                                    // disabled={disableSearch}
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <div style={{ height: 40 }} />
+                                </>
+                            ))}
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginRight: '60px' }}>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    size="small"
+                                    onClick={handleAddClick}
+                                    // disabled={disableSearch}
+                                >
+                                    Add Item
+                                </Button>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    size="large"
+                                    onClick={handleSave}
+                                    // disabled={disableSearch}
+                                >
+                                    Save Plan
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             )}
-        </div>
+        </>
     );
 };
 

@@ -57,7 +57,7 @@ function DietPlan() {
     };
 
     function getDietPlans() {
-        const link = '/api/dietPlan/getDietPlanAndMealByUserId/';
+        const link = '/api/dietPlan/getDietPlanAndMealByMemberId/';
         const key = memberId;
         const url = link + key;
         HttpCommon.get(url)
@@ -71,6 +71,7 @@ function DietPlan() {
             })
             .catch((err) => {
                 console.log(err);
+                setIsLoading(false);
             });
     }
 
@@ -155,6 +156,9 @@ function DietPlan() {
                         setAmount={setAmount}
                         selectedFoodData={selectedFoodData}
                         setSelectedFoodData={setSelectedFoodData}
+                        memberId={memberId}
+                        getDietPlans={getDietPlans}
+                        setOpenAddNewDietPlanDialog={setOpenAddNewDietPlanDialog}
                     />
                 );
             default:
@@ -248,60 +252,7 @@ function DietPlan() {
                         <div style={{ height: 20 }} />
                         {showStep(activeStep)}
                         {activeStep === steps.length ? (
-                            <>
-                                <TextField
-                                    fullWidth
-                                    // value={firstName.concat(' ', lastName)}
-                                    label="Name"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField fullWidth /* value={email} */ label="Email" margin="dense" inputProps={{ readOnly: true }} />
-                                <TextField
-                                    fullWidth
-                                    /* value={birthday} */ label="Birthday"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    /* value={genderValue} */ label="Gender"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    /* value={contactNo} */ label="Contact No"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    /* value={street.concat(', ', lane, ', ', city)} */
-                                    label="Address"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    /* value={province} */ label="Province"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    /* value={branchId} */ label="Branch Id"
-                                    margin="dense"
-                                    inputProps={{ readOnly: true }}
-                                />
-                                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                    <Button color="inherit" onClick={handleCloseAddNewDietPlan} sx={{ mr: 1 }}>
-                                        Close
-                                    </Button>
-                                    <Box sx={{ flex: '1 1 auto' }} />
-                                    <Button /* onClick={handleAddNewMemberSubmit} */>Submit</Button>
-                                </Box>
-                            </>
+                            <></>
                         ) : (
                             <>
                                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -314,7 +265,7 @@ function DietPlan() {
                                         Next
                                     </Button>
                                     else<Button onClick={handleNext}>Next</Button> */}
-                                    <Button onClick={handleNext}>{activeStep === steps.length - 1 ? 'Finish' : 'Next'}</Button>
+                                    <Button onClick={handleNext}>{activeStep === steps.length - 1 ? '' : 'Next'}</Button>
                                 </Box>
                             </>
                         )}

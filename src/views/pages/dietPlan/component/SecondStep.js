@@ -209,31 +209,32 @@ const SecondStep = ({
         let count = 0;
         console.log(extrafoodData);
         const tempArr = [];
-        if (extrafoodData.length > 0) {
-            while (count < 3) {
-                const tempFinalFoodData = [...finalFoodData];
+        while (count < 3) {
+            const tempFinalFoodData = [...finalFoodData];
 
-                // if (count > finalFoodData.length - 1) {
-                //     tempFinalFoodData.push(finalFoodData[finalFoodData.length - 1]);
-                // } else {
-                //     tempFinalFoodData.push(finalFoodData[count]);
-                // }
-                const foodIndex = getRndInteger(extrafoodData.length);
-                console.log('foodIndexFinal');
-                console.log(foodIndex);
-                console.log(extrafoodData[foodIndex]);
-                console.log(tempFinalFoodData);
+            // if (count > finalFoodData.length - 1) {
+            //     tempFinalFoodData.push(finalFoodData[finalFoodData.length - 1]);
+            // } else {
+            //     tempFinalFoodData.push(finalFoodData[count]);
+            // }
+            const foodIndex = getRndInteger(extrafoodData.length);
+            console.log('foodIndexFinal');
+            console.log(foodIndex);
+            console.log(extrafoodData[foodIndex]);
+            console.log(tempFinalFoodData);
+            if (extrafoodData.length > 0) {
                 tempFinalFoodData.push({
                     name: extrafoodData[foodIndex].foodName,
                     amount: extrafoodData[foodIndex].amount,
                     calorie: extrafoodData[foodIndex].calAmount
                 });
-                tempArr.push(tempFinalFoodData);
-                count += 1;
             }
+
+            tempArr.push(tempFinalFoodData);
+            count += 1;
         }
-        console.log(tempArr);
         setSugestionArr(tempArr);
+        console.log(tempArr);
     }, [finalFoodData]);
 
     const hansleSelect = () => {
