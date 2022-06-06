@@ -1,5 +1,5 @@
 import { Button, Stack, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, Step, StepLabel, Stepper } from '@material-ui/core';
-import { TextField } from '@mui/material';
+import { TextField, Avatar } from '@mui/material';
 import { React, useState } from 'react';
 import MainCard from 'ui-component/cards/MainCard';
 import { Search } from '@material-ui/icons';
@@ -14,6 +14,7 @@ import { Box } from '@material-ui/system';
 import { makeStyles } from '@material-ui/styles';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import { useTheme } from '@material-ui/core/styles';
 
 const defaultOptions = {
     loop: true,
@@ -26,20 +27,49 @@ const defaultOptions = {
 
 const dietPlanArray = [];
 const steps = ['Food Items', 'Diet Plan Suggestions', 'Diet Plan Details'];
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     dialog: {
         width: 800
+    },
+    avatarFirst: {
+        ...theme.typography.commonAvatar,
+        ...theme.typography.largeAvatar,
+        color: theme.palette.secondary.light,
+        backgroundColor: theme.palette.secondary.light,
+        borderRadius: '20px',
+        marginRight: '10px',
+        height: '20px',
+        width: '20px',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    avatarSecond: {
+        ...theme.typography.commonAvatar,
+        ...theme.typography.largeAvatar,
+        color: theme.palette.secondary.dark,
+        backgroundColor: theme.palette.secondary.dark,
+        borderRadius: '20px',
+        height: '8px',
+        width: '8px',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }));
 function DietPlan() {
     const classes = useStyles();
+    const theme = useTheme();
 
     const [memberId, setMemberId] = useState();
     const [dietPlanData, setDietPlanData] = useState([]);
+    const [consumedCal, setConsumedCal] = useState(0);
+    const [burnedCal, setBurnedCal] = useState(0);
+    const [weightloss, setWeightloss] = useState(0);
     const [showButton, setShowButton] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [disableSearch, setDisableSearch] = useState(true);
     const [openAddNewDietPlanDialog, setOpenAddNewDietPlanDialog] = useState(false);
+    const [openWeightPrediction, setOpenWeightPrediction] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
     const [items, setItems] = useState([]);
@@ -47,6 +77,8 @@ function DietPlan() {
     const [amount, setAmount] = useState();
     const [mealType, setMealType] = useState('');
     const [portionType, setPortionType] = useState('');
+    const [exerciseCount, setExerciseCount] = useState('');
+    const [monthCount, setMonthCount] = useState('');
 
     const navigate = useNavigate();
 
@@ -54,6 +86,26 @@ function DietPlan() {
         console.log(event.target.value);
         setDisableSearch(false);
         setMemberId(event.target.value);
+    };
+
+    const handleExerciseCount = (event) => {
+        console.log(event.target.value);
+        setExerciseCount(event.target.value);
+    };
+
+    const handleConsumedCal = (event) => {
+        console.log(event.target.value);
+        setConsumedCal(event.target.value);
+    };
+
+    const handleBurnedCal = (event) => {
+        console.log(event.target.value);
+        setBurnedCal(event.target.value);
+    };
+
+    const handlMonthCount = (event) => {
+        console.log(event.target.value);
+        setMonthCount(event.target.value);
     };
 
     function getDietPlans() {
@@ -75,9 +127,37 @@ function DietPlan() {
             });
     }
 
+    function getBurnAndConsumedCalories() {
+        HttpCommon.get(`/api/dietPlan/getCalorieConsumeAndBurnByMemberId/${memberId}`)
+            .then((res) => {
+                console.log(res);
+                console.log(res.data.data);
+                setConsumedCal(res.data.data.consumedCal);
+                setBurnedCal(res.data.data.burnedCal);
+                setShowButton(true);
+
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setIsLoading(false);
+            });
+    }
+
     const handleSearch = () => {
         setIsLoading(true);
         getDietPlans();
+        getBurnAndConsumedCalories();
+    };
+
+    const handleCalculate = () => {
+        if (consumedCal !== '' && burnedCal !== '' && exerciseCount !== '' && monthCount !== '') {
+            const tempWeightloss =
+                (parseInt(consumedCal, 10) * 30 - parseInt(burnedCal, 10) * 4 * parseInt(exerciseCount, 10)) *
+                parseInt(monthCount, 10) *
+                0.00013;
+            setWeightloss(tempWeightloss.toFixed(2));
+        }
     };
 
     const handleShowProfile = () => {
@@ -88,6 +168,13 @@ function DietPlan() {
 
     const handleAddNewDietPlan = () => {
         setOpenAddNewDietPlanDialog(true);
+    };
+
+    const handleWeightPrediction = () => {
+        setOpenWeightPrediction(true);
+    };
+    const handleCloseWeightPrediction = () => {
+        setOpenWeightPrediction(false);
     };
 
     const handleCloseAddNewDietPlan = () => {
@@ -190,6 +277,9 @@ function DietPlan() {
                             <Button variant="outlined" color="secondary" sx={{ background: '#f3e5f5' }} onClick={handleShowProfile}>
                                 Show Profile
                             </Button>
+                            <Button variant="outlined" color="secondary" sx={{ background: '#f3e5f5' }} onClick={handleWeightPrediction}>
+                                Weight Prediction
+                            </Button>
                             <Button variant="outlined" color="secondary" sx={{ background: '#f3e5f5' }} onClick={handleAddNewDietPlan}>
                                 Add New Diet Plan
                             </Button>
@@ -271,6 +361,95 @@ function DietPlan() {
                             </>
                         )}
                     </Box>
+                </DialogContent>
+            </Dialog>
+            <Dialog fullWidth maxWidth="md" open={openWeightPrediction} onClose={handleCloseWeightPrediction}>
+                <DialogTitle>Weight Prediction</DialogTitle>
+                <DialogContent>
+                    {/* <DialogContentText sx={{ color: 'error.main' }}>Enter all * Requierd Data</DialogContentText> */}
+                    <div style={{ height: 10 }} />
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Grid container alignItems="center" justifyContent="center" spacing={2}>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <div style={{ display: 'flex', alignItems: 'left' }}>
+                                    <Avatar variant="rounded" className={classes.avatarFirst}>
+                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                    </Avatar>
+                                    <div style={{ textAlign: 'left' }}>Calorie Consumption :</div>
+                                </div>
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <TextField
+                                    fullWidth
+                                    id="exercise-count"
+                                    label="Calorie (kcal)"
+                                    variant="outlined"
+                                    defaultValue={consumedCal}
+                                    onChange={handleConsumedCal}
+                                />
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <div style={{ display: 'flex', alignItems: 'left' }}>
+                                    <Avatar variant="rounded" className={classes.avatarFirst}>
+                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                    </Avatar>
+                                    <div style={{ textAlign: 'left' }}>Calorie Burning :</div>
+                                </div>
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <TextField
+                                    fullWidth
+                                    id="exercise-count"
+                                    label="Calorie (kcal)"
+                                    variant="outlined"
+                                    defaultValue={burnedCal}
+                                    onChange={handleBurnedCal}
+                                />
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <div style={{ display: 'flex', alignItems: 'left' }}>
+                                    <Avatar variant="rounded" className={classes.avatarFirst}>
+                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                    </Avatar>
+                                    <div style={{ textAlign: 'left' }}>Weekly Exercise Count :</div>
+                                </div>
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <TextField
+                                    fullWidth
+                                    id="exercise-count"
+                                    label="Exercise Count"
+                                    variant="outlined"
+                                    onChange={handleExerciseCount}
+                                />
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <div style={{ display: 'flex', alignItems: 'left' }}>
+                                    <Avatar variant="rounded" className={classes.avatarFirst}>
+                                        <Avatar variant="rounded" className={classes.avatarSecond} />
+                                    </Avatar>
+                                    <div style={{ textAlign: 'left' }}>Month Count :</div>
+                                </div>
+                            </Grid>
+                            <Grid item sm={12} xs={12} md={3} lg={3}>
+                                <TextField
+                                    fullWidth
+                                    id="month-count"
+                                    label="Enter Month Count"
+                                    variant="outlined"
+                                    onChange={handlMonthCount}
+                                />
+                            </Grid>
+                        </Grid>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                        Weight {weightloss > 0 ? 'Gain' : 'Loss'} is {Math.abs(weightloss)} kg
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                        <Button variant="outlined" color="secondary" sx={{ background: '#f3e5f5' }} onClick={handleCalculate}>
+                            Calculate
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </>
