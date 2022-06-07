@@ -23,6 +23,7 @@ import HttpCommon from 'utils/http-common';
 
 import { Store } from 'react-notifications-component';
 import 'animate.css/animate.min.css';
+import { useNavigate } from 'react-router';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -34,19 +35,30 @@ const bodyparts = ['ABS', 'Back', 'Biceps', 'Chest', 'Forearm', 'Hips', 'Legs', 
 const status = ['Availble', 'Not Available'];
 
 function ServiceType() {
+    const [userType, setUserType] = useState();
     const [serviceData, setServiceData] = useState([]);
-    const [BranchId, setBranchId] = React.useState();
-    const [branchArray, setBranchArray] = React.useState([]);
-    const [serviceName, setServiceName] = React.useState();
-    const [serviceStatus, setServiceStatus] = React.useState(null);
-    const [bodyPart, setBodyPart] = React.useState(null);
+    const [BranchId, setBranchId] = useState();
+    const [branchArray, setBranchArray] = useState([]);
+    const [serviceName, setServiceName] = useState(null);
+    const [serviceStatus, setServiceStatus] = useState(null);
+    const [bodyPart, setBodyPart] = useState(null);
     const [addButton, setAddButtonDisable] = useState(true);
-    const [editableServiceName, setEditableServiceName] = React.useState();
-    const [editableServiceStatus, setEditableServiceStatus] = React.useState(null);
-    const [editableBodyPart, setEditableBodyPart] = React.useState(null);
-    const [editServiceId, setEditServiceId] = React.useState(null);
+    const [editableServiceName, setEditableServiceName] = useState();
+    const [editableServiceStatus, setEditableServiceStatus] = useState(null);
+    const [editableBodyPart, setEditableBodyPart] = useState(null);
+    const [editServiceId, setEditServiceId] = useState(null);
+    const [showTable, setShowTable] = useState(true);
+    // Create and get my reference in Add New Subscription type
+    const mainCard2Ref = useRef(null);
+    const mainCard1Ref = useRef(null);
+    const navigate = useNavigate();
 
-    useEffect(() => {
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
+    function getGym() {
         const link = '/api/gym/getAllGymByUserId/';
         const key = localStorage.getItem('userID');
         const url = link + key;
@@ -59,6 +71,44 @@ function ServiceType() {
             .catch((err) => {
                 console.log(err);
             });
+    }
+
+    function getServices() {
+        const link = '/api/user/';
+        const key = localStorage.getItem('userID');
+        const url = link + key;
+        console.log(url);
+        HttpCommon.get(url)
+            .then((res) => {
+                console.log(res.data.data.branchId);
+                setBranchId(res.data.data.branchId);
+                const link2 = '/api/serviceType/getServiceTypeByBranchId/';
+                const key2 = res.data.data.branchId;
+                const url2 = link2 + key2;
+                console.log(url2);
+                HttpCommon.get(url2)
+                    .then((res) => {
+                        setServiceData(res.data.data.serviceType);
+                        setShowTable(false);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    useEffect(() => {
+        setUserType(localStorage.getItem('type'));
+        if (localStorage.getItem('type') === 'Admin') {
+            unauthorizedlogin();
+        } else if (localStorage.getItem('type') === 'Owner') {
+            getGym();
+        } else if (localStorage.getItem('type') === 'Manager' || localStorage.getItem('type') === 'Trainer') {
+            getServices();
+        }
     }, []);
 
     const handleGymSelect = (event, newValue) => {
@@ -97,10 +147,20 @@ function ServiceType() {
         HttpCommon.get(url)
             .then((res) => {
                 setServiceData(res.data.data.serviceType);
+                setShowTable(false);
             })
             .catch((err) => {
                 console.log(err);
             });
+    };
+
+    // Scroll to myRef view
+    const executeScroll = () => {
+        mainCard2Ref.current.scrollIntoView();
+    };
+
+    const addButtonClickExecuteScroll = () => {
+        mainCard1Ref.current.scrollIntoView();
     };
 
     const handleServiceName = (event) => {
@@ -166,6 +226,7 @@ function ServiceType() {
         setServiceName(null);
         setServiceStatus(null);
         setBodyPart(null);
+        addButtonClickExecuteScroll();
     };
 
     const handleEditFormSubmit = () => {
@@ -230,127 +291,166 @@ function ServiceType() {
         setEditServiceId(null);
     };
 
-    // Create and get my reference in Add New Subscription type
-    const myRef = useRef(null);
-
-    // Scroll to myRef view
-    const executeScroll = () => {
-        myRef.current.scrollIntoView();
-    };
-
     return (
         <>
-            <MainCard title="Services">
-                <Stack direction="row" spacing={2}>
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={gymArray}
-                        onChange={handleGymSelect}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} label="Gym" />}
-                    />
-                    {branchArray.length > 0 ? (
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo2"
-                            options={branchArray}
-                            onChange={handleBranchSelect}
-                            sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Branch" />}
-                        />
+            <MainCard title="Services" ref={mainCard1Ref}>
+                <>
+                    {userType === 'Owner' ? (
+                        <>
+                            <Stack direction="row" spacing={2}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={gymArray}
+                                    onChange={handleGymSelect}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Gym" />}
+                                />
+                                {branchArray.length > 0 ? (
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo2"
+                                        options={branchArray}
+                                        onChange={handleBranchSelect}
+                                        sx={{ width: 300 }}
+                                        renderInput={(params) => <TextField {...params} label="Branch" />}
+                                    />
+                                ) : (
+                                    <></>
+                                )}
+
+                                <Button variant="contained" startIcon={<Search />} size="large" onClick={handleSearch}>
+                                    Search
+                                </Button>
+                            </Stack>
+                            <div style={{ height: 50 }} />
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                    {userType !== 'Trainer' ? (
+                        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                            <AnimateButton>
+                                <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
+                                    Add New Service
+                                </Button>
+                            </AnimateButton>
+                        </Grid>
                     ) : (
                         <></>
                     )}
 
-                    <Button variant="contained" startIcon={<Search />} size="large" onClick={handleSearch}>
-                        Search
-                    </Button>
-                </Stack>
-                <div style={{ height: 50 }} />
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align="center">Status</TableCell>
-                                <TableCell align="center">Body Part</TableCell>
-                                <TableCell align="right">
-                                    <AnimateButton>
-                                        <Button disableElevation size="medium" variant="contained" color="primary" onClick={executeScroll}>
-                                            Add New Service
-                                        </Button>
-                                    </AnimateButton>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {serviceData != null ? (
-                                serviceData.map((row) => (
-                                    <React.Fragment key={row.id}>
-                                        {editServiceId === row.id ? (
-                                            <EditableRow
-                                                editableServiceName={editableServiceName}
-                                                editableServiceStatus={editableServiceStatus}
-                                                editableBodyPart={editableBodyPart}
-                                                setEditableServiceName={setEditableServiceName}
-                                                setEditableServiceStatus={setEditableServiceStatus}
-                                                setEditableBodyPart={setEditableBodyPart}
-                                                handleCancelClick={handleCancelClick}
-                                                handleEditFormSubmit={handleEditFormSubmit}
-                                            />
-                                        ) : (
-                                            <ReadOnlyRow row={row} handleEditClick={handleEditClick} />
-                                        )}
-                                    </React.Fragment>
-                                ))
-                            ) : (
-                                <></>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                    <div style={{ height: 10 }} />
+                    <TableContainer component={Paper} hidden={showTable}>
+                        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                            <TableHead sx={{ backgroundColor: '#512da8' }}>
+                                <TableRow>
+                                    <TableCell sx={{ color: 'white' }}>Name</TableCell>
+                                    <TableCell align="center" sx={{ color: 'white' }}>
+                                        Status
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ color: 'white' }}>
+                                        Body Part
+                                    </TableCell>
+                                    {userType !== 'Trainer' ? <TableCell align="right" /> : <></>}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {serviceData != null ? (
+                                    serviceData.map((row) => (
+                                        <React.Fragment key={row.id}>
+                                            {editServiceId === row.id ? (
+                                                <EditableRow
+                                                    editableServiceName={editableServiceName}
+                                                    editableServiceStatus={editableServiceStatus}
+                                                    editableBodyPart={editableBodyPart}
+                                                    setEditableServiceName={setEditableServiceName}
+                                                    setEditableServiceStatus={setEditableServiceStatus}
+                                                    setEditableBodyPart={setEditableBodyPart}
+                                                    handleCancelClick={handleCancelClick}
+                                                    handleEditFormSubmit={handleEditFormSubmit}
+                                                />
+                                            ) : (
+                                                <ReadOnlyRow row={row} handleEditClick={handleEditClick} userType={userType} />
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <></>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </>
             </MainCard>
             <div style={{ height: 10 }} />
-            <MainCard title="Add New Service" ref={myRef}>
-                <TextField required fullWidth value={serviceName} onChange={handleServiceName} label="Name" margin="dense" name="name" />
+            {userType !== 'Trainer' ? (
+                <MainCard title="Add New Service" ref={mainCard2Ref}>
+                    <TextField
+                        required
+                        fullWidth
+                        value={serviceName}
+                        onChange={handleServiceName}
+                        label="Name"
+                        margin="dense"
+                        name="name"
+                        color="secondary"
+                    />
 
-                <Autocomplete
-                    value={serviceStatus}
-                    onChange={handleServiceStatus}
-                    id="controllable-states-demo"
-                    options={status}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="bodyPart" />
-                    )}
-                />
+                    <Autocomplete
+                        value={serviceStatus}
+                        onChange={handleServiceStatus}
+                        id="controllable-states-demo"
+                        options={status}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Status"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="bodyPart"
+                                color="secondary"
+                            />
+                        )}
+                    />
 
-                <Autocomplete
-                    value={bodyPart}
-                    onChange={handleBodyPart}
-                    id="controllable-states-demo"
-                    options={bodyparts}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Body Part" variant="outlined" fullWidth margin="dense" name="bodyPart" />
-                    )}
-                />
+                    <Autocomplete
+                        value={bodyPart}
+                        onChange={handleBodyPart}
+                        id="controllable-states-demo"
+                        options={bodyparts}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Body Part"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="bodyPart"
+                                color="secondary"
+                            />
+                        )}
+                    />
 
-                <Grid container direction="row" justifyContent="flex-end" spacing={3}>
-                    <Grid item>
-                        <Button
-                            disableElevation
-                            onClick={handleAddFormSubmit}
-                            size="medium"
-                            variant="contained"
-                            color="primary"
-                            disabled={addButton}
-                        >
-                            Add
-                        </Button>
+                    <Grid container direction="row" justifyContent="flex-end" spacing={3}>
+                        <Grid item>
+                            <Button
+                                disableElevation
+                                onClick={handleAddFormSubmit}
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                disabled={addButton}
+                            >
+                                Add
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </MainCard>
-
+                </MainCard>
+            ) : (
+                <></>
+            )}
             <div style={{ height: 50 }} />
         </>
     );
