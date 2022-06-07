@@ -56,9 +56,14 @@ instance.interceptors.response.use(
             console.log('error');
             window.location = '/';
         } else {
+            let msg = 'Cannot find the Server';
+            if (error.response.data !== undefined && error.response.data.message !== undefined) {
+                msg = error.response.data.message;
+            }
+
             Store.addNotification({
                 title: 'Error Occured!',
-                message: 'Cannot find the Server',
+                message: msg,
                 type: 'danger',
                 insert: 'top',
                 container: 'top-right',
