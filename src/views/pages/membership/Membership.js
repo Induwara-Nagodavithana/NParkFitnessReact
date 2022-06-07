@@ -92,6 +92,11 @@ const Membership = () => {
             });
     }
 
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
     useEffect(() => {
         setUserType(localStorage.getItem('type'));
         setUserID(localStorage.getItem('userID'));
@@ -100,6 +105,8 @@ const Membership = () => {
             getGym();
         } else if (localStorage.getItem('type') === 'Manager' || localStorage.getItem('type') === 'Trainer') {
             getBranchMembers();
+        } else if (localStorage.getItem('type') === 'Admin') {
+            unauthorizedlogin();
         }
     }, []);
 
