@@ -53,7 +53,6 @@ const gymArray = [];
 const steps = ['Sign Up', 'Personal Info', 'Contact Details'];
 
 function ManageEmployee() {
-    const [selectedGymId, setSelectedGymId] = React.useState();
     const [branchId, setBranchId] = React.useState();
     const [radioValue, setRadioValue] = React.useState('Manager');
     const [employeeData, setEmployeeData] = React.useState([]);
@@ -116,7 +115,6 @@ function ManageEmployee() {
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
             console.log(newValue.value);
-            setSelectedGymId(newValue.value);
 
             const link = '/api/branch/getBranchByGymId/';
             const key = newValue.value;
@@ -613,7 +611,7 @@ function ManageEmployee() {
                 <Stack spacing={2}>
                     <Autocomplete
                         disablePortal
-                        id="combo-box-demo"
+                        id="gyms"
                         options={gymArray}
                         onChange={handleGymSelect}
                         sx={{ width: 300 }}
@@ -622,7 +620,7 @@ function ManageEmployee() {
                     {branchArray.length > 0 ? (
                         <Autocomplete
                             disablePortal
-                            id="combo-box-demo2"
+                            id="branchs"
                             options={branchArray}
                             onChange={handleBranchSelect}
                             sx={{ width: 300 }}

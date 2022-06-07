@@ -22,6 +22,7 @@ const EmployeeManagement = Loadable(lazy(() => import('views/pages/employee-mana
 const Attendance = Loadable(lazy(() => import('views/pages/attendance/Attendance')));
 const Account = Loadable(lazy(() => import('views/pages/account/Account')));
 const DietPlan = Loadable(lazy(() => import('views/pages/dietPlan/DietPlan')));
+const Membership = Loadable(lazy(() => import('views/pages/membership/Membership')));
 
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
@@ -96,6 +97,10 @@ const MainRoutes = {
         {
             path: '/employeeManagement',
             element: <EmployeeManagement />
+        },
+        {
+            path: '/membership',
+            element: <Membership />
         },
         {
             path: '/attendance',

@@ -37,6 +37,14 @@ function ServiceType() {
     const [serviceData, setServiceData] = useState([]);
     const [BranchId, setBranchId] = React.useState();
     const [branchArray, setBranchArray] = React.useState([]);
+    const [serviceName, setServiceName] = React.useState();
+    const [serviceStatus, setServiceStatus] = React.useState(null);
+    const [bodyPart, setBodyPart] = React.useState(null);
+    const [addButton, setAddButtonDisable] = useState(true);
+    const [editableServiceName, setEditableServiceName] = React.useState();
+    const [editableServiceStatus, setEditableServiceStatus] = React.useState(null);
+    const [editableBodyPart, setEditableBodyPart] = React.useState(null);
+    const [editServiceId, setEditServiceId] = React.useState(null);
 
     useEffect(() => {
         const link = '/api/gym/getAllGymByUserId/';
@@ -94,16 +102,6 @@ function ServiceType() {
                 console.log(err);
             });
     };
-
-    const [serviceName, setServiceName] = React.useState();
-    const [serviceStatus, setServiceStatus] = React.useState(null);
-    const [bodyPart, setBodyPart] = React.useState(null);
-    const [addButton, setAddButtonDisable] = useState(true);
-    const [editableServiceName, setEditableServiceName] = React.useState();
-    const [editableServiceStatus, setEditableServiceStatus] = React.useState(null);
-    const [editableBodyPart, setEditableBodyPart] = React.useState(null);
-
-    const [editServiceId, setEditServiceId] = React.useState(null);
 
     const handleServiceName = (event) => {
         setServiceName(event.target.value);

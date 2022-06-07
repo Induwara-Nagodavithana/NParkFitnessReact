@@ -37,6 +37,7 @@
         "history": "^5.0.0",
         "material-ui-phone-number": "^3.0.0",
         "material-ui-popup-state": "^1.8.0",
+        "moment": "^2.29.3",
         "payhere-js-sdk": "^1.0.1",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",

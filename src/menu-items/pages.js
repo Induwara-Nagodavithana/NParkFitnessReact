@@ -165,6 +165,14 @@ const pages = {
             breadcrumbs: false
         },
         {
+            id: 'membership',
+            title: 'Membership',
+            type: 'item',
+            url: '/pages/membership',
+            icon: IconUsers,
+            breadcrumbs: false
+        },
+        {
             id: 'attendance',
             title: 'Attendance',
             type: 'item',
