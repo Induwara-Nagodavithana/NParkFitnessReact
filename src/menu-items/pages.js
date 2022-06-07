@@ -343,6 +343,15 @@ function pagesRoute() {
                             breadcrumbs: false
                         },
                         {
+                            id: 'price',
+                            title: 'Price',
+                            type: 'item',
+                            url: '/pages/price',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
+                        },
+                        {
                             id: 'payment-report',
                             title: 'Payment Report',
                             type: 'item',
@@ -452,6 +461,15 @@ function pagesRoute() {
                             title: 'Payment Report',
                             type: 'item',
                             url: '/pages/report/paymentReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
+                        },
+                        {
+                            id: 'price',
+                            title: 'Price',
+                            type: 'item',
+                            url: '/pages/price',
                             external: true,
                             target: true,
                             breadcrumbs: false
