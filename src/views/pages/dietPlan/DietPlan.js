@@ -15,6 +15,8 @@ import { makeStyles } from '@material-ui/styles';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
 import { useTheme } from '@material-ui/core/styles';
+import WeightDetails from '../reports/member-report/WeightDetails';
+import WeightChart from './component/WeightChart';
 
 const defaultOptions = {
     loop: true,
@@ -79,6 +81,8 @@ function DietPlan() {
     const [portionType, setPortionType] = useState('');
     const [exerciseCount, setExerciseCount] = useState('');
     const [monthCount, setMonthCount] = useState('');
+    const [weightData, setWeightData] = useState([]);
+    const [bodyWeight, setBodyWeight] = useState(0);
 
     const navigate = useNavigate();
 
@@ -127,6 +131,21 @@ function DietPlan() {
             });
     }
 
+    function getBodyDetails() {
+        HttpCommon.get(`/api/bodyDetails/getLatestBodyDetailsByMemberId/${memberId}`)
+            .then((res) => {
+                console.log(res);
+                console.log(res.data.data);
+                if (res.data.data.bodyDetails !== undefined && res.data.data.bodyDetails !== null) {
+                    setBodyWeight(parseFloat(res.data.data.bodyDetails.weight));
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                setIsLoading(false);
+            });
+    }
+
     function getBurnAndConsumedCalories() {
         HttpCommon.get(`/api/dietPlan/getCalorieConsumeAndBurnByMemberId/${memberId}`)
             .then((res) => {
@@ -148,6 +167,7 @@ function DietPlan() {
         setIsLoading(true);
         getDietPlans();
         getBurnAndConsumedCalories();
+        getBodyDetails();
     };
 
     const handleCalculate = () => {
@@ -157,6 +177,16 @@ function DietPlan() {
                 parseInt(monthCount, 10) *
                 0.00013;
             setWeightloss(tempWeightloss.toFixed(2));
+            let count = 0;
+            const tempWeightData = [];
+            while (count <= parseInt(monthCount, 10)) {
+                const tempWeightchange =
+                    (parseInt(consumedCal, 10) * 30 - parseInt(burnedCal, 10) * 4 * parseInt(exerciseCount, 10)) * count * 0.00013;
+                console.log(bodyWeight + tempWeightchange);
+                tempWeightData.push(parseFloat((bodyWeight + tempWeightchange).toFixed(2)));
+                count += 1;
+            }
+            setWeightData(tempWeightData);
         }
     };
 
@@ -442,8 +472,15 @@ function DietPlan() {
                             </Grid>
                         </Grid>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                    {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
                         Weight {weightloss > 0 ? 'Gain' : 'Loss'} is {Math.abs(weightloss)} kg
+                    </div> */}
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                        {weightData !== undefined && weightData.length > 0 ? (
+                            <WeightChart data={weightData} weightLoss={weightloss} />
+                        ) : (
+                            <></>
+                        )}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
                         <Button variant="outlined" color="secondary" sx={{ background: '#f3e5f5' }} onClick={handleCalculate}>
