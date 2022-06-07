@@ -35,7 +35,6 @@ const gymArray = [];
 
 const Membership = () => {
     const [userType, setUserType] = useState();
-    const [userID, setUserID] = useState();
     const [branchArray, setBranchArray] = useState([]);
     const [branchId, setBranchId] = useState();
     const [isDataAvailable, setIsDataAvailable] = useState(true);
@@ -99,7 +98,6 @@ const Membership = () => {
 
     useEffect(() => {
         setUserType(localStorage.getItem('type'));
-        setUserID(localStorage.getItem('userID'));
         console.log(userType);
         if (localStorage.getItem('type') === 'Owner') {
             getGym();

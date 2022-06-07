@@ -26,6 +26,7 @@ import HttpCommon from 'utils/http-common';
 import { Store } from 'react-notifications-component';
 import 'animate.css/animate.min.css';
 import SubscriptionTypeCard from './component/SubscriptionTypeCard';
+import { useNavigate } from 'react-router';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -42,6 +43,8 @@ const choice = [
 
 function SubscriptionType() {
     const [subscriptionData, setSubscriptionData] = useState([]);
+    const [userType, setUserType] = useState();
+    const navigate = useNavigate();
 
     function getSubscriptionTypes() {
         HttpCommon.get('/api/subscriptionType/')
@@ -53,8 +56,19 @@ function SubscriptionType() {
                 console.log(err);
             });
     }
+
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
     useEffect(() => {
-        getSubscriptionTypes();
+        setUserType(localStorage.getItem('type'));
+        if (localStorage.getItem('type') === 'Admin') {
+            getSubscriptionTypes();
+        } else {
+            unauthorizedlogin();
+        }
     }, []);
 
     const [contacts, setContacts] = React.useState();
