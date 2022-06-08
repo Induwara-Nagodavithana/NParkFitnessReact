@@ -23,7 +23,6 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
     };
 
     const handleAdd = () => {
-        console.log(foodItem);
         if (foodItem !== undefined && foodItem !== '') {
             const arr = items;
             arr.push({ foodItem });
@@ -34,25 +33,20 @@ const FirstStep = ({ mealType, setMealType, items, setItems, setAmount }) => {
             //         foodItem
             //     }
             // ]);
-            console.log(arr);
+
             setFoodItem('');
-            console.log(items);
-            console.log(foodItem);
         }
     };
 
     const handleMealType = (event) => {
-        console.log(event.target.value);
         setMealType(event.target.value);
     };
 
     const handleFoodItem = (event) => {
-        console.log(event.target.value);
         setFoodItem(event.target.value);
     };
 
     const handleAmount = (event) => {
-        console.log(event.target.value);
         setAmount(event.target.value);
     };
 

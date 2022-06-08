@@ -9,7 +9,6 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Grid,
     Tooltip,
     Dialog,
     DialogTitle,
@@ -22,14 +21,11 @@ import MainCard from 'ui-component/cards/MainCard';
 import { Search } from '@material-ui/icons';
 import HttpCommon from 'utils/http-common';
 import Paper from '@mui/material/Paper';
-import { logDOM } from '@testing-library/react';
 import { TableBody } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import moment from 'moment';
-import { makeStyles } from '@material-ui/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router';
+import messages from 'utils/messages';
 
 const gymArray = [];
 
@@ -45,49 +41,42 @@ const Membership = () => {
     const [viewDialogOpen, setViewDialogOpen] = useState(false);
     const [viewMember, setViewMember] = useState({});
     const navigate = useNavigate();
-    const descriptionElementRef = React.useRef(null);
 
     function getGym() {
         const link = '/api/gym/getAllGymByUserId/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
-                console.log(gymArray);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
 
     function getBranchMembers() {
-        console.log('getbranchMember');
         const link = '/api/user/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
-                console.log(res.data.data.branchId);
                 setBranchId(res.data.data.branchId);
                 const link2 = '/api/membership/getAllMembershipByBranchId/';
                 const key2 = res.data.data.branchId;
                 const url2 = link2 + key2;
-                console.log(url2);
                 HttpCommon.get(url2)
                     .then((res) => {
                         setIsDataAvailable(false);
-                        console.log(res.data.data.memberData);
+
                         setMemberData(res.data.data.memberData);
                     })
                     .catch((err) => {
-                        console.log(err);
+                        messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                     });
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
 
@@ -98,7 +87,6 @@ const Membership = () => {
 
     useEffect(() => {
         setUserType(localStorage.getItem('type'));
-        console.log(userType);
         if (localStorage.getItem('type') === 'Owner') {
             getGym();
         } else if (localStorage.getItem('type') === 'Manager' || localStorage.getItem('type') === 'Trainer') {
@@ -110,66 +98,55 @@ const Membership = () => {
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
-            console.log(newValue);
-
             const link = '/api/branch/getBranchByGymId/';
             const key = newValue.value;
             const url = link + key;
-            console.log(url);
             HttpCommon.get(url)
                 .then((res) => {
-                    console.log(res);
                     const tempArr = [];
                     res.data.data.forEach((element) => {
                         tempArr.push({ label: element.name, value: element.id });
                     });
                     setBranchArray(tempArr);
-                    console.log(tempArr);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                 });
         }
     };
 
     const handleBranchSelect = (event, newValue) => {
         if (newValue !== null) {
-            console.log(branchArray);
             setBranchId(newValue.value);
         }
     };
 
     const handleSearch = () => {
-        console.log(branchId);
         const link = '/api/membership/getAllMembershipByBranchId/';
         const key = branchId;
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
                 setIsDataAvailable(false);
-                console.log(res.data.data.memberData);
                 setMemberData(res.data.data.memberData);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     };
 
     function checkDate(type, expDate) {
         const today = new Date();
-        console.log(today);
-        console.log(expDate);
         const weekBeforExpireDate = new Date(expDate);
         weekBeforExpireDate.setDate(weekBeforExpireDate.getDate() - 7);
-        console.log(weekBeforExpireDate);
+
         let isInBetween = false;
         if (type === 'Ex') {
             isInBetween = moment(today).isSameOrAfter(expDate);
         } else {
             isInBetween = moment(today).isBetween(weekBeforExpireDate, expDate);
         }
-        console.log(isInBetween);
+
         return isInBetween;
     }
 
@@ -184,7 +161,7 @@ const Membership = () => {
                 handleSearch();
             })
             .catch((error) => {
-                console.log(error);
+                messages.addMessage({ title: 'Fail !', msg: error, type: 'danger' });
             });
 
         setMemberId(null);
@@ -192,14 +169,12 @@ const Membership = () => {
     };
 
     const handleViewButtonClick = (event, row) => {
-        console.log(row);
         setMemberId(row.id);
         setViewMember(row);
         setViewDialogOpen(true);
     };
 
     const handleButtonClick = (event, row) => {
-        console.log(row);
         setMemberId(row.id);
         setMembershipActivation(row.isActive);
         setDialogOpen(true);
@@ -211,7 +186,6 @@ const Membership = () => {
     };
 
     const handleShowProfile = () => {
-        // <MemberReport memberid={2} />;
         navigate('/pages/report/memberReport', { state: { memberid: memberId } });
     };
 
@@ -345,7 +319,7 @@ const Membership = () => {
                     '& .MuiDialog-container': {
                         '& .MuiPaper-root': {
                             width: '100%',
-                            maxWidth: '300px' // Set your width here
+                            maxWidth: '300px'
                         }
                     }
                 }}

@@ -19,13 +19,12 @@ import {
     Select,
     MenuItem,
     Stepper,
-    StepLable,
     Step,
     StepLabel,
-    IconButton
+    Grid
 } from '@material-ui/core';
-import React, { useEffect, Fragment } from 'react';
-import { Search, Visibility, VisibilityOff } from '@material-ui/icons';
+import React, { useEffect } from 'react';
+import { Search } from '@material-ui/icons';
 import MainCard from 'ui-component/cards/MainCard';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -33,12 +32,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { Box } from '@material-ui/system';
-import { Autocomplete, OutlinedInput, InputAdornment } from '@mui/material';
+import { Autocomplete } from '@mui/material';
 import HttpCommon from 'utils/http-common';
 import ReadOnlyRow from './component/ReadOnlyMemberManagementRow';
-
-import { Store } from 'react-notifications-component';
-import 'animate.css/animate.min.css';
 
 // Stepper
 import FirstStep from './component/FirstStep';
@@ -47,79 +43,166 @@ import ThirdStep from './component/ThirdStep';
 
 // Firebase Authentication
 import app from '../authentication/auth-forms/firebase';
-import { getAuth, createUserWithEmailAndPassword, IdTokenResult } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+
+import { useNavigate } from 'react-router';
+import messages from 'utils/messages';
 
 const gymArray = [];
+const adminArray = [];
+const ownerArray = [];
+const managerArray = [];
+const trainerArray = [];
 const steps = ['Sign Up', 'Personal Info', 'Contact Details'];
 
 function ManageEmployee() {
+    const [userType, setUserType] = React.useState();
     const [branchId, setBranchId] = React.useState();
-    const [radioValue, setRadioValue] = React.useState('Manager');
+
+    const [radioValue, setRadioValue] = React.useState();
+
     const [employeeData, setEmployeeData] = React.useState([]);
     const [openAddNewMemberDialog, setOpenAddNewMemberDialog] = React.useState(false);
     const [openEditMemberDialog, setEditMemberDialog] = React.useState(false);
     const [openViewMemberDialog, setViewMemberDialog] = React.useState(false);
 
-    const [employeeType, setEmployeeType] = React.useState('');
-
     const [branchArray, setBranchArray] = React.useState([]);
     const [editEmployeeId, setEditEmployeeId] = React.useState();
-    const [addNewEmployee, setAddNewEmployee] = React.useState();
-    const [editFormData, setEditFormData] = React.useState({
-        firstName: '',
-        lastName: '',
-        password: '',
-        birthDay: '',
-        email: '',
-        contactNo: '',
-        street: '',
-        lane: '',
-        city: ''
-    });
 
+    // Form Data
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [confirmPassword, setConfirmPassword] = React.useState('');
-    const [confirmValidation, setConfirmValidation] = React.useState(true);
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [birthday, setBirthday] = React.useState(null);
     const [genderValue, setGenderValue] = React.useState('Male');
     const [contactNo, setContactNo] = React.useState('');
+    const [employeeType, setEmployeeType] = React.useState('');
     const [street, setStreet] = React.useState('');
     const [lane, setLane] = React.useState('');
     const [city, setCity] = React.useState('');
     const [province, setProvince] = React.useState('');
-    const [showPassword, setShowPassword] = React.useState(false);
+
     const [addNewStaffButton, setAddNewStaffButton] = React.useState(true);
     const [uId, setUID] = React.useState('');
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
+    const [showTable, setShowTable] = React.useState(true);
+    const navigate = useNavigate();
 
-    useEffect(() => {
+    function showDataToAdmin() {
+        const allMembers = [...adminArray, ...ownerArray, ...managerArray, ...trainerArray];
+        setEmployeeData(allMembers);
+        setBranchId(null);
+        setRadioValue('Admin');
+        setAddNewStaffButton(false);
+        setShowTable(false);
+    }
+
+    function getGym() {
         const link = '/api/gym/getAllGymByUserId/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
-                console.log(gymArray);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
+    }
+
+    function getAllMembers() {
+        const tempAdArr = [];
+        const tempOwArr = [];
+        const url = '/api/user/';
+        HttpCommon.get(url)
+            .then(async (res) => {
+                await Promise.all(
+                    res.data.data.map((element) => {
+                        if (element.type === 'Admin') {
+                            adminArray.push(element);
+                            tempAdArr.push(element);
+                        } else if (element.type === 'Owner') {
+                            ownerArray.push(element);
+                            tempOwArr.push(element);
+                        } else if (element.type === 'Manager') {
+                            managerArray.push(element);
+                        } else if (element.type === 'Trainer') {
+                            trainerArray.push(element);
+                        }
+                        return 0;
+                    })
+                );
+                showDataToAdmin();
+            })
+            .catch((err) => {
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+            });
+    }
+
+    function showDataToManager() {
+        setRadioValue('Trainer');
+        const link = '/api/user/';
+        const key = localStorage.getItem('userID');
+        const url = link + key;
+        HttpCommon.get(url)
+            .then((res) => {
+                if (res.data.data !== null) {
+                    setBranchId(res.data.data.branchId);
+                    const link2 = '/api/user/findUserByBranchId/';
+                    const key2 = res.data.data.branchId;
+                    const url2 = link2 + key2;
+
+                    HttpCommon.get(url2)
+                        .then((res) => {
+                            const tempArr = [];
+                            res.data.data.forEach((element) => {
+                                if (element.type === 'Trainer') {
+                                    tempArr.push(element);
+                                }
+                            });
+
+                            setEmployeeData(tempArr);
+                            setAddNewStaffButton(false);
+                            setShowTable(false);
+                        })
+                        .catch((err) => {
+                            messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+                        });
+                }
+            })
+            .catch((err) => {
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+            });
+    }
+
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
+    useEffect(() => {
+        setUserType(localStorage.getItem('type'));
+        if (localStorage.getItem('type') === 'Admin') {
+            getAllMembers();
+        } else if (localStorage.getItem('type') === 'Owner') {
+            getGym();
+        } else if (localStorage.getItem('type') === 'Manager') {
+            showDataToManager();
+        } else if (localStorage.getItem('type') === 'Trainer') {
+            unauthorizedlogin();
+        }
     }, []);
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
-            console.log(newValue.value);
-
             const link = '/api/branch/getBranchByGymId/';
             const key = newValue.value;
             const url = link + key;
-            console.log(url);
+
             HttpCommon.get(url)
                 .then((res) => {
                     const tempArr = [];
@@ -127,10 +210,9 @@ function ManageEmployee() {
                         tempArr.push({ label: element.name, value: element.id });
                     });
                     setBranchArray(tempArr);
-                    console.log(tempArr);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                 });
         }
     };
@@ -142,40 +224,29 @@ function ManageEmployee() {
     };
 
     const handleRadioButton = (event) => {
-        console.log(event.target.value);
         setRadioValue(event.target.value);
     };
 
     const handleSearch = () => {
-        console.log(branchId);
-        console.log(radioValue);
         const link = '/api/user/findUserByBranchId/';
         const key = branchId;
         const url = link + key;
         HttpCommon.get(url)
             .then((res) => {
-                // const tempArr = [];
-                // res.data.data.forEach((element) => {
-                //     tempArr.push({ label: element.name, value: element.id });
-                // });
-                // setBranchArray(tempArr);
-                setEmployeeData(res.data.data);
-                console.log(res.data.data);
+                const tempArr = [];
+                res.data.data.forEach((element) => {
+                    if (element.type === radioValue) {
+                        tempArr.push(element);
+                    }
+                });
+                setEmployeeData(tempArr);
+
                 setAddNewStaffButton(false);
+                setShowTable(false);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
-    };
-
-    const handleAddFormChange = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...addNewEmployee };
-        newFormData[fieldName] = fieldValue;
-
-        setAddNewEmployee(newFormData);
     };
 
     const handleAddNewMemberSubmit = () => {
@@ -196,21 +267,16 @@ function ManageEmployee() {
             branchId
         })
             .then((res) => {
-                handleSearch();
-                Store.addNotification({
-                    title: 'Successfully Added!',
-                    message: 'New member added to the data base.',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                if (userType === 'Admin') {
+                    showDataToAdmin();
+                } else if (userType === 'Owner') {
+                    handleSearch();
+                } else {
+                    showDataToManager();
+                }
+
+                messages.addMessage({ title: 'Successfully Added!', msg: 'New member added to the data base.', type: 'success' });
+
                 setOpenAddNewMemberDialog(false);
                 setActiveStep(0);
                 setEmail('');
@@ -228,80 +294,41 @@ function ManageEmployee() {
                 setUID('');
             })
             .catch((error) => {
-                console.log(error);
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: error.massage, type: 'danger' });
             });
     };
 
     const handleViewClick = (event, row) => {
         setViewMemberDialog(true);
-
-        const formValues = {
-            firstName: row.firstName,
-            lastName: row.lastName,
-            password: row.password,
-            birthDay: row.birthDay,
-            email: row.email,
-            contactNo: row.contactNo,
-            street: row.street,
-            lane: row.lane,
-            city: row.city
-        };
-
-        setEditFormData(formValues);
+        setFirstName(row.firstName);
+        setLastName(row.lastName);
+        setEmail(row.email);
+        setBirthday(row.birthDay);
+        setContactNo(row.contactNo);
+        setGenderValue(row.gender);
         setEmployeeType(row.type);
+        setStreet(row.street);
+        setLane(row.lane);
+        setCity(row.city);
         setProvince(row.province);
     };
 
     // Handling edit click
     const handleEditClick = (event, row) => {
-        event.preventDefault();
-        console.log('ContactId');
-        console.log(row.id);
-        console.log(row);
         setEditEmployeeId(row.id);
-
         setEditMemberDialog(true);
-
-        const formValues = {
-            firstName: row.firstName,
-            lastName: row.lastName,
-            password: row.password,
-            birthDay: row.birthDay,
-            email: row.email,
-            contactNo: row.contactNo,
-            street: row.street,
-            lane: row.lane,
-            city: row.city
-        };
-
-        setEditFormData(formValues);
+        setFirstName(row.firstName);
+        setLastName(row.lastName);
+        setEmail(row.email);
+        setBirthday(row.birthDay);
+        setContactNo(row.contactNo);
+        setGenderValue(row.gender);
         setEmployeeType(row.type);
+        setStreet(row.street);
+        setLane(row.lane);
+        setCity(row.city);
         setProvince(row.province);
     };
-
-    // const handleEditFormChange = (event) => {
-    //     const fieldName = event.target.getAttribute('name');
-    //     const fieldValue = event.target.value;
-
-    //     const newFormData = { ...editFormData };
-    //     newFormData[fieldName] = fieldValue;
-
-    //     setEditFormData(newFormData);
-    // };
 
     const handleEditMemberSubmit = () => {
         const link = '/api/user/';
@@ -313,52 +340,14 @@ function ManageEmployee() {
         })
             .then((res) => {
                 handleSearch();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Subscription Type Edited Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Edit Successfully !', msg: 'Subscription Type Edited Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: error.message, type: 'danger' });
             });
 
         setEditEmployeeId(null);
         setEditMemberDialog(false);
-    };
-
-    const handleEmail = (event) => {
-        console.log(event.target.value);
-        setEmail(event.target.value);
-    };
-
-    const handlePassword = (event) => {
-        console.log(event.target.value);
-        setPassword(event.target.value);
     };
 
     // Add New Member Dialog
@@ -368,15 +357,10 @@ function ManageEmployee() {
     const handleCloseAddNewMember = () => {
         setOpenAddNewMemberDialog(false);
     };
-    // const handleGenderButton = (event) => {
-    //     setGenderValue(event.target.value);
-    // };
+
     const handleEmployeeType = (event) => {
         setEmployeeType(event.target.value);
     };
-    // const handleProvince = (event) => {
-    //     setProvince(event.target.value);
-    // };
 
     const handleCloseEditMember = () => {
         setEditEmployeeId(null);
@@ -386,19 +370,11 @@ function ManageEmployee() {
     const handleCloseViewMember = () => {
         setViewMemberDialog(false);
     };
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
 
     // Stepper
     const isStepSkipped = (step) => skipped.has(step);
 
     const handleNext = () => {
-        console.log('step up');
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
             newSkipped = new Set(newSkipped.values());
@@ -418,12 +394,15 @@ function ManageEmployee() {
             case 0:
                 return (
                     <FirstStep
-                        setEmail={setEmail}
-                        setPassword={setPassword}
-                        setConfirmPassword={setConfirmPassword}
+                        userType={userType}
                         email={email}
                         password={password}
                         confirmPassword={confirmPassword}
+                        employeeType={employeeType}
+                        setEmail={setEmail}
+                        setPassword={setPassword}
+                        setConfirmPassword={setConfirmPassword}
+                        setEmployeeType={setEmployeeType}
                     />
                 );
             case 1:
@@ -461,210 +440,127 @@ function ManageEmployee() {
     function validations() {
         switch (activeStep) {
             case 0:
-                console.log('step00');
-                if (password === '') {
-                    Store.addNotification({
-                        title: 'Fail!',
-                        message: 'Field cannot be empty.',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 2000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                if (password === '' || email === '') {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
                     setActiveStep(0);
                 } else if (password !== confirmPassword) {
-                    Store.addNotification({
-                        title: 'Fail!',
-                        message: 'Confirm Password did not match.',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 2000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Fail !', msg: 'Confirm Password did not match.', type: 'danger' });
                     setActiveStep(0);
                     setPassword('');
                     setConfirmPassword('');
-                } else if (password === confirmPassword) {
-                    // confirmValidation(false);
+                } else if (password === confirmPassword && email !== '') {
                     handleNext();
                 }
-
                 break;
             case 1:
-                console.log('step01');
                 if (firstName !== '' && lastName !== '' && birthday !== '') {
                     handleNext();
                 } else {
-                    Store.addNotification({
-                        title: 'Fail!',
-                        message: 'Field cannot be empty.',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 2000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
                 }
                 break;
             case 2:
-                console.log('step02');
                 if (contactNo !== '' && street !== '' && lane !== '' && city !== '' && province !== '') {
                     const auth = getAuth(app);
                     createUserWithEmailAndPassword(auth, email, password)
                         .then((userCredential) => {
-                            // Signed in
-                            console.log(userCredential.user.uid);
                             setUID(userCredential.user.uid);
-                            // const user = userCredential.user;
-                            // ...
-                            Store.addNotification({
-                                title: 'successfull!',
-                                message: 'added successfully.',
-                                type: 'success',
-                                insert: 'top',
-                                container: 'top-right',
-                                animationIn: ['animate__animated', 'animate__fadeIn'],
-                                animationOut: ['animate__animated', 'animate__fadeOut'],
-                                dismiss: {
-                                    duration: 2000,
-                                    onScreen: true
-                                },
-                                width: 500
-                            });
                             handleNext();
                         })
                         .catch((error) => {
-                            const errorCode = error.code;
-                            const errorMessage = error.message;
-                            Store.addNotification({
+                            messages.addMessage({
                                 title: 'Fail!',
-                                message: errorMessage,
-                                type: 'danger',
-                                insert: 'top',
-                                container: 'top-right',
-                                animationIn: ['animate__animated', 'animate__fadeIn'],
-                                animationOut: ['animate__animated', 'animate__fadeOut'],
-                                dismiss: {
-                                    duration: 2000,
-                                    onScreen: true
-                                },
-                                width: 500
+                                msg: error.message,
+                                type: 'danger'
                             });
-                            // ..
                         });
                 } else {
-                    Store.addNotification({
-                        title: 'Fail!',
-                        message: 'Field cannot be empty.',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 2000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
                 }
                 break;
             default:
-                console.log('step default');
-                Store.addNotification({
-                    title: 'Failed!',
-                    message: 'Active Step Not Found.',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: 'Active Step Not Found.', type: 'danger' });
         }
     }
 
     return (
         <>
             <MainCard title="Manage Employee">
-                <Stack spacing={2}>
-                    <Autocomplete
-                        disablePortal
-                        id="gyms"
-                        options={gymArray}
-                        onChange={handleGymSelect}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} label="Gym" />}
-                    />
-                    {branchArray.length > 0 ? (
-                        <Autocomplete
-                            disablePortal
-                            id="branchs"
-                            options={branchArray}
-                            onChange={handleBranchSelect}
-                            sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Branch" />}
-                        />
-                    ) : (
-                        <></>
-                    )}
+                {userType === 'Owner' ? (
+                    <>
+                        <Stack spacing={2}>
+                            <Autocomplete
+                                disablePortal
+                                id="gyms"
+                                options={gymArray}
+                                onChange={handleGymSelect}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Gym" />}
+                            />
+                            {branchArray.length > 0 ? (
+                                <Autocomplete
+                                    disablePortal
+                                    id="branchs"
+                                    options={branchArray}
+                                    onChange={handleBranchSelect}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Branch" />}
+                                />
+                            ) : (
+                                <></>
+                            )}
 
-                    <RadioGroup row value={radioValue} onChange={handleRadioButton}>
-                        <FormControlLabel value="Manager" control={<Radio color="secondary" />} label="Manager" />
-                        <FormControlLabel value="Trainer" control={<Radio color="secondary" />} label="Trainer" />
-                    </RadioGroup>
-                </Stack>
+                            <RadioGroup row value={radioValue} onChange={handleRadioButton}>
+                                <FormControlLabel value="Manager" control={<Radio color="secondary" />} label="Manager" />
+                                <FormControlLabel value="Trainer" control={<Radio color="secondary" />} label="Trainer" />
+                            </RadioGroup>
+                        </Stack>
+                        <div style={{ height: 10 }} />
 
-                <div style={{ height: 10 }} />
+                        <Button variant="contained" color="secondary" startIcon={<Search />} size="smaLL" onClick={handleSearch}>
+                            Search
+                        </Button>
+                    </>
+                ) : (
+                    <></>
+                )}
 
-                <Button variant="contained" color="secondary" startIcon={<Search />} size="smaLL" onClick={handleSearch}>
-                    Search
-                </Button>
+                <div style={{ height: 20 }} />
+                {showTable !== true ? (
+                    <Grid container justifyContent="flex-end">
+                        <AnimateButton>
+                            <Button
+                                disableElevation
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                onClick={handleClickAddNewMember}
+                                disabled={addNewStaffButton}
+                            >
+                                Add New Staff
+                            </Button>
+                        </AnimateButton>
+                    </Grid>
+                ) : (
+                    <></>
+                )}
 
-                <div style={{ height: 50 }} />
+                <div style={{ height: 20 }} />
 
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                        <TableHead>
+                <TableContainer component={Paper} hidden={showTable}>
+                    <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+                        <TableHead sx={{ backgroundColor: '#512da8' }}>
                             <TableRow>
-                                <TableCell align="center">Use Id</TableCell>
-                                <TableCell align="center">Name</TableCell>
-                                <TableCell align="center">Contact No</TableCell>
-                                <TableCell align="right">
-                                    <AnimateButton>
-                                        <Button
-                                            disableElevation
-                                            size="medium"
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={handleClickAddNewMember}
-                                            disabled={addNewStaffButton}
-                                        >
-                                            Add New Staff
-                                        </Button>
-                                    </AnimateButton>
+                                <TableCell align="center" sx={{ color: 'white' }}>
+                                    Use Id
                                 </TableCell>
+                                <TableCell align="center" sx={{ color: 'white' }}>
+                                    Name
+                                </TableCell>
+                                <TableCell align="center" sx={{ color: 'white' }}>
+                                    Contact No
+                                </TableCell>
+                                <TableCell align="right" sx={{ color: 'white' }} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -676,7 +572,7 @@ function ManageEmployee() {
                                         ) : (
                                             <ReadOnlyRow
                                                 row={row}
-                                                radioValue={radioValue}
+                                                userType={userType}
                                                 handleViewClick={handleViewClick}
                                                 handleEditClick={handleEditClick}
                                             />
@@ -690,6 +586,7 @@ function ManageEmployee() {
                     </Table>
                 </TableContainer>
             </MainCard>
+
             <Dialog open={openAddNewMemberDialog} onClose={handleCloseAddNewMember}>
                 <DialogTitle>Add New Staff Member</DialogTitle>
                 <DialogContent>
@@ -737,7 +634,18 @@ function ManageEmployee() {
                                     inputProps={{ readOnly: true }}
                                 />
                                 <TextField fullWidth value={province} label="Province" margin="dense" inputProps={{ readOnly: true }} />
-                                <TextField fullWidth value={branchId} label="Branch Id" margin="dense" inputProps={{ readOnly: true }} />
+                                {userType !== 'Admin' ? (
+                                    <TextField
+                                        fullWidth
+                                        value={branchId}
+                                        label="Branch Id"
+                                        margin="dense"
+                                        inputProps={{ readOnly: true }}
+                                    />
+                                ) : (
+                                    <></>
+                                )}
+
                                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                     <Button color="inherit" onClick={handleCloseAddNewMember} sx={{ mr: 1 }}>
                                         Close
@@ -753,11 +661,6 @@ function ManageEmployee() {
                                         Back
                                     </Button>
                                     <Box sx={{ flex: '1 1 auto' }} />
-                                    {/* if(activeStep === steps.length - 1)<Button onClick={handleNext}>Finish</Button>else if(activeStep===0 )
-                                    <Button onClick={handleNext} disabled={checkConfirm}>
-                                        Next
-                                    </Button>
-                                    else<Button onClick={handleNext}>Next</Button> */}
                                     <Button onClick={validations}>{activeStep === steps.length - 1 ? 'Finish' : 'Next'}</Button>
                                 </Box>
                             </>
@@ -769,10 +672,23 @@ function ManageEmployee() {
             <Dialog open={openEditMemberDialog} onClose={handleCloseAddNewMember}>
                 <DialogTitle>Edit Staff Member Details</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Owner can change only the type of member</DialogContentText>
+                    {userType !== 'Admin' ? (
+                        <>
+                            {userType !== 'Owner' ? (
+                                <DialogContentText>Manager can change only the type of member</DialogContentText>
+                            ) : (
+                                <>
+                                    <DialogContentText>Owner can change only the type of member</DialogContentText>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <DialogContentText>Admin can change only the type of member</DialogContentText>
+                    )}
+
                     <TextField
                         fullWidth
-                        value={editFormData.firstName}
+                        value={firstName}
                         label="First Name"
                         margin="dense"
                         name="firstName"
@@ -780,31 +696,17 @@ function ManageEmployee() {
                     />
                     <TextField
                         fullWidth
-                        value={editFormData.lastName}
+                        value={lastName}
                         label="Last Name"
                         margin="dense"
                         name="lastName"
                         inputProps={{ readOnly: true }}
                     />
+                    <TextField fullWidth value={email} label="Email" margin="dense" name="email" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={birthday} label="Birthday" margin="dense" name="birthDay" inputProps={{ readOnly: true }} />
                     <TextField
                         fullWidth
-                        value={editFormData.email}
-                        label="Email"
-                        margin="dense"
-                        name="email"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.birthDay}
-                        label="Birthday"
-                        margin="dense"
-                        name="birthDay"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.contactNo}
+                        value={contactNo}
                         label="Contact Number"
                         margin="dense"
                         name="contactNo"
@@ -818,38 +720,38 @@ function ManageEmployee() {
                         </RadioGroup>
                     </FormControl>
                     <Box sx={{ minWidth: 120 }}>
-                        <FormControl fullWidth required>
-                            <InputLabel id="type-lable">Type</InputLabel>
-                            <Select labelId="type-lable" id="type-select" value={employeeType} label="Type" onChange={handleEmployeeType}>
-                                <MenuItem value="Manager">Manager</MenuItem>
-                                <MenuItem value="Trainer">Trainer</MenuItem>
+                        <FormControl fullWidth>
+                            <InputLabel id="type-lable" required>
+                                Type
+                            </InputLabel>
+                            <Select
+                                labelId="type-lable"
+                                id="type-select"
+                                value={employeeType}
+                                label="Type**"
+                                onChange={handleEmployeeType}
+                                required
+                            >
+                                {userType === 'Admin' ? (
+                                    <MenuItem value="Admin">Admin</MenuItem>
+                                ) : (
+                                    <>
+                                        {userType === 'Manager' ? (
+                                            <MenuItem value="Trainer">Trainer</MenuItem>
+                                        ) : (
+                                            <>
+                                                <MenuItem value="Manager">Manager</MenuItem>
+                                                <MenuItem value="Trainer">Trainer</MenuItem>
+                                            </>
+                                        )}
+                                    </>
+                                )}
                             </Select>
                         </FormControl>
                     </Box>
-                    <TextField
-                        fullWidth
-                        value={editFormData.street}
-                        label="Street"
-                        margin="dense"
-                        name="street"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.lane}
-                        label="Lane"
-                        margin="dense"
-                        name="lane"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.city}
-                        label="City"
-                        margin="dense"
-                        name="city"
-                        inputProps={{ readOnly: true }}
-                    />
+                    <TextField fullWidth value={street} label="Street" margin="dense" name="street" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={lane} label="Lane" margin="dense" name="lane" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={city} label="City" margin="dense" name="city" inputProps={{ readOnly: true }} />
                     <TextField fullWidth value={province} label="Province" margin="dense" name="province" inputProps={{ readOnly: true }} />
                 </DialogContent>
                 <DialogActions>
@@ -860,10 +762,9 @@ function ManageEmployee() {
             <Dialog open={openViewMemberDialog} onClose={handleCloseAddNewMember}>
                 <DialogTitle>Member Details</DialogTitle>
                 <DialogContent>
-                    {/* <DialogContentText>Owner can change only the type of member</DialogContentText> */}
                     <TextField
                         fullWidth
-                        value={editFormData.firstName}
+                        value={firstName}
                         label="First Name"
                         margin="dense"
                         name="firstName"
@@ -871,31 +772,17 @@ function ManageEmployee() {
                     />
                     <TextField
                         fullWidth
-                        value={editFormData.lastName}
+                        value={lastName}
                         label="Last Name"
                         margin="dense"
                         name="lastName"
                         inputProps={{ readOnly: true }}
                     />
+                    <TextField fullWidth value={email} label="Email" margin="dense" name="email" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={birthday} label="Birthday" margin="dense" name="birthDay" inputProps={{ readOnly: true }} />
                     <TextField
                         fullWidth
-                        value={editFormData.email}
-                        label="Email"
-                        margin="dense"
-                        name="email"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.birthDay}
-                        label="Birthday"
-                        margin="dense"
-                        name="birthDay"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.contactNo}
+                        value={contactNo}
                         label="Contact Number"
                         margin="dense"
                         name="contactNo"
@@ -909,30 +796,9 @@ function ManageEmployee() {
                         </RadioGroup>
                     </FormControl>
                     <TextField fullWidth value={employeeType} label="Employee Type" margin="dense" inputProps={{ readOnly: true }} />
-                    <TextField
-                        fullWidth
-                        value={editFormData.street}
-                        label="Street"
-                        margin="dense"
-                        name="street"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.lane}
-                        label="Lane"
-                        margin="dense"
-                        name="lane"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={editFormData.city}
-                        label="City"
-                        margin="dense"
-                        name="city"
-                        inputProps={{ readOnly: true }}
-                    />
+                    <TextField fullWidth value={street} label="Street" margin="dense" name="street" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={lane} label="Lane" margin="dense" name="lane" inputProps={{ readOnly: true }} />
+                    <TextField fullWidth value={city} label="City" margin="dense" name="city" inputProps={{ readOnly: true }} />
                     <TextField fullWidth value={province} label="Province" margin="dense" name="province" inputProps={{ readOnly: true }} />
                 </DialogContent>
                 <DialogActions>
@@ -942,5 +808,4 @@ function ManageEmployee() {
         </>
     );
 }
-
 export default ManageEmployee;

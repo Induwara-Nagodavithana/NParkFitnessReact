@@ -20,10 +20,8 @@ import EditableRow from './component/EditableRowService';
 import ReadOnlyRow from './component/ReadOnlyServiceRow';
 import { Search } from '@material-ui/icons';
 import HttpCommon from 'utils/http-common';
-
-import { Store } from 'react-notifications-component';
-import 'animate.css/animate.min.css';
 import { useNavigate } from 'react-router';
+import messages from 'utils/messages';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -48,6 +46,7 @@ function ServiceType() {
     const [editableBodyPart, setEditableBodyPart] = useState(null);
     const [editServiceId, setEditServiceId] = useState(null);
     const [showTable, setShowTable] = useState(true);
+
     // Create and get my reference in Add New Subscription type
     const mainCard2Ref = useRef(null);
     const mainCard1Ref = useRef(null);
@@ -62,14 +61,12 @@ function ServiceType() {
         const link = '/api/gym/getAllGymByUserId/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
-                console.log(gymArray);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
 
@@ -77,26 +74,23 @@ function ServiceType() {
         const link = '/api/user/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
-                console.log(res.data.data.branchId);
                 setBranchId(res.data.data.branchId);
                 const link2 = '/api/serviceType/getServiceTypeByBranchId/';
                 const key2 = res.data.data.branchId;
                 const url2 = link2 + key2;
-                console.log(url2);
                 HttpCommon.get(url2)
                     .then((res) => {
                         setServiceData(res.data.data.serviceType);
                         setShowTable(false);
                     })
                     .catch((err) => {
-                        console.log(err);
+                        messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                     });
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
 
@@ -113,12 +107,9 @@ function ServiceType() {
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
-            console.log(newValue.value);
-
             const link = '/api/branch/getBranchByGymId/';
             const key = newValue.value;
             const url = link + key;
-            console.log(url);
             HttpCommon.get(url)
                 .then((res) => {
                     const tempArr = [];
@@ -126,10 +117,9 @@ function ServiceType() {
                         tempArr.push({ label: element.name, value: element.id });
                     });
                     setBranchArray(tempArr);
-                    console.log(tempArr);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                 });
         }
     };
@@ -150,7 +140,7 @@ function ServiceType() {
                 setShowTable(false);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     };
 
@@ -168,7 +158,6 @@ function ServiceType() {
     };
 
     const handleServiceStatus = (event, newValue) => {
-        console.log(newValue);
         setServiceStatus(newValue);
     };
 
@@ -188,39 +177,10 @@ function ServiceType() {
         })
             .then((res) => {
                 handleSearch();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'New Service Added Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'New Service Added Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: 'Fill all required Data',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: 'Fill all required Data', type: 'danger' });
             });
 
         setServiceName(null);
@@ -233,7 +193,6 @@ function ServiceType() {
         const link = '/api/serviceType/';
         const key = editServiceId;
         const url = link + key;
-
         HttpCommon.put(url, {
             name: editableServiceName,
             status: editableServiceStatus,
@@ -241,39 +200,10 @@ function ServiceType() {
         })
             .then((res) => {
                 handleSearch();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Service Edited Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'Service Edited Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: error, type: 'danger' });
             });
 
         setEditServiceId(null);
@@ -281,7 +211,6 @@ function ServiceType() {
 
     const handleEditClick = (event, row) => {
         setEditServiceId(row.id);
-
         setEditableServiceName(row.name);
         setEditableServiceStatus(row.status);
         setEditableBodyPart(row.bodyPart);

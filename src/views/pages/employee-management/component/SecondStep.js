@@ -5,19 +5,12 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 const SecondStep = ({ firstName, lastName, birthday, genderValue, setFirstName, setLastName, setBirthday, setGenderValue }) => {
     const handleFirstName = (event) => {
-        console.log(event.target.value);
         setFirstName(event.target.value);
     };
     const handleLastName = (event) => {
-        console.log(event.target.value);
         setLastName(event.target.value);
     };
-    // const handleBirthday = (event) => {
-    //     console.log(event);
-    //     // setBirthday(event.target.value);
-    // };
     const handleGender = (event) => {
-        console.log(event.target.value);
         setGenderValue(event.target.value);
     };
     return (
@@ -50,7 +43,7 @@ const SecondStep = ({ firstName, lastName, birthday, genderValue, setFirstName, 
                     label="Birthday"
                     value={birthday}
                     onChange={(newValue) => {
-                        setBirthday(newValue);
+                        setBirthday(newValue.slice(0, 15));
                     }}
                     renderInput={(params) => <TextField {...params} />}
                 />

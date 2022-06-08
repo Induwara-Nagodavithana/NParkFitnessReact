@@ -2,13 +2,11 @@ import React from 'react';
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
-import { Button, Card, CardContent, Grid, Link, Stack, Typography } from '@material-ui/core';
-import BadgeIcon from '@mui/icons-material/Badge';
+import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-
-import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2, IconFileDescription } from '@tabler/icons';
+import { IconFileAnalytics, IconBulb, IconReceipt2, IconFileDescription } from '@tabler/icons';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -63,12 +61,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| PROFILE MENU - UPGRADE PLAN CARD ||=========================== //
-
 const SubscriptionTypeCard = ({ row, handleEditClick }) => {
     const classes = useStyles();
-    console.log(row);
-    console.log(row.id);
+
     let status;
     if (row.isActive) {
         status = 'Active';

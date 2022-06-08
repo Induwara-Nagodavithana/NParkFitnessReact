@@ -1,13 +1,6 @@
-import React, { useEffect, useRef, useState, Fragment } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Paper,
-    TableHead,
     Grid,
     TextField,
     Autocomplete,
@@ -18,15 +11,11 @@ import {
     DialogTitle
 } from '@material-ui/core';
 import MainCard from 'ui-component/cards/MainCard';
-import AnimateButton from 'ui-component/extended/AnimateButton';
 import MuiAlert from '@mui/material/Alert';
-import ReadOnlyRow from './component/ReadOnlySubscriptionRow';
 import HttpCommon from 'utils/http-common';
-
-import { Store } from 'react-notifications-component';
-import 'animate.css/animate.min.css';
 import SubscriptionTypeCard from './component/SubscriptionTypeCard';
 import { useNavigate } from 'react-router';
+import messages from 'utils/messages';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -49,11 +38,10 @@ function SubscriptionType() {
     function getSubscriptionTypes() {
         HttpCommon.get('/api/subscriptionType/')
             .then((res) => {
-                console.log(res.data.data);
                 setSubscriptionData(res.data.data);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
 
@@ -129,39 +117,10 @@ function SubscriptionType() {
         })
             .then((res) => {
                 getSubscriptionTypes();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'New Subscription Type Added Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'New Subscription Type Added Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: 'Fill all required Data',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: 'Fill all required Data', type: 'danger' });
             });
     };
 
@@ -170,7 +129,6 @@ function SubscriptionType() {
         const link = '/api/subscriptionType/';
         const key = editContactId;
         const url = link + key;
-
         HttpCommon.put(url, {
             type: editFormData.type,
             description: editFormData.description,
@@ -183,38 +141,10 @@ function SubscriptionType() {
         })
             .then((res) => {
                 getSubscriptionTypes();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Subscription Type Edited Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'Subscription Type Edited Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: error, type: 'danger' });
             });
 
         setEditContctId(null);
@@ -223,8 +153,6 @@ function SubscriptionType() {
 
     // Handling edit click
     const handleEditClick = (event, row) => {
-        console.log('ContactId');
-        console.log(row.id);
         setEditContctId(row.id);
         setOpenDialog(true);
 

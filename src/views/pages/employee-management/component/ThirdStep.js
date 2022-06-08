@@ -6,29 +6,31 @@ import MuiPhoneNumber from 'material-ui-phone-number';
 
 const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setStreet, setLane, setCity, setProvince }) => {
     const handleContactNo = (value) => {
-        console.log(value);
         setContactNo(value);
     };
     const handleStreet = (event) => {
-        console.log(event.target.value);
         setStreet(event.target.value);
     };
     const handleLane = (event) => {
-        console.log(event.target.value);
         setLane(event.target.value);
     };
     const handleCity = (event) => {
-        console.log(event.target.value);
         setCity(event.target.value);
     };
     const handlePrivince = (event) => {
-        console.log(event.target.value);
         setProvince(event.target.value);
     };
     return (
         <div>
             <div style={{ height: 15 }} />
-            <MuiPhoneNumber defaultCountry="lk" onChange={handleContactNo} variant="outlined" label="Contact No" required />
+            <MuiPhoneNumber
+                defaultCountry="lk"
+                value={contactNo}
+                onChange={handleContactNo}
+                variant="outlined"
+                label="Contact No"
+                required
+            />
 
             <TextField
                 required
