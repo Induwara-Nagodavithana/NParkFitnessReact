@@ -38,6 +38,7 @@ import ScheduleDetails from './ScheduleDetails';
 import DietDetails from './DietDetails';
 import GoalDetails from './GoalDetails';
 import BMIChart from './BMIChart';
+import messages from 'utils/messages';
 
 // assets
 
@@ -272,20 +273,7 @@ const MemberReport = ({ memberid }) => {
             setDataLoading(false);
 
             if (response.data.data.member === null) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Member Id Cannot Found In Your Gym',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Member Id Cannot Found In Your Gym', type: 'danger' });
             }
         });
     }

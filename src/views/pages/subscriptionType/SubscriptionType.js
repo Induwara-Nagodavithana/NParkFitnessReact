@@ -25,6 +25,7 @@ import HttpCommon from 'utils/http-common';
 
 import { Store } from 'react-notifications-component';
 import 'animate.css/animate.min.css';
+import messages from 'utils/messages';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -113,39 +114,11 @@ function SubscriptionType() {
         })
             .then((res) => {
                 getSubscriptionTypes();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'New Subscription Type Added Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'New Subscription Type Added Successfully', type: 'success' });
             })
             .catch((error) => {
                 console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: 'Fill all required Data',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail!', msg: 'Fill all required Data', type: 'danger' });
             });
     };
 
@@ -167,38 +140,11 @@ function SubscriptionType() {
         })
             .then((res) => {
                 getSubscriptionTypes();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Subscription Type Edited Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'Subscription Type Edited Successfully', type: 'success' });
             })
             .catch((error) => {
                 console.log(error);
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail!', msg: error, type: 'danger' });
             });
 
         setEditContctId(null);

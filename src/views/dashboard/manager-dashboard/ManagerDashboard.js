@@ -21,6 +21,7 @@ import { Store } from 'react-notifications-component';
 
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 
 const defaultOptions = {
@@ -148,21 +149,7 @@ const ManagerDashboard = () => {
                 };
 
                 setAttendanceCount(body);
-
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'User is not registered to a branch.',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'User is not registered to a branch.', type: 'danger' });
                 setDataLoading(false);
             }
         });

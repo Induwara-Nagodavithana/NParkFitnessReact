@@ -4,6 +4,7 @@ import { store } from '../store/index';
 import { Navigate } from 'react-router-dom';
 import React, { Component } from 'react';
 import { Store } from 'react-notifications-component';
+import Message from 'utils/messages';
 
 // const { token } = store.getState();
 
@@ -60,21 +61,22 @@ instance.interceptors.response.use(
             if (error.response.data !== undefined && error.response.data.message !== undefined) {
                 msg = error.response.data.message;
             }
+            Message.addMessage({ title: 'Error was Occured!', msg, type: 'danger' });
 
-            Store.addNotification({
-                title: 'Error Occured!',
-                message: msg,
-                type: 'danger',
-                insert: 'top',
-                container: 'top-right',
-                animationIn: ['animate__animated', 'animate__fadeIn'],
-                animationOut: ['animate__animated', 'animate__fadeOut'],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                },
-                width: 500
-            });
+            // Store.addNotification({
+            //     title: 'Error Occured!',
+            //     message: msg,
+            //     type: 'danger',
+            //     insert: 'top',
+            //     container: 'top-right',
+            //     animationIn: ['animate__animated', 'animate__fadeIn'],
+            //     animationOut: ['animate__animated', 'animate__fadeOut'],
+            //     dismiss: {
+            //         duration: 5000,
+            //         onScreen: true
+            //     },
+            //     width: 500
+            // });
         }
         return Promise.reject(error);
     }

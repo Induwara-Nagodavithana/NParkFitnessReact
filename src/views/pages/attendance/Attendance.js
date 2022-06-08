@@ -45,6 +45,7 @@ import { gridSpacing } from 'store/constant';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@material-ui/core/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
+import messages from 'utils/messages';
 
 const gymArray = [];
 const steps = ['Sign Up', 'Personal Info', 'Contact Details'];
@@ -145,38 +146,12 @@ function Attendance() {
                 setEmployeeData(res.data.data);
                 console.log(res.data.data);
                 if (res.data.data.length < 1) {
-                    Store.addNotification({
-                        title: 'Error Occured!',
-                        message: 'Attendance Not Found',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Error Occured!', msg: 'Attendance Not Found', type: 'danger' });
                 }
             })
             .catch((err) => {
                 console.log(err);
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Attendance Cannot Found',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Attendance Cannot Found', type: 'danger' });
             });
     };
 
@@ -188,38 +163,12 @@ function Attendance() {
                     setAttendItems(res.data.data);
                     setViewMemberDialog(true);
                 } else {
-                    Store.addNotification({
-                        title: 'Error Occured!',
-                        message: 'Attend Details Not Found',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Error Occured!', msg: 'Attend Details Not Found', type: 'danger' });
                 }
             })
             .catch((err) => {
                 console.log(err);
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Attend Details Cannot Found',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Attend Details Cannot Found', type: 'danger' });
             });
     };
 

@@ -44,6 +44,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import app from './firebase';
 import { getAuth, createUserWithEmailAndPassword, IdTokenResult } from 'firebase/auth';
 import { Step, StepButton, Stepper } from '@material-ui/core';
+import messages from 'utils/messages';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -192,20 +193,7 @@ const FirebaseRegister = ({ ...others }) => {
                     if (response.data.success) {
                         navigate('/', { replace: true });
                     } else {
-                        Store.addNotification({
-                            title: 'Error Occured!',
-                            message: 'User Account Registration Not Succesful!',
-                            type: 'danger',
-                            insert: 'top',
-                            container: 'top-right',
-                            animationIn: ['animate__animated', 'animate__fadeIn'],
-                            animationOut: ['animate__animated', 'animate__fadeOut'],
-                            dismiss: {
-                                duration: 5000,
-                                onScreen: true
-                            },
-                            width: 500
-                        });
+                        messages.addMessage({ title: 'Error Occured!', msg: 'User Account Registration Not Succesful!', type: 'danger' });
                     }
                 });
             })
@@ -214,20 +202,7 @@ const FirebaseRegister = ({ ...others }) => {
                 const errorMessage = error.message;
                 console.log(errorCode);
                 console.log(errorMessage);
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: errorMessage,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
             });
 
         // setTimeout(async () => {

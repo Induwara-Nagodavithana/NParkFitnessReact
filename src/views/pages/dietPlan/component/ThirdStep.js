@@ -11,6 +11,7 @@ import axios from 'axios';
 import HttpCommon from 'utils/http-common';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 
 const defaultOptions = {
     loop: true,
@@ -159,36 +160,11 @@ const ThirdStep = ({
             if (response.data.success) {
                 getDietPlans();
                 setOpenAddNewDietPlanDialog(false);
-                Store.addNotification({
-                    title: 'Saved!',
-                    message: 'Diet Plan Uploaded',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Saved!', msg: 'Diet Plan Uploaded', type: 'success' });
+
                 // window.location.reload(false);
             } else {
-                Store.addNotification({
-                    title: 'Error!',
-                    message: 'Diet Plan Not Created',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error!', msg: 'Diet Plan Not Created', type: 'danger' });
             }
             setDataLoading(false);
         });
@@ -211,20 +187,8 @@ const ThirdStep = ({
         calorieInstance.get(`/nutrition?query=${list[index].amount} g ${list[index].name}`).then(async (response) => {
             console.log(response.data);
             if (response.data.items.length === 0) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Foods Cannot Find',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
+
                 // setIsLoading(false);
             } else {
                 const list = [...selectedFoodData];

@@ -12,6 +12,7 @@ import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2 } from '@t
 import { loadStripe } from '@stripe/stripe-js';
 import HttpCommon from 'utils/http-common';
 import { Store } from 'react-notifications-component';
+import messages from 'utils/messages';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -135,53 +136,14 @@ const SubscriptionCard = (subscriptionData) => {
                 console.log('Stripe checkout error', error);
                 if (error) setStripeError(error.message);
                 if (!error) {
-                    Store.addNotification({
-                        title: 'Successful!',
-                        message: 'Payment succesfully done.',
-                        type: 'success',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Successful!', msg: 'Payment succesfully done.', type: 'success' });
                 } else {
-                    Store.addNotification({
-                        title: 'Payment Error Occured!',
-                        message: error.message,
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Payment Error Occured!', msg: error.message, type: 'danger' });
                 }
             })
             .catch((err) => {
                 console.log(err);
-                Store.addNotification({
-                    title: 'Payment Error Occured!',
-                    message: err.message,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Payment Error Occured!', msg: err.message, type: 'danger' });
             });
 
         // const stripe = await getStripe();

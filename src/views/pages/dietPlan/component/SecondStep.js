@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 
 const defaultOptions = {
     loop: true,
@@ -90,20 +91,8 @@ const SecondStep = ({
         calorieInstance.get(`/nutrition?query=${foodText}`).then(async (response) => {
             console.log(response.data);
             if (response.data.items.length === 0) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Foods Cannot Find',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
+
                 setIsLoading(false);
             } else {
                 await Promise.all(
