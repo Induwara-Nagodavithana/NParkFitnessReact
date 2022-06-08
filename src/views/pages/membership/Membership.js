@@ -250,7 +250,7 @@ const Membership = () => {
             <div style={{ height: 10 }} />
             <MainCard hidden={isDataAvailable} title="Members">
                 <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} arial-label="member table">
+                    <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} arial-label="member table">
                         <TableHead sx={{ backgroundColor: '#512da8' }}>
                             <TableRow>
                                 <TableCell sx={{ color: 'white' }}>Name</TableCell>

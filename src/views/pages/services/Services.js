@@ -304,7 +304,7 @@ function ServiceType() {
                                     options={gymArray}
                                     onChange={handleGymSelect}
                                     sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField {...params} label="Gym" />}
+                                    renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                                 />
                                 {branchArray.length > 0 ? (
                                     <Autocomplete
@@ -313,13 +313,13 @@ function ServiceType() {
                                         options={branchArray}
                                         onChange={handleBranchSelect}
                                         sx={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Branch" />}
+                                        renderInput={(params) => <TextField {...params} label="Branch" color="secondary" />}
                                     />
                                 ) : (
                                     <></>
                                 )}
 
-                                <Button variant="contained" startIcon={<Search />} size="large" onClick={handleSearch}>
+                                <Button variant="contained" startIcon={<Search />} size="medium" color="secondary" onClick={handleSearch}>
                                     Search
                                 </Button>
                             </Stack>
@@ -342,7 +342,7 @@ function ServiceType() {
 
                     <div style={{ height: 10 }} />
                     <TableContainer component={Paper} hidden={showTable}>
-                        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                        <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
                             <TableHead sx={{ backgroundColor: '#512da8' }}>
                                 <TableRow>
                                     <TableCell sx={{ color: 'white' }}>Name</TableCell>

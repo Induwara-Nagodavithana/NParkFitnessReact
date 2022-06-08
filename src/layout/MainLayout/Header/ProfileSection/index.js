@@ -208,7 +208,13 @@ const ProfileSection = () => {
                                     color="inherit"
                                 />
                             ) : (
-                                <Avatar sx={{ bgcolor: theme.palette.secondary.light, ml: '10px', width: 30, height: 30 }}>
+                                <Avatar
+                                    sx={{ bgcolor: theme.palette.secondary.light, ml: '10px', width: 30, height: 30 }}
+                                    ref={anchorRef}
+                                    aria-controls={open ? 'menu-list-grow' : undefined}
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
                                     <Typography style={{ fontSize: '16px', color: theme.palette.secondary.dark }} right variant="subtitle1">
                                         {userData.firstName.charAt(0) + userData.lastName.charAt(0)}
                                     </Typography>

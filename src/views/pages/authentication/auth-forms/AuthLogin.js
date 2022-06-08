@@ -322,6 +322,7 @@ const FirebaseLogin = ({ ...others }) => {
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
+                                    label="Confirm Password"
                                     onChange={(event) => {
                                         console.log(event.target.value);
                                         setPassword(event.target.value);
