@@ -34,6 +34,7 @@ import MapIcon from '@mui/icons-material/Map';
 import TrainerDetails from './TrainerDetails';
 import SquareCard from './SquareCard';
 import SmallCard from './SmallCard';
+import messages from 'utils/messages';
 
 // assets
 
@@ -238,20 +239,7 @@ const TrainerReport = () => {
                 console.log(response1.data.data);
                 setTrainerData(response1.data.data);
                 if (response1.data.data === null) {
-                    Store.addNotification({
-                        title: 'Error Occured!',
-                        message: 'Enter Trainer Id Cannot Found In Your Gym',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Error Occured!', msg: 'Enter Trainer Id Cannot Found In Your Gym', type: 'danger' });
                 }
 
                 HttpCommon.post(`api/dashboard/getMemberDetails/${trainerId}`, { branchId }).then(async (response) => {

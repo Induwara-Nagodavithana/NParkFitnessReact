@@ -72,6 +72,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 
 import { getAuth, updatePassword, updateEmail, reauthenticateWithCredential } from 'firebase/auth';
+import messages from 'utils/messages';
 //= ==============================|| SHADOW BOX ||===============================//
 let theme;
 
@@ -327,35 +328,10 @@ const Account = () => {
                         email: values.email
                     }).then((response) => {
                         console.log(response.data.data);
-                        Store.addNotification({
-                            title: 'Email Changed!',
-                            message: 'User Account Email Changed',
-                            type: 'success',
-                            insert: 'top',
-                            container: 'top-right',
-                            animationIn: ['animate__animated', 'animate__fadeIn'],
-                            animationOut: ['animate__animated', 'animate__fadeOut'],
-                            dismiss: {
-                                duration: 5000,
-                                onScreen: true
-                            },
-                            width: 500
-                        });
+                        messages.addMessage({ title: 'Email Changed!', msg: 'User Account Email Changed', type: 'success' });
+
                         if (response.data.success) {
-                            Store.addNotification({
-                                title: 'Saved!',
-                                message: 'Profile Details Saved Successfully',
-                                type: 'success',
-                                insert: 'top',
-                                container: 'top-right',
-                                animationIn: ['animate__animated', 'animate__fadeIn'],
-                                animationOut: ['animate__animated', 'animate__fadeOut'],
-                                dismiss: {
-                                    duration: 5000,
-                                    onScreen: true
-                                },
-                                width: 500
-                            });
+                            messages.addMessage({ title: 'Saved!', msg: 'Profile Details Saved Successfully', type: 'success' });
                         }
                         setDataLoading(true);
                         const key = localStorage.getItem('userID');
@@ -368,39 +344,14 @@ const Account = () => {
                     console.log(error);
                     console.log(error.message);
                     console.log(error.code);
-                    Store.addNotification({
-                        title: 'Email Changed Failed!',
-                        message: error.message,
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Email Changed Failed!', msg: error.message, type: 'danger' });
+
                     if (error.code === 'auth/requires-recent-login') {
                         setOpen3(true);
                     }
                 });
         } else {
-            Store.addNotification({
-                title: 'Error!',
-                message: 'Enter all required fields',
-                type: 'danger',
-                insert: 'top',
-                container: 'top-right',
-                animationIn: ['animate__animated', 'animate__fadeIn'],
-                animationOut: ['animate__animated', 'animate__fadeOut'],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                },
-                width: 500
-            });
+            messages.addMessage({ title: 'Error!', msg: 'Enter all required fields', type: 'danger' });
         }
     }
 
@@ -446,40 +397,14 @@ const Account = () => {
             }).then((response) => {
                 console.log(response.data.data);
                 if (response.data.success) {
-                    Store.addNotification({
-                        title: 'Saved!',
-                        message: 'Profile Details Saved Successfully',
-                        type: 'success',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Saved!', msg: 'Profile Details Saved Successfully', type: 'success' });
                 }
                 setDataLoading(true);
                 const key = localStorage.getItem('userID');
                 getUserDetails(key);
             });
         } else {
-            Store.addNotification({
-                title: 'Error!',
-                message: 'Enter all required fields',
-                type: 'danger',
-                insert: 'top',
-                container: 'top-right',
-                animationIn: ['animate__animated', 'animate__fadeIn'],
-                animationOut: ['animate__animated', 'animate__fadeOut'],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                },
-                width: 500
-            });
+            messages.addMessage({ title: 'Error!', msg: 'Enter all required fields', type: 'danger' });
         }
     }
 
@@ -495,20 +420,7 @@ const Account = () => {
         }).then((response) => {
             console.log(response.data.data);
             if (response.data.success) {
-                Store.addNotification({
-                    title: 'Uploaded!',
-                    message: 'Profile Image Uploaded',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Uploaded!', msg: 'Profile Image Uploaded', type: 'success' });
             }
             setDataLoading(true);
             const key = localStorage.getItem('userID');
@@ -526,38 +438,14 @@ const Account = () => {
             updatePassword(user, newPassword)
                 .then(() => {
                     // Update successful.
-                    Store.addNotification({
-                        title: 'Password Changed!',
-                        message: 'User Account Password Changed',
-                        type: 'success',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Password Changed!', msg: 'User Account Password Changed', type: 'success' });
+
                     setOpen(false);
                 })
                 .catch((error) => {
                     // An error ocurred
-                    Store.addNotification({
-                        title: 'Password Changed Failed!',
-                        message: error.message,
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Password Changed Failed!', msg: error.message, type: 'danger' });
+
                     setOpen(false);
                 });
         }

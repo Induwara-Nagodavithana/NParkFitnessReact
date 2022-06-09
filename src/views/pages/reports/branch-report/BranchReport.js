@@ -156,6 +156,7 @@ const Report = ({
     managerCount,
     attendanceCount,
     incomeCount,
+    rawPayment,
     serviceData
 }) => {
     theme = useTheme();
@@ -210,7 +211,7 @@ const Report = ({
                     </Grid>
                 </Grid>
                 <AttendanceChart data={attendanceCount.yearArr} />
-                <TotalGrowthBarChart incomeData={incomeCount} />
+                <TotalGrowthBarChart incomeData={incomeCount} rawData={rawPayment} />
                 <div style={{ height: '10px' }} />
                 <ServiceCard data={serviceData} />
             </SubCard>
@@ -232,6 +233,7 @@ const BranchReport = () => {
     const [trainerCount, setTrainerCount] = React.useState();
     const [managerCount, setManagerCount] = React.useState();
     const [attendanceCount, setAttendanceCount] = React.useState();
+    const [rawPayment, setRawPayment] = React.useState(0);
     const [incomeCount, setIncomeCount] = React.useState();
     const [serviceData, setServiceData] = React.useState();
     const [isDataLoading, setDataLoading] = React.useState(true);
@@ -305,6 +307,24 @@ const BranchReport = () => {
                     );
                     console.log(incomeArr);
                     setIncomeCount(incomeArr);
+
+                    const rawCardPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                    const rawCashPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                    await Promise.all(
+                        response.data.data.rawPaymentData.map((element) => {
+                            const month = parseInt(element.date.slice(5, 7), 10);
+                            if (element.method === 'cash') {
+                                rawCashPaymentArr[month - 1].push(element);
+                            } else {
+                                rawCardPaymentArr[month - 1].push(element);
+                            }
+                            return 0;
+                        })
+                    );
+                    console.log(rawCardPaymentArr);
+                    console.log(rawCashPaymentArr);
+                    setRawPayment({ rawCardPaymentArr, rawCashPaymentArr });
+
                     console.log('Is It Done2');
 
                     setDataLoading(false);
@@ -370,6 +390,7 @@ const BranchReport = () => {
                                         managerCount={managerCount}
                                         attendanceCount={attendanceCount}
                                         incomeCount={incomeCount}
+                                        rawPayment={rawPayment}
                                         serviceData={serviceData}
                                     />
                                     {/* </SubCard> */}
@@ -401,6 +422,7 @@ const BranchReport = () => {
                                                 managerCount={managerCount}
                                                 attendanceCount={attendanceCount}
                                                 incomeCount={incomeCount}
+                                                rawPayment={rawPayment}
                                                 serviceData={serviceData}
                                                 classes={classes}
                                             />
@@ -431,6 +453,7 @@ export class ComponentToPrint extends React.PureComponent {
             managerCount,
             attendanceCount,
             incomeCount,
+            rawPayment,
             serviceData,
             classes
         } = this.props;
@@ -460,6 +483,7 @@ export class ComponentToPrint extends React.PureComponent {
                                 managerCount={managerCount}
                                 attendanceCount={attendanceCount}
                                 incomeCount={incomeCount}
+                                rawPayment={rawPayment}
                                 serviceData={serviceData}
                             />
                         </div>

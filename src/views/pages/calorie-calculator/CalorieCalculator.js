@@ -84,6 +84,7 @@ import Chart from 'react-apexcharts';
 
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 //= =============================|| SAMPLE PAGE ||==============================//
 const defaultOptions = {
     loop: true,
@@ -295,20 +296,8 @@ const CalorieCalculator = () => {
             setCalorieData(response.data.items);
 
             if (response.data.items.length < 1) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Foods Cannot Find',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
+
                 setDataLoading(false);
             } else {
                 await Promise.all(

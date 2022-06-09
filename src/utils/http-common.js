@@ -4,6 +4,7 @@ import { store } from '../store/index';
 import { Navigate } from 'react-router-dom';
 import React, { Component } from 'react';
 import { Store } from 'react-notifications-component';
+import Message from 'utils/messages';
 
 // const { token } = store.getState();
 
@@ -27,8 +28,8 @@ instance.interceptors.request.use(
     (config) => {
         // Do something before request is sent
         const token = localStorage.getItem('token');
-        console.log('token');
-        console.log(token);
+        // console.log('token');
+        // console.log(token);
         config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
@@ -43,7 +44,7 @@ instance.interceptors.response.use(
     (response) => {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
-        console.log(response);
+        // console.log(response);
         console.log(response.status);
         return response;
     },
@@ -56,20 +57,26 @@ instance.interceptors.response.use(
             console.log('error');
             window.location = '/';
         } else {
-            Store.addNotification({
-                title: 'Error Occured!',
-                message: 'Cannot find the Server',
-                type: 'danger',
-                insert: 'top',
-                container: 'top-right',
-                animationIn: ['animate__animated', 'animate__fadeIn'],
-                animationOut: ['animate__animated', 'animate__fadeOut'],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                },
-                width: 500
-            });
+            let msg = 'Cannot find the Server';
+            if (error.response.data !== undefined && error.response.data.message !== undefined) {
+                msg = error.response.data.message;
+            }
+            Message.addMessage({ title: 'Error was Occured!', msg, type: 'danger' });
+
+            // Store.addNotification({
+            //     title: 'Error Occured!',
+            //     message: msg,
+            //     type: 'danger',
+            //     insert: 'top',
+            //     container: 'top-right',
+            //     animationIn: ['animate__animated', 'animate__fadeIn'],
+            //     animationOut: ['animate__animated', 'animate__fadeOut'],
+            //     dismiss: {
+            //         duration: 5000,
+            //         onScreen: true
+            //     },
+            //     width: 500
+            // });
         }
         return Promise.reject(error);
     }

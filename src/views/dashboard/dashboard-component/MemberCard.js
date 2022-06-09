@@ -282,7 +282,11 @@ const MemberCard = ({ isLoading, data }) => {
                                         ))}
                                     </>
                                 ) : (
-                                    <></>
+                                    <>
+                                        <Typography variant="subtitle1" color="inherit">
+                                            No Member Found.
+                                        </Typography>
+                                    </>
                                 )}
                             </Grid>
                         </Grid>

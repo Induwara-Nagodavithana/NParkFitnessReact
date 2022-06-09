@@ -39,6 +39,7 @@ import { SET_TOKEN, SET_FONT_FAMILY } from 'store/actions'; // THEME_RTL
 
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const defaultOptions = {
@@ -72,6 +73,27 @@ const FirebaseLogin = ({ ...others }) => {
         setShowPassword(!showPassword);
     };
 
+    function navigateDashboard(type) {
+        switch (type) {
+            case 'Admin':
+                navigate('/pages/dashboard/admin');
+                break;
+            case 'Owner':
+                navigate('/pages/dashboard/owner');
+                break;
+            case 'Manager':
+                navigate('/pages/dashboard/manager');
+                break;
+            case 'Trainer':
+                navigate('/pages/dashboard/trainer');
+                break;
+            default:
+                messages.addMessage({ title: 'Error Occured!', msg: `${type} type clients cannot enter this system. `, type: 'danger' });
+
+                break;
+        }
+    }
+
     const onSubmitHandler = (event) => {
         setDataLoading(true);
         event.preventDefault();
@@ -97,24 +119,16 @@ const FirebaseLogin = ({ ...others }) => {
                     console.log(response);
                     setDataLoading(false);
                     if (response.data.success) {
-                        localStorage.setItem('type', response.data.data.type);
-                        localStorage.setItem('userID', response.data.data.id);
-                        navigate('/pages/dashboard/admin');
+                        // localStorage.setItem('type', response.data.data.type);
+                        // localStorage.setItem('userID', response.data.data.id);
+                        await Promise.all([
+                            localStorage.setItem('type', response.data.data.type),
+                            localStorage.setItem('userID', response.data.data.id)
+                        ]);
+                        navigateDashboard(response.data.data.type);
+                        // navigate('/pages/dashboard/admin');
                     } else {
-                        Store.addNotification({
-                            title: 'Error Occured!',
-                            message: 'Entered User Cannot Find In Server',
-                            type: 'danger',
-                            insert: 'top',
-                            container: 'top-right',
-                            animationIn: ['animate__animated', 'animate__fadeIn'],
-                            animationOut: ['animate__animated', 'animate__fadeOut'],
-                            dismiss: {
-                                duration: 5000,
-                                onScreen: true
-                            },
-                            width: 500
-                        });
+                        messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
                     }
                 });
             })
@@ -124,20 +138,7 @@ const FirebaseLogin = ({ ...others }) => {
                 const errorMessage = error.message;
                 console.log(errorCode);
                 console.log(errorMessage);
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: errorMessage,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
             });
         // setTimeout(async () => {
         //     userInput.fireUID = fireUID;
@@ -179,44 +180,19 @@ const FirebaseLogin = ({ ...others }) => {
                     if (response.data.success) {
                         localStorage.setItem('type', response.data.data.type);
                         localStorage.setItem('userID', response.data.data.id);
-                        navigate('/pages/dashboard/admin');
+                        navigateDashboard(response.data.data.type);
+                        // navigate('/pages/dashboard/admin');
                     } else {
                         localStorage.clear();
                         window.location.reload();
-                        Store.addNotification({
-                            title: 'Error Occured!',
-                            message: 'Entered User Cannot Find In Server',
-                            type: 'danger',
-                            insert: 'top',
-                            container: 'top-right',
-                            animationIn: ['animate__animated', 'animate__fadeIn'],
-                            animationOut: ['animate__animated', 'animate__fadeOut'],
-                            dismiss: {
-                                duration: 5000,
-                                onScreen: true
-                            },
-                            width: 500
-                        });
+                        messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
                     }
                 })
                 .catch((err) => {
                     setDataLoading(false);
                     localStorage.clear();
                     window.location.reload();
-                    Store.addNotification({
-                        title: 'Error Occured!',
-                        message: 'Entered User Cannot Find In Server',
-                        type: 'danger',
-                        insert: 'top',
-                        container: 'top-right',
-                        animationIn: ['animate__animated', 'animate__fadeIn'],
-                        animationOut: ['animate__animated', 'animate__fadeOut'],
-                        dismiss: {
-                            duration: 5000,
-                            onScreen: true
-                        },
-                        width: 500
-                    });
+                    messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
                 });
         }
     }, []);

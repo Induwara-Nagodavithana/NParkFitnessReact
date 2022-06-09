@@ -174,6 +174,7 @@ const ProfileSection = () => {
     const prevOpen = React.useRef(open);
     React.useEffect(() => {
         const key = localStorage.getItem('userID');
+        console.log(key);
         getUserDetails(key);
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
@@ -187,7 +188,7 @@ const ProfileSection = () => {
                 classes={{ label: classes.profileLabel }}
                 className={classes.profileChip}
                 icon={
-                    userData === undefined ? (
+                    userData === undefined || userData === null ? (
                         <Avatar
                             src={User1}
                             className={classes.headerAvatar}

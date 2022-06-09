@@ -45,23 +45,23 @@ const useStyles = makeStyles((theme) => ({
             position: 'absolute',
             width: '200px',
             height: '200px',
-            border: '19px solid ',
-            borderColor: theme.palette.secondary.dark,
-            borderRadius: '50%',
-            top: '65px',
-            right: '-150px'
-        },
-        '&:before': {
-            content: '""',
-            position: 'absolute',
-            width: '200px',
-            height: '200px',
             border: '3px solid ',
             borderColor: theme.palette.secondary.dark,
             borderRadius: '50%',
             top: '145px',
             right: '-70px',
             opacity: 0.5
+        },
+        '&:before': {
+            content: '""',
+            position: 'absolute',
+            width: '200px',
+            height: '200px',
+            border: '19px solid ',
+            borderColor: theme.palette.secondary.dark,
+            borderRadius: '50%',
+            top: '65px',
+            right: '-150px'
         }
     },
     tagLine: {
@@ -134,7 +134,7 @@ const DietPlanCard = (dietPlanData) => {
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconFileAnalytics color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Total Calories :
@@ -158,13 +158,13 @@ const DietPlanCard = (dietPlanData) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map((row) => (
-                                        <StyledTableRow key={row.name}>
+                                    {dietPlanData.dietPlanData.mealItemData.map((row) => (
+                                        <StyledTableRow key={row.foodName}>
                                             <StyledTableCell component="th" scope="row">
-                                                {row.name}
+                                                {row.foodName}
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">{row.calories}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.fat}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.amount}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.calAmount}</StyledTableCell>
                                         </StyledTableRow>
                                     ))}
                                 </TableBody>

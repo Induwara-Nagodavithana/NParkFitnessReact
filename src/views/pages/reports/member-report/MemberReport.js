@@ -37,6 +37,8 @@ import AttendDetails from './AttendDetails';
 import ScheduleDetails from './ScheduleDetails';
 import DietDetails from './DietDetails';
 import GoalDetails from './GoalDetails';
+import BMIChart from './BMIChart';
+import messages from 'utils/messages';
 
 // assets
 
@@ -181,12 +183,21 @@ const Report = ({ size, memberData, weightData, attendanceData, scheduleData, di
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
                     NPartFitness
                 </Typography>
-                <MemberDetails data={memberData} />
+                {memberData !== undefined && memberData !== null ? <MemberDetails data={memberData} /> : <></>}
+                {goalData !== undefined && goalData !== null ? <GoalDetails data={goalData} /> : <></>}
+                {scheduleData !== undefined && scheduleData !== null ? <ScheduleDetails data={scheduleData} /> : <></>}
+                {weightData !== undefined && weightData !== null ? <WeightDetails data={weightData} /> : <></>}
+                {weightData !== undefined && weightData !== null ? <BMIChart data={weightData} /> : <></>}
+                {attendanceData !== undefined && attendanceData !== null ? <AttendDetails data={attendanceData} /> : <></>}
+                {dietData !== undefined && dietData !== null ? <DietDetails data={dietData} /> : <></>}
+
+                {/* <MemberDetails data={memberData} />
                 <GoalDetails data={goalData} />
                 <ScheduleDetails data={scheduleData} />
                 <WeightDetails data={weightData} />
+                <BMIChart data={weightData} />
                 <AttendDetails data={attendanceData} />
-                <DietDetails data={dietData} />
+                <DietDetails data={dietData} /> */}
             </SubCard>
         </>
     );
@@ -208,8 +219,7 @@ const MemberReport = ({ memberid }) => {
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
     const { state } = useLocation();
-    console.log(state.memberid);
-    const memberId = state.memberid === undefined ? 1 : state.memberid;
+    const memberId = state !== null ? state.memberid : 1;
     const userId = 1;
     function getMemberDetails() {
         // let arr = [];
@@ -260,22 +270,10 @@ const MemberReport = ({ memberid }) => {
                     });
                 });
             });
+            setDataLoading(false);
 
             if (response.data.data.member === null) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Member Id Cannot Found In Your Gym',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Member Id Cannot Found In Your Gym', type: 'danger' });
             }
         });
     }
