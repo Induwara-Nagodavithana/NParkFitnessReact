@@ -12,7 +12,10 @@ import {
     IconUsers,
     IconReportAnalytics,
     IconReceipt,
-    IconToolsKitchen2
+    IconToolsKitchen2,
+    IconCalendar,
+    IconSubtask,
+    IconBike
 } from '@tabler/icons';
 
 // constant
@@ -170,6 +173,30 @@ const pages = {
             type: 'item',
             url: '/pages/attendance',
             icon: IconUsers,
+            breadcrumbs: false
+        },
+        {
+            id: 'gym',
+            title: 'Gym',
+            type: 'item',
+            url: '/pages/gym',
+            icon: IconBike,
+            breadcrumbs: false
+        },
+        {
+            id: 'branch',
+            title: 'Branch',
+            type: 'item',
+            url: '/pages/branch',
+            icon: IconSubtask,
+            breadcrumbs: false
+        },
+        {
+            id: 'schedule',
+            title: 'Schedule',
+            type: 'item',
+            url: '/pages/schedule',
+            icon: IconCalendar,
             breadcrumbs: false
         }
     ]
