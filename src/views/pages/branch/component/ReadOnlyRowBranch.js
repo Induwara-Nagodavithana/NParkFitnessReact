@@ -3,11 +3,17 @@ import { TableRow, TableCell, IconButton } from '@material-ui/core';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { Edit } from '@material-ui/icons';
 
-const ReadOnlyRowGym = ({ row, handleEditClick }) => (
+const ReadOnlyRow = ({ row, handleEditClick }) => (
     <>
         <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-            <TableCell align="center">{row.name}</TableCell>
-            <TableCell align="center">{row.CreatedAt.substring(0, 10)}</TableCell>
+            <TableCell component="th" scope="row">
+                {row.name}
+            </TableCell>
+            <TableCell align="left">{row.street}</TableCell>
+            <TableCell align="right">{row.lane}</TableCell>
+            <TableCell align="right">{row.city}</TableCell>
+            <TableCell align="right">{row.province}</TableCell>
+            {row.isActive === true ? <TableCell align="right">Active</TableCell> : <TableCell align="right">Not Active</TableCell>}
 
             <TableCell align="right">
                 <AnimateButton>
@@ -20,4 +26,4 @@ const ReadOnlyRowGym = ({ row, handleEditClick }) => (
     </>
 );
 
-export default ReadOnlyRowGym;
+export default ReadOnlyRow;
