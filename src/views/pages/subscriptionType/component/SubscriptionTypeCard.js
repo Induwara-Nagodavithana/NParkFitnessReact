@@ -6,7 +6,7 @@ import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { IconFileAnalytics, IconBulb, IconReceipt2, IconFileDescription } from '@tabler/icons';
+import { IconFileAnalytics, IconBulb, IconReceipt2, IconFileDescription, IconBulbOff } from '@tabler/icons';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
