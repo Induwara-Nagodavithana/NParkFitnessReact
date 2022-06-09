@@ -258,12 +258,14 @@ const Subscription = () => {
 
     function getSubscription() {
         // let arr = [];
-        HttpCommon.get('/api/subscription/getSubscriptionByUserId/1').then((response) => {
+        const userId = localStorage.getItem('userID');
+
+        HttpCommon.get(`/api/subscription/getSubscriptionByUserId/${userId}`).then((response) => {
             console.log(response.data);
             console.log(response.data.data);
-            console.log(response.data.data.isActive);
+            // console.log(response.data.data.isActive);
             setSubscription(response.data.data);
-            HttpCommon.get('/api/subscriptionPayment/getSubscriptionPaymentByUserId/1').then((response) => {
+            HttpCommon.get(`/api/subscriptionPayment/getSubscriptionPaymentByUserId/${userId}`).then((response) => {
                 console.log(response.data.data);
                 console.log(response.data.data.payment);
                 setSubscriptionPayments(response.data.data.payment);

@@ -115,22 +115,27 @@ const FirebaseLogin = ({ ...others }) => {
                 dispatch({ type: SET_TOKEN, token: userCredential.user.accessToken });
                 localStorage.setItem('token', userCredential.user.accessToken);
                 userInput.fireUID = fireUID;
-                HttpCommon.post('/auth/validateUserByFireUIDAndEmail', userInput).then(async (response) => {
-                    console.log(response);
-                    setDataLoading(false);
-                    if (response.data.success) {
-                        // localStorage.setItem('type', response.data.data.type);
-                        // localStorage.setItem('userID', response.data.data.id);
-                        await Promise.all([
-                            localStorage.setItem('type', response.data.data.type),
-                            localStorage.setItem('userID', response.data.data.id)
-                        ]);
-                        navigateDashboard(response.data.data.type);
-                        // navigate('/pages/dashboard/admin');
-                    } else {
-                        messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
-                    }
-                });
+                HttpCommon.post('/auth/validateUserByFireUIDAndEmail', userInput)
+                    .then(async (response) => {
+                        console.log(response);
+                        setDataLoading(false);
+                        if (response.data.success) {
+                            // localStorage.setItem('type', response.data.data.type);
+                            // localStorage.setItem('userID', response.data.data.id);
+                            await Promise.all([
+                                localStorage.setItem('type', response.data.data.type),
+                                localStorage.setItem('userID', response.data.data.id)
+                            ]);
+                            navigateDashboard(response.data.data.type);
+                            // navigate('/pages/dashboard/admin');
+                        } else {
+                            messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
+                        }
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        setDataLoading(false);
+                    });
             })
             .catch((error) => {
                 setDataLoading(false);
