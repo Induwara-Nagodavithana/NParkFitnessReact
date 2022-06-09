@@ -189,7 +189,7 @@ const ShadowBox = () => {
 
 const NotificationList = (notificationData) => {
     const classes = useStyles();
-    console.log(notificationData);
+    // console.log(notificationData);
 
     return (
         <List className={classes.navContainer}>

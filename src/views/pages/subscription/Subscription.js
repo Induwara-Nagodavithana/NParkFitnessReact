@@ -50,6 +50,7 @@ import { Payhere, AccountCategory, Customer, CurrencyType, PayhereCheckout, Chec
 import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
+import messages from 'utils/messages';
 
 //= ==============================|| SHADOW BOX ||===============================//
 let theme;
@@ -279,38 +280,16 @@ const Subscription = () => {
             .then((response) => {
                 console.log(response.data.data);
                 getSubscription();
-                Store.addNotification({
+                messages.addMessage({
                     title: 'Subscription Type Changed!',
-                    message: 'Subscription type changed successfully.',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
+                    msg: 'Subscription type changed successfully.',
+                    type: 'success'
                 });
             })
             .catch((error) => {
                 // handle error
                 console.log(error);
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: error.message,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: error.message, type: 'danger' });
             });
     }
 

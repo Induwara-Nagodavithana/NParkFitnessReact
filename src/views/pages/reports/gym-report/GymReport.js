@@ -150,6 +150,7 @@ const Report = ({
     managerCount,
     attendanceCount,
     incomeCount,
+    rawPayment,
     branchesData,
     branchCount
 }) => {
@@ -207,7 +208,7 @@ const Report = ({
                     </Grid>
                 </Grid>
                 <AttendanceChart data={attendanceCount.yearArr} />
-                <TotalGrowthBarChart incomeData={incomeCount} />
+                <TotalGrowthBarChart incomeData={incomeCount} rawData={rawPayment} />
                 <div style={{ height: '10px' }} />
                 <PopularCard data={branchesData} />
             </SubCard>
@@ -229,6 +230,7 @@ const BranchReport = () => {
     const [managerCount, setManagerCount] = React.useState();
     const [attendanceCount, setAttendanceCount] = React.useState();
     const [incomeCount, setIncomeCount] = React.useState();
+    const [rawPayment, setRawPayment] = React.useState(0);
     const [gymData, setGymData] = React.useState();
     const [branchesData, setBranchesData] = React.useState();
     const [branchCount, setBranchCount] = React.useState();
@@ -240,62 +242,18 @@ const BranchReport = () => {
     const gymId = 1;
 
     function getManagerData() {
+        const userId = localStorage.getItem('userID');
         HttpCommon.get(`/api/gym/${gymId}`).then((response0) => {
             console.log(response0.data.data);
             setGymData(response0.data.data);
-            HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${gymId}`).then((response1) => {
+            HttpCommon.get(`/api/dashboard/getBranchMonthIncome/${userId}`).then((response1) => {
                 console.log(response1.data.data);
                 setBranchesData(response1.data.data);
-                HttpCommon.get(`api/dashboard/getOwnerDashboardData/${gymId}`).then(async (response) => {
-                    console.log(response.data.data);
-                    console.log(response.data.data.staffCount);
-                    setMemberCount(response.data.data.memberCount);
-                    setServiceCount(response.data.data.serviceCount);
-                    setBranchCount(response.data.data.branchCount);
-                    setExMemberCount(response.data.data.exMemberCount);
-
-                    await Promise.all(
-                        await response.data.data.staffCount.map((element) => {
-                            if (element.type === 'Manager') {
-                                setManagerCount(element.count);
-                            } else if (element.type === 'Trainer') {
-                                setTrainerCount(element.count);
-                            }
-                            return 0;
-                        })
-                    );
-
-                    let body = {
-                        chartMonthData: [],
-                        chartYearData: [],
-                        monthCount: 0,
-                        yearCount: 0
-                    };
-                    if (response.data.data.attendanceCount !== null) {
-                        const monthArr = [];
-                        const yearArr = [];
-                        let monthCount = 0;
-                        let yearCount = 0;
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceMonth.map((element) => {
-                                monthCount += element.count;
-                                return monthArr.push(element.count);
-                            })
-                        );
-                        await Promise.all(
-                            response.data.data.attendanceCount.attendanceYear.map((element) => {
-                                yearCount += element.count;
-                                return yearArr.push(element.count);
-                            })
-                        );
-
-                        body = { monthArr, yearArr, monthCount, yearCount };
-                    }
-
-                    setAttendanceCount(body);
+                HttpCommon.get(`/api/dashboard/getGymTotalIncome/${gymId}`).then(async (response1) => {
+                    console.log(response1.data.data);
                     const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     await Promise.all(
-                        response.data.data.incomeCount.map((element) => {
+                        response1.data.data.payment.map((element) => {
                             const month = parseInt(element.date.slice(5, 7), 10);
                             incomeArr[month - 1] = element.totalAmount;
                             return 0;
@@ -303,9 +261,96 @@ const BranchReport = () => {
                     );
                     console.log(incomeArr);
                     setIncomeCount(incomeArr);
-                    console.log('Is It Done2');
 
-                    setDataLoading(false);
+                    const rawCardPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                    const rawCashPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                    await Promise.all(
+                        response1.data.data.rawPayment.map((element) => {
+                            const month = parseInt(element.date.slice(5, 7), 10);
+                            if (element.method === 'cash') {
+                                rawCashPaymentArr[month - 1].push(element);
+                            } else {
+                                rawCardPaymentArr[month - 1].push(element);
+                            }
+                            return 0;
+                        })
+                    );
+                    console.log(rawCardPaymentArr);
+                    console.log(rawCashPaymentArr);
+                    setRawPayment({ rawCardPaymentArr, rawCashPaymentArr });
+                    HttpCommon.get(`api/dashboard/getOwnerDashboardData/${userId}`).then(async (response) => {
+                        console.log(response.data.data);
+                        console.log(response.data.data.staffCount);
+                        setMemberCount(response.data.data.memberCount);
+                        setServiceCount(response.data.data.serviceCount);
+                        setBranchCount(response.data.data.branchCount);
+                        setExMemberCount(response.data.data.exMemberCount);
+
+                        await Promise.all(
+                            await response.data.data.staffCount.map((element) => {
+                                if (element.type === 'Manager') {
+                                    setManagerCount(element.count);
+                                } else if (element.type === 'Trainer') {
+                                    setTrainerCount(element.count);
+                                }
+                                return 0;
+                            })
+                        );
+
+                        let body = {
+                            chartMonthData: [],
+                            chartYearData: [],
+                            monthCount: 0,
+                            yearCount: 0
+                        };
+                        if (response.data.data.attendanceCount !== null) {
+                            const monthArr = [];
+                            const yearArr = [];
+                            let monthCount = 0;
+                            let yearCount = 0;
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceMonth.map((element) => {
+                                    monthCount += element.count;
+                                    return monthArr.push(element.count);
+                                })
+                            );
+                            await Promise.all(
+                                response.data.data.attendanceCount.attendanceYear.map((element) => {
+                                    yearCount += element.count;
+                                    return yearArr.push(element.count);
+                                })
+                            );
+
+                            body = { monthArr, yearArr, monthCount, yearCount };
+                        }
+
+                        setAttendanceCount(body);
+                        // const incomeArr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        // await Promise.all(
+                        //     response.data.data.incomeCount.map((element) => {
+                        //         const month = parseInt(element.date.slice(5, 7), 10);
+                        //         incomeArr[month - 1] = element.totalAmount;
+                        //         return 0;
+                        //     })
+                        // );
+                        // console.log(incomeArr);
+                        // setIncomeCount(incomeArr);
+
+                        // const rawPaymentArr = [[], [], [], [], [], [], [], [], [], [], [], []];
+                        // await Promise.all(
+                        //     response.data.data.rawPaymentData.map((element) => {
+                        //         const month = parseInt(element.date.slice(5, 7), 10);
+                        //         rawPaymentArr[month - 1].push(element);
+                        //         return 0;
+                        //     })
+                        // );
+                        // console.log(rawPaymentArr);
+                        // setRawPayment(rawPaymentArr);
+
+                        console.log('Is It Done2');
+
+                        setDataLoading(false);
+                    });
                 });
             });
         });
@@ -367,6 +412,7 @@ const BranchReport = () => {
                                         managerCount={managerCount}
                                         attendanceCount={attendanceCount}
                                         incomeCount={incomeCount}
+                                        rawPayment={rawPayment}
                                         branchesData={branchesData}
                                         branchCount={branchCount}
                                     />
@@ -399,6 +445,7 @@ const BranchReport = () => {
                                                 managerCount={managerCount}
                                                 attendanceCount={attendanceCount}
                                                 incomeCount={incomeCount}
+                                                rawPayment={rawPayment}
                                                 branchesData={branchesData}
                                                 branchCount={branchCount}
                                                 classes={classes}
@@ -430,6 +477,7 @@ export class ComponentToPrint extends React.PureComponent {
             managerCount,
             attendanceCount,
             incomeCount,
+            rawPayment,
             branchesData,
             branchCount,
             classes
@@ -460,6 +508,7 @@ export class ComponentToPrint extends React.PureComponent {
                                 managerCount={managerCount}
                                 attendanceCount={attendanceCount}
                                 incomeCount={incomeCount}
+                                rawPayment={rawPayment}
                                 branchesData={branchesData}
                                 branchCount={branchCount}
                             />

@@ -174,6 +174,7 @@ const ProfileSection = () => {
     const prevOpen = React.useRef(open);
     React.useEffect(() => {
         const key = localStorage.getItem('userID');
+        console.log(key);
         getUserDetails(key);
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
@@ -187,7 +188,7 @@ const ProfileSection = () => {
                 classes={{ label: classes.profileLabel }}
                 className={classes.profileChip}
                 icon={
-                    userData === undefined ? (
+                    userData === undefined || userData === null ? (
                         <Avatar
                             src={User1}
                             className={classes.headerAvatar}
@@ -209,11 +210,11 @@ const ProfileSection = () => {
                                 />
                             ) : (
                                 <Avatar
+                                    sx={{ bgcolor: theme.palette.secondary.light, ml: '10px', width: 30, height: 30 }}
                                     ref={anchorRef}
                                     aria-controls={open ? 'menu-list-grow' : undefined}
                                     aria-haspopup="true"
                                     color="inherit"
-                                    sx={{ bgcolor: theme.palette.secondary.light, ml: '10px', width: 30, height: 30 }}
                                 >
                                     <Typography style={{ fontSize: '16px', color: theme.palette.secondary.dark }} right variant="subtitle1">
                                         {userData.firstName.charAt(0) + userData.lastName.charAt(0)}

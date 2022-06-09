@@ -47,6 +47,7 @@ import Slide from '@mui/material/Slide';
 
 import { Store } from 'react-notifications-component';
 import 'animate.css/animate.min.css';
+import messages from 'utils/messages';
 
 //= ==============================|| SHADOW BOX ||===============================//
 let theme;
@@ -244,20 +245,7 @@ const CustomerPayment = ({ memberId }) => {
             console.log(response.data.data);
             setMemberData(response.data.data);
             if (response.data.data.member === null) {
-                Store.addNotification({
-                    title: 'Error Occured!',
-                    message: 'Enter Member Id Cannot Found In Your Gym',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Member Id Cannot Found In Your Gym', type: 'danger' });
             }
         });
     }
@@ -272,20 +260,8 @@ const CustomerPayment = ({ memberId }) => {
         }).then((response) => {
             console.log(response.data.data);
             setOpen(false);
-            Store.addNotification({
-                title: 'Payment Added Successfully!',
-                message: 'Customer payment added successfully.',
-                type: 'success',
-                insert: 'top',
-                container: 'top-right',
-                animationIn: ['animate__animated', 'animate__fadeIn'],
-                animationOut: ['animate__animated', 'animate__fadeOut'],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                },
-                width: 500
-            });
+            messages.addMessage({ title: 'Payment Added Successfully!', msg: 'Customer payment added successfully.', type: 'success' });
+
             getMemberDetails();
         });
     }
