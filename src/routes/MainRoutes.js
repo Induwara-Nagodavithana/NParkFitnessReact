@@ -23,6 +23,7 @@ const EmployeeManagement = Loadable(lazy(() => import('views/pages/employee-mana
 const Attendance = Loadable(lazy(() => import('views/pages/attendance/Attendance')));
 const Account = Loadable(lazy(() => import('views/pages/account/Account')));
 const DietPlan = Loadable(lazy(() => import('views/pages/dietPlan/DietPlan')));
+const Membership = Loadable(lazy(() => import('views/pages/membership/Membership')));
 const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
 const Branch = Loadable(lazy(() => import('views/pages/branch/Branch')));
 const Schedule = Loadable(lazy(() => import('views/pages/schedule/Schedule')));
@@ -101,6 +102,10 @@ const MainRoutes = {
         {
             path: '/employeeManagement',
             element: <EmployeeManagement />
+        },
+        {
+            path: '/membership',
+            element: <Membership />
         },
         {
             path: '/attendance',

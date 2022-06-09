@@ -1,13 +1,6 @@
-import React, { useEffect, useRef, useState, Fragment } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Paper,
-    TableHead,
     Grid,
     TextField,
     Autocomplete,
@@ -18,13 +11,10 @@ import {
     DialogTitle
 } from '@material-ui/core';
 import MainCard from 'ui-component/cards/MainCard';
-import AnimateButton from 'ui-component/extended/AnimateButton';
 import MuiAlert from '@mui/material/Alert';
-import ReadOnlyRow from './component/ReadOnlySubscriptionRow';
 import HttpCommon from 'utils/http-common';
-
-import { Store } from 'react-notifications-component';
-import 'animate.css/animate.min.css';
+import SubscriptionTypeCard from './component/SubscriptionTypeCard';
+import { useNavigate } from 'react-router';
 import messages from 'utils/messages';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
@@ -42,6 +32,8 @@ const choice = [
 
 function SubscriptionType() {
     const [subscriptionData, setSubscriptionData] = useState([]);
+    const [userType, setUserType] = useState();
+    const navigate = useNavigate();
 
     function getSubscriptionTypes() {
         HttpCommon.get('/api/subscriptionType/')
@@ -49,11 +41,22 @@ function SubscriptionType() {
                 setSubscriptionData(res.data.data);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     }
+
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
     useEffect(() => {
-        getSubscriptionTypes();
+        setUserType(localStorage.getItem('type'));
+        if (localStorage.getItem('type') === 'Admin') {
+            getSubscriptionTypes();
+        } else {
+            unauthorizedlogin();
+        }
     }, []);
 
     const [contacts, setContacts] = React.useState();
@@ -117,8 +120,7 @@ function SubscriptionType() {
                 messages.addMessage({ title: 'Successfully Done!', msg: 'New Subscription Type Added Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-                messages.addMessage({ title: 'Fail!', msg: 'Fill all required Data', type: 'danger' });
+                messages.addMessage({ title: 'Fail !', msg: 'Fill all required Data', type: 'danger' });
             });
     };
 
@@ -127,7 +129,6 @@ function SubscriptionType() {
         const link = '/api/subscriptionType/';
         const key = editContactId;
         const url = link + key;
-
         HttpCommon.put(url, {
             type: editFormData.type,
             description: editFormData.description,
@@ -143,8 +144,7 @@ function SubscriptionType() {
                 messages.addMessage({ title: 'Successfully Done!', msg: 'Subscription Type Edited Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-                messages.addMessage({ title: 'Fail!', msg: error, type: 'danger' });
+                messages.addMessage({ title: 'Fail !', msg: error, type: 'danger' });
             });
 
         setEditContctId(null);
@@ -153,9 +153,6 @@ function SubscriptionType() {
 
     // Handling edit click
     const handleEditClick = (event, row) => {
-        event.preventDefault();
-        console.log('ContactId');
-        console.log(row.id);
         setEditContctId(row.id);
         setOpenDialog(true);
 
@@ -201,50 +198,23 @@ function SubscriptionType() {
     return (
         <>
             <MainCard title="Subscription Types">
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Type</TableCell>
-                                <TableCell align="left">Description</TableCell>
-                                <TableCell align="left">Gym Count</TableCell>
-                                <TableCell align="left">Branch Count</TableCell>
-                                <TableCell align="left">Amount</TableCell>
-                                <TableCell align="left">Status</TableCell>
-                                <TableCell align="left">Calorie Cal</TableCell>
-                                <TableCell align="left">Diet Plan</TableCell>
-                                <TableCell align="right">
-                                    <AnimateButton>
-                                        <Button
-                                            disableElevation
-                                            size="medium"
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={executeScroll}
-                                        >
-                                            Add New Type
-                                        </Button>
-                                    </AnimateButton>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {subscriptionData != null ? (
-                                subscriptionData.map((row) => (
-                                    <React.Fragment key={row.id}>
-                                        {editContactId === row.id ? (
-                                            <Dialog />
-                                        ) : (
-                                            <ReadOnlyRow row={row} handleEditClick={handleEditClick} />
-                                        )}
-                                    </React.Fragment>
-                                ))
-                            ) : (
-                                <></>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <Grid container spacing={2}>
+                    {subscriptionData != null ? (
+                        subscriptionData.map((row) => (
+                            <React.Fragment key={row.id}>
+                                {editContactId === row.id ? (
+                                    <Dialog />
+                                ) : (
+                                    <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
+                                        <SubscriptionTypeCard row={row} handleEditClick={handleEditClick} />
+                                    </Grid>
+                                )}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        <></>
+                    )}
+                </Grid>
             </MainCard>
 
             <div style={{ height: 10 }} />

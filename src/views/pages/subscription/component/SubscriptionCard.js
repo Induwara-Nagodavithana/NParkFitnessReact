@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 // material-ui
 import { makeStyles } from '@material-ui/styles';
 import { Button, Card, CardContent, Grid, Link, Stack, Typography } from '@material-ui/core';
-import BadgeIcon from '@mui/icons-material/Badge';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
@@ -86,8 +85,6 @@ const getStripe = () => {
 
 const SubscriptionCard = (subscriptionData) => {
     const classes = useStyles();
-    console.log(subscriptionData);
-    console.log(subscriptionData.subscriptionData.id);
     let status;
     if (subscriptionData.subscriptionData.isActive) {
         status = 'Active';

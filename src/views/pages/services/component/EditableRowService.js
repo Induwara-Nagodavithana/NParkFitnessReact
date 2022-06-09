@@ -4,12 +4,29 @@ import { Cancel, Save } from '@material-ui/icons';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
 const bodyparts = ['ABS', 'Back', 'Biceps', 'Chest', 'Forearm', 'Hips', 'Legs', 'Shoulder', 'Triceps'];
+const status = ['Availble', 'Not Available'];
 
-const EditableRow = ({ setEditedValue, editFormData, handleCancelClick, handleEditFormChange, handleEditFormSubmit }) => {
-    const indexOfArray = (element) => element === `${editFormData.bodyPart}`;
-    const index = bodyparts.findIndex(indexOfArray);
-    const [bodyPartValue, setBodyPartValue] = useState(bodyparts[index]);
+const EditableRow = ({
+    editableServiceName,
+    editableServiceStatus,
+    editableBodyPart,
+    setEditableServiceName,
+    setEditableServiceStatus,
+    setEditableBodyPart,
+    handleEditFormSubmit,
+    handleCancelClick
+}) => {
+    const handleServiceName = (event) => {
+        setEditableServiceName(event.target.value);
+    };
 
+    const handleServiceStatus = (event, newValue) => {
+        setEditableServiceStatus(newValue);
+    };
+
+    const handleBodyPart = (event, newValue) => {
+        setEditableBodyPart(newValue);
+    };
     return (
         <>
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -20,29 +37,27 @@ const EditableRow = ({ setEditedValue, editFormData, handleCancelClick, handleEd
                         label="Name"
                         margin="dense"
                         name="name"
-                        value={editFormData.name}
-                        onChange={handleEditFormChange}
-                    />
-                </TableCell>
-                <TableCell>
-                    <TextField
-                        required
-                        fullWidth
-                        label="Type"
-                        multiline
-                        margin="dense"
-                        name="status"
-                        value={editFormData.status}
-                        onChange={handleEditFormChange}
+                        value={editableServiceName}
+                        onChange={handleServiceName}
                     />
                 </TableCell>
                 <TableCell>
                     <Autocomplete
-                        value={bodyPartValue}
+                        value={editableServiceStatus}
                         // inputValue={editFormData.bodyType}
-                        onChange={(event, newValue) => {
-                            setEditedValue(newValue);
-                        }}
+                        onChange={handleServiceStatus}
+                        id="controllable-states-demo"
+                        options={status}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="status" />
+                        )}
+                    />
+                </TableCell>
+                <TableCell>
+                    <Autocomplete
+                        value={editableBodyPart}
+                        // inputValue={editFormData.bodyType}
+                        onChange={handleBodyPart}
                         id="controllable-states-demo"
                         options={bodyparts}
                         renderInput={(params) => (

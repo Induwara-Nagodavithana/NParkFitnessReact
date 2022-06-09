@@ -13,7 +13,7 @@ import {
     IconReportAnalytics,
     IconReceipt,
     IconToolsKitchen2,
-    IconToolsKitchen1
+    IconToolsKitchen1,
     IconCalendar,
     IconSubtask,
     IconBike
@@ -158,6 +158,22 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
+                    id: 'membership',
+                    title: 'Membership',
+                    type: 'item',
+                    url: '/pages/membership',
+                    icon: IconUsers,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'services',
+                    title: 'Services',
+                    type: 'item',
+                    url: '/pages/services',
+                    icon: IconReportAnalytics,
+                    breadcrumbs: false
+                },
+                {
                     id: 'employee-management',
                     title: 'Employee Managment',
                     type: 'item',
@@ -179,14 +195,6 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/customerPayment',
                     icon: icons.IconCash,
-                    breadcrumbs: false
-                },
-                {
-                    id: 'services',
-                    title: 'Services',
-                    type: 'item',
-                    url: '/pages/services',
-                    icon: IconReportAnalytics,
                     breadcrumbs: false
                 },
                 {
@@ -271,20 +279,36 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
-                  id: 'branch',
-                  title: 'Branch',
-                  type: 'item',
-                  url: '/pages/branch',
-                  icon: IconSubtask,
-                  breadcrumbs: false
+                    id: 'services',
+                    title: 'Services',
+                    type: 'item',
+                    url: '/pages/services',
+                    icon: IconReportAnalytics,
+                    breadcrumbs: false
                 },
                 {
-                  id: 'schedule',
-                  title: 'Schedule',
-                  type: 'item',
-                  url: '/pages/schedule',
-                  icon: IconCalendar,
-                  breadcrumbs: false
+                    id: 'membership',
+                    title: 'Membership',
+                    type: 'item',
+                    url: '/pages/membership',
+                    icon: IconUsers,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'branch',
+                    title: 'Branch',
+                    type: 'item',
+                    url: '/pages/branch',
+                    icon: IconSubtask,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'schedule',
+                    title: 'Schedule',
+                    type: 'item',
+                    url: '/pages/schedule',
+                    icon: IconCalendar,
+                    breadcrumbs: false
                 },
                 {
                     id: 'notification',
@@ -300,14 +324,6 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/customerPayment',
                     icon: icons.IconCash,
-                    breadcrumbs: false
-                },
-                {
-                    id: 'services',
-                    title: 'Services',
-                    type: 'item',
-                    url: '/pages/services',
-                    icon: IconReportAnalytics,
                     breadcrumbs: false
                 },
                 {
@@ -422,6 +438,14 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/dietPlan',
                     icon: IconToolsKitchen2,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'membership',
+                    title: 'Membership',
+                    type: 'item',
+                    url: '/pages/membership',
+                    icon: IconUsers,
                     breadcrumbs: false
                 },
                 {
@@ -661,7 +685,6 @@ const pages = () => {
         children: pagesRoute()
     };
     return pages;
-
 };
 
 // const pages = {

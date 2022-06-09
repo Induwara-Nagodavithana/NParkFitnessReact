@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Box, Select, MenuItem } from '@material-ui/core';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -8,22 +8,29 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const FirstStep = ({ setEmail, setPassword, setConfirmPassword, email, password, confirmPassword }) => {
+const FirstStep = ({
+    userType,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    setEmployeeType,
+    email,
+    password,
+    confirmPassword,
+    employeeType
+}) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
     const handleEmail = (event) => {
-        console.log(event.target.value);
         setEmail(event.target.value);
     };
 
     const handlePassword = (event) => {
-        console.log(event.target.value);
         setPassword(event.target.value);
     };
 
     const handleConfirmPassword = (event) => {
-        console.log(event.target.value);
         setConfirmPassword(event.target.value);
     };
 
@@ -37,6 +44,10 @@ const FirstStep = ({ setEmail, setPassword, setConfirmPassword, email, password,
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
+    };
+
+    const handleEmployeeType = (event) => {
+        setEmployeeType(event.target.value);
     };
 
     return (
@@ -53,7 +64,6 @@ const FirstStep = ({ setEmail, setPassword, setConfirmPassword, email, password,
                     inputProps={{ maxLength: 255 }}
                 />
             </FormControl>
-
             <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                 <OutlinedInput
@@ -98,6 +108,31 @@ const FirstStep = ({ setEmail, setPassword, setConfirmPassword, email, password,
                     label="Confirm Password"
                 />
             </FormControl>
+            {/* {userType !== 'Owner' ? (
+                <FormControl sx={{ m: 1, width: '25ch' }}>
+                    <InputLabel id="type-select-lable" required>
+                        Type
+                    </InputLabel>
+                    <Select labelId="type-select-lable" id="type-select" value={employeeType} label="Type**" onChange={handleEmployeeType}>
+                        {userType === 'Admin' ? (
+                            <MenuItem value="Admin">Admin</MenuItem>
+                        ) : (
+                            <>
+                                {userType === 'Manager' ? (
+                                    <MenuItem value="Trainer">Trainer</MenuItem>
+                                ) : (
+                                    <>
+                                        <MenuItem value="Manager">Manager</MenuItem>
+                                        <MenuItem value="Trainer">Trainer</MenuItem>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </Select>
+                </FormControl>
+            ) : (
+                <></>
+            )} */}
         </div>
     );
 };

@@ -20,9 +20,8 @@ import EditableRow from './component/EditableRowService';
 import ReadOnlyRow from './component/ReadOnlyServiceRow';
 import { Search } from '@material-ui/icons';
 import HttpCommon from 'utils/http-common';
-
-import { Store } from 'react-notifications-component';
-import 'animate.css/animate.min.css';
+import { useNavigate } from 'react-router';
+import messages from 'utils/messages';
 
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -34,33 +33,83 @@ const bodyparts = ['ABS', 'Back', 'Biceps', 'Chest', 'Forearm', 'Hips', 'Legs', 
 const status = ['Availble', 'Not Available'];
 
 function ServiceType() {
+    const [userType, setUserType] = useState();
     const [serviceData, setServiceData] = useState([]);
-    const [BranchId, setBranchId] = React.useState();
-    const [branchArray, setBranchArray] = React.useState([]);
+    const [BranchId, setBranchId] = useState();
+    const [branchArray, setBranchArray] = useState([]);
+    const [serviceName, setServiceName] = useState(null);
+    const [serviceStatus, setServiceStatus] = useState(null);
+    const [bodyPart, setBodyPart] = useState(null);
+    const [addButton, setAddButtonDisable] = useState(true);
+    const [editableServiceName, setEditableServiceName] = useState();
+    const [editableServiceStatus, setEditableServiceStatus] = useState(null);
+    const [editableBodyPart, setEditableBodyPart] = useState(null);
+    const [editServiceId, setEditServiceId] = useState(null);
+    const [showTable, setShowTable] = useState(true);
 
-    useEffect(() => {
+    // Create and get my reference in Add New Subscription type
+    const mainCard2Ref = useRef(null);
+    const mainCard1Ref = useRef(null);
+    const navigate = useNavigate();
+
+    function unauthorizedlogin() {
+        localStorage.clear();
+        navigate('/', { replace: true });
+    }
+
+    function getGym() {
         const link = '/api/gym/getAllGymByUserId/';
         const key = localStorage.getItem('userID');
         const url = link + key;
-        console.log(url);
         HttpCommon.get(url)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
-                console.log(gymArray);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
+    }
+
+    function getServices() {
+        const link = '/api/user/';
+        const key = localStorage.getItem('userID');
+        const url = link + key;
+        HttpCommon.get(url)
+            .then((res) => {
+                setBranchId(res.data.data.branchId);
+                const link2 = '/api/serviceType/getServiceTypeByBranchId/';
+                const key2 = res.data.data.branchId;
+                const url2 = link2 + key2;
+                HttpCommon.get(url2)
+                    .then((res) => {
+                        setServiceData(res.data.data.serviceType);
+                        setShowTable(false);
+                    })
+                    .catch((err) => {
+                        messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+                    });
+            })
+            .catch((err) => {
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+            });
+    }
+
+    useEffect(() => {
+        setUserType(localStorage.getItem('type'));
+        if (localStorage.getItem('type') === 'Admin') {
+            unauthorizedlogin();
+        } else if (localStorage.getItem('type') === 'Owner') {
+            getGym();
+        } else if (localStorage.getItem('type') === 'Manager' || localStorage.getItem('type') === 'Trainer') {
+            getServices();
+        }
     }, []);
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
-            console.log(newValue.value);
-
             const link = '/api/branch/getBranchByGymId/';
             const key = newValue.value;
             const url = link + key;
-            console.log(url);
             HttpCommon.get(url)
                 .then((res) => {
                     const tempArr = [];
@@ -68,10 +117,9 @@ function ServiceType() {
                         tempArr.push({ label: element.name, value: element.id });
                     });
                     setBranchArray(tempArr);
-                    console.log(tempArr);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                 });
         }
     };
@@ -89,137 +137,73 @@ function ServiceType() {
         HttpCommon.get(url)
             .then((res) => {
                 setServiceData(res.data.data.serviceType);
+                setShowTable(false);
             })
             .catch((err) => {
-                console.log(err);
+                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
             });
     };
 
-    const [newServiceData, setNewServiceData] = useState();
-    const [statusValue, setStatusValue] = React.useState(null);
-    const [bodyPartValue, setBodyPartValue] = React.useState(null);
-    const [editedValue, setEditedValue] = useState();
+    // Scroll to myRef view
+    const executeScroll = () => {
+        mainCard2Ref.current.scrollIntoView();
+    };
 
-    const [editFormData, setEditFormData] = React.useState({
-        name: '',
-        status: '',
-        bodyPart: ''
-    });
+    const addButtonClickExecuteScroll = () => {
+        mainCard1Ref.current.scrollIntoView();
+    };
 
-    const [editServiceId, setEditServiceId] = React.useState(null);
+    const handleServiceName = (event) => {
+        setServiceName(event.target.value);
+    };
 
-    const handlAddFormChange = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
+    const handleServiceStatus = (event, newValue) => {
+        setServiceStatus(newValue);
+    };
 
-        const newFormData = { ...newServiceData };
-        newFormData[fieldName] = fieldValue;
-
-        setNewServiceData(newFormData);
-        console.log(newServiceData);
+    const handleBodyPart = (event, newValue) => {
+        setBodyPart(newValue);
+        if (serviceName != null && serviceStatus != null) {
+            setAddButtonDisable(false);
+        }
     };
 
     const handleAddFormSubmit = () => {
         HttpCommon.post('/api/serviceType/', {
-            name: newServiceData.name,
-            status: statusValue,
-            bodyPart: bodyPartValue,
+            name: serviceName,
+            status: serviceStatus,
+            bodyPart,
             branchId: BranchId
         })
             .then((res) => {
                 handleSearch();
-                setNewServiceData(null);
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'New Service Added Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'New Service Added Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: 'Fill all required Data',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: 'Fill all required Data', type: 'danger' });
             });
-    };
 
-    const handleEditFormChange = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...editFormData };
-        newFormData[fieldName] = fieldValue;
-
-        setEditFormData(newFormData);
+        setServiceName(null);
+        setServiceStatus(null);
+        setBodyPart(null);
+        addButtonClickExecuteScroll();
     };
 
     const handleEditFormSubmit = () => {
         const link = '/api/serviceType/';
         const key = editServiceId;
         const url = link + key;
-
         HttpCommon.put(url, {
-            name: editFormData.name,
-            status: editFormData.status,
-            bodyPart: editedValue
+            name: editableServiceName,
+            status: editableServiceStatus,
+            bodyPart: editableBodyPart
         })
             .then((res) => {
                 handleSearch();
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Service Edited Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Successfully Done!', msg: 'Service Edited Successfully', type: 'success' });
             })
             .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+                messages.addMessage({ title: 'Fail !', msg: error, type: 'danger' });
             });
 
         setEditServiceId(null);
@@ -227,143 +211,175 @@ function ServiceType() {
 
     const handleEditClick = (event, row) => {
         setEditServiceId(row.id);
-
-        const formValues = {
-            name: row.name,
-            status: row.status,
-            bodyPart: row.bodyPart
-        };
-        setEditFormData(formValues);
+        setEditableServiceName(row.name);
+        setEditableServiceStatus(row.status);
+        setEditableBodyPart(row.bodyPart);
     };
 
     const handleCancelClick = () => {
         setEditServiceId(null);
     };
 
-    // Create and get my reference in Add New Subscription type
-    const myRef = useRef(null);
-
-    // Scroll to myRef view
-    const executeScroll = () => {
-        myRef.current.scrollIntoView();
-    };
-
     return (
         <>
-            <MainCard title="Services">
-                <Stack direction="row" spacing={2}>
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={gymArray}
-                        onChange={handleGymSelect}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} label="Gym" />}
-                    />
-                    {branchArray.length > 0 ? (
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo2"
-                            options={branchArray}
-                            onChange={handleBranchSelect}
-                            sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Branch" />}
-                        />
+            <MainCard title="Services" ref={mainCard1Ref}>
+                <>
+                    {userType === 'Owner' ? (
+                        <>
+                            <Stack direction="row" spacing={2}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={gymArray}
+                                    onChange={handleGymSelect}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
+                                />
+                                {branchArray.length > 0 ? (
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo2"
+                                        options={branchArray}
+                                        onChange={handleBranchSelect}
+                                        sx={{ width: 300 }}
+                                        renderInput={(params) => <TextField {...params} label="Branch" color="secondary" />}
+                                    />
+                                ) : (
+                                    <></>
+                                )}
+
+                                <Button variant="contained" startIcon={<Search />} size="medium" color="secondary" onClick={handleSearch}>
+                                    Search
+                                </Button>
+                            </Stack>
+                            <div style={{ height: 50 }} />
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                    {userType !== 'Trainer' ? (
+                        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                            <AnimateButton>
+                                <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
+                                    Add New Service
+                                </Button>
+                            </AnimateButton>
+                        </Grid>
                     ) : (
                         <></>
                     )}
 
-                    <Button variant="contained" startIcon={<Search />} size="large" onClick={handleSearch}>
-                        Search
-                    </Button>
-                </Stack>
-                <div style={{ height: 50 }} />
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align="center">Status</TableCell>
-                                <TableCell align="center">Body Part</TableCell>
-                                <TableCell align="right">
-                                    <AnimateButton>
-                                        <Button disableElevation size="medium" variant="contained" color="primary" onClick={executeScroll}>
-                                            Add New Service
-                                        </Button>
-                                    </AnimateButton>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {serviceData != null ? (
-                                serviceData.map((row) => (
-                                    <React.Fragment key={row.id}>
-                                        {editServiceId === row.id ? (
-                                            <EditableRow
-                                                editFormData={editFormData}
-                                                setEditedValue={setEditedValue}
-                                                handleEditFormChange={handleEditFormChange}
-                                                handleEditFormSubmit={handleEditFormSubmit}
-                                                handleCancelClick={handleCancelClick}
-                                            />
-                                        ) : (
-                                            <ReadOnlyRow row={row} handleEditClick={handleEditClick} />
-                                        )}
-                                    </React.Fragment>
-                                ))
-                            ) : (
-                                <></>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                    <div style={{ height: 10 }} />
+                    <TableContainer component={Paper} hidden={showTable}>
+                        <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+                            <TableHead sx={{ backgroundColor: '#512da8' }}>
+                                <TableRow>
+                                    <TableCell sx={{ color: 'white' }}>Name</TableCell>
+                                    <TableCell align="center" sx={{ color: 'white' }}>
+                                        Status
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ color: 'white' }}>
+                                        Body Part
+                                    </TableCell>
+                                    {userType !== 'Trainer' ? <TableCell align="right" /> : <></>}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {serviceData != null ? (
+                                    serviceData.map((row) => (
+                                        <React.Fragment key={row.id}>
+                                            {editServiceId === row.id ? (
+                                                <EditableRow
+                                                    editableServiceName={editableServiceName}
+                                                    editableServiceStatus={editableServiceStatus}
+                                                    editableBodyPart={editableBodyPart}
+                                                    setEditableServiceName={setEditableServiceName}
+                                                    setEditableServiceStatus={setEditableServiceStatus}
+                                                    setEditableBodyPart={setEditableBodyPart}
+                                                    handleCancelClick={handleCancelClick}
+                                                    handleEditFormSubmit={handleEditFormSubmit}
+                                                />
+                                            ) : (
+                                                <ReadOnlyRow row={row} handleEditClick={handleEditClick} userType={userType} />
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <></>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </>
             </MainCard>
             <div style={{ height: 10 }} />
-            <MainCard title="Add New Service" ref={myRef}>
-                <TextField required fullWidth onChange={handlAddFormChange} label="Name" margin="dense" name="name" />
+            {userType !== 'Trainer' ? (
+                <MainCard title="Add New Service" ref={mainCard2Ref}>
+                    <TextField
+                        required
+                        fullWidth
+                        value={serviceName}
+                        onChange={handleServiceName}
+                        label="Name"
+                        margin="dense"
+                        name="name"
+                        color="secondary"
+                    />
 
-                <Autocomplete
-                    value={statusValue}
-                    onChange={(event, newValue) => {
-                        console.log(newValue);
-                        setStatusValue(newValue);
-                    }}
-                    id="controllable-states-demo"
-                    options={status}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="bodyPart" />
-                    )}
-                />
+                    <Autocomplete
+                        value={serviceStatus}
+                        onChange={handleServiceStatus}
+                        id="controllable-states-demo"
+                        options={status}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Status"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="bodyPart"
+                                color="secondary"
+                            />
+                        )}
+                    />
 
-                <Autocomplete
-                    value={bodyPartValue}
-                    onChange={(event, newValue) => {
-                        console.log(newValue);
-                        setBodyPartValue(newValue);
-                    }}
-                    id="controllable-states-demo"
-                    options={bodyparts}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Body Part" variant="outlined" fullWidth margin="dense" name="bodyPart" />
-                    )}
-                />
+                    <Autocomplete
+                        value={bodyPart}
+                        onChange={handleBodyPart}
+                        id="controllable-states-demo"
+                        options={bodyparts}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Body Part"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="bodyPart"
+                                color="secondary"
+                            />
+                        )}
+                    />
 
-                <Grid container direction="row" justifyContent="flex-end" spacing={3}>
-                    <Grid item>
-                        <Button
-                            disableElevation
-                            onClick={handleAddFormSubmit}
-                            size="medium"
-                            variant="contained"
-                            color="primary"
-                            disabled={!newServiceData}
-                        >
-                            Add
-                        </Button>
+                    <Grid container direction="row" justifyContent="flex-end" spacing={3}>
+                        <Grid item>
+                            <Button
+                                disableElevation
+                                onClick={handleAddFormSubmit}
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                disabled={addButton}
+                            >
+                                Add
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </MainCard>
-
+                </MainCard>
+            ) : (
+                <></>
+            )}
             <div style={{ height: 50 }} />
         </>
     );

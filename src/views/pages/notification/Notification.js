@@ -70,9 +70,6 @@ const Notification = () => {
                 const childData = childSnapshot.val();
                 childData.key = childKey;
                 notificationArr.unshift(childData);
-                console.log(childData);
-
-                // ...
             });
 
             setNotifications(notificationArr.slice(0, 6));
