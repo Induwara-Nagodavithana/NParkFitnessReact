@@ -21,6 +21,7 @@ import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 const defaultOptions = {
@@ -46,7 +47,7 @@ const OwnerDashboard = () => {
     const [rawPayment, setRawPayment] = useState(0);
     const [branchesData, setBranchesData] = useState();
     // const [userId, setUserId] = useState();
-
+    const navigate = useNavigate();
     const gymId = 1;
 
     function getOwnerDashboard() {
@@ -140,22 +141,13 @@ const OwnerDashboard = () => {
     }
 
     useEffect(() => {
-        // const calorieInstance = axios.create({
-        //     baseURL: 'https://identitytoolkit.googleapis.com/v1',
-        //     timeout: 10000
-        // });
-        // calorieInstance
-        //     .post('/accounts:signInWithPassword?key=AIzaSyDqSwxdurpJuoKWgGufwGKzU69EWr4TirQ', {
-        //         email: 'kamal@gmail.com',
-        //         password: '123456',
-        //         returnSecureToken: true
-        //     })
-        //     .then((response) => {
-        //         console.log(response.data);
-        //         localStorage.setItem('token', response.data.idToken);
-        //     });
-        // setUserId(localStorage.getItem('userID'));
-        getOwnerDashboard();
+        const type = localStorage.getItem('type');
+        if (type !== 'Owner') {
+            localStorage.clear();
+            navigate('/', { replace: true });
+        } else {
+            getOwnerDashboard();
+        }
     }, []);
 
     return (

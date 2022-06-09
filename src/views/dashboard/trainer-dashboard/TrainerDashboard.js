@@ -24,6 +24,7 @@ import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
 import SquareCard from 'views/pages/reports/trainer-report/SquareCard';
 import messages from 'utils/messages';
+import { useNavigate } from 'react-router';
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 
 const defaultOptions = {
@@ -48,7 +49,7 @@ const TrainerDashboard = () => {
     const [serviceData, setServiceData] = useState();
     const [pendingScheduleCount, setPendingScheduleCount] = useState(0);
     const [pendingDietCount, setPendingDietCount] = useState(0);
-
+    const navigate = useNavigate();
     // const branchId = 1;
     // const userId = 4;
 
@@ -145,7 +146,13 @@ const TrainerDashboard = () => {
     }
 
     useEffect(() => {
-        getTrainerDashboard();
+        const type = localStorage.getItem('type');
+        if (type !== 'Trainer') {
+            localStorage.clear();
+            navigate('/', { replace: true });
+        } else {
+            getTrainerDashboard();
+        }
     }, []);
 
     return (

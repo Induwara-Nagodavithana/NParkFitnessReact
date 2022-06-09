@@ -22,6 +22,7 @@ import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
 import messages from 'utils/messages';
+import { useNavigate } from 'react-router';
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 
 const defaultOptions = {
@@ -45,6 +46,7 @@ const ManagerDashboard = () => {
     const [incomeCount, setIncomeCount] = useState();
     const [rawPayment, setRawPayment] = useState(0);
     const [serviceData, setServiceData] = useState();
+    const navigate = useNavigate();
 
     // const branchId = 1;
 
@@ -156,7 +158,13 @@ const ManagerDashboard = () => {
     }
 
     useEffect(() => {
-        getManagerDashboard();
+        const type = localStorage.getItem('type');
+        if (type !== 'Manager') {
+            localStorage.clear();
+            navigate('/', { replace: true });
+        } else {
+            getManagerDashboard();
+        }
     }, []);
 
     useEffect(() => {

@@ -23,6 +23,7 @@ import * as success from 'assets/images/loading.json';
 import BlueCard from '../dashboard-component/BlueCard';
 import SubTypeCard from '../dashboard-component/SubTypeCard';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 // ===========================|| DEFAULT DASHBOARD ||=========================== //
 const defaultOptions = {
@@ -49,6 +50,8 @@ const AdminDashboard = () => {
     const [subTypeData, setSubTypeData] = useState();
     const [rawPayment, setRawPayment] = useState(0);
     const customization = useSelector((state) => state.customization);
+    const navigate = useNavigate();
+
     function getAdminDashboard() {
         // let arr = [];
 
@@ -125,7 +128,13 @@ const AdminDashboard = () => {
     useEffect(() => {
         console.log('customization.token');
         console.log(customization.token);
-        getAdminDashboard();
+        const type = localStorage.getItem('type');
+        if (type !== 'Admin') {
+            localStorage.clear();
+            navigate('/', { replace: true });
+        } else {
+            getAdminDashboard();
+        }
     }, []);
 
     return (
