@@ -61,14 +61,6 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
-                    id: 'employee-management',
-                    title: 'Employee Managment',
-                    type: 'item',
-                    url: '/pages/employeeManagement',
-                    icon: IconUsers,
-                    breadcrumbs: false
-                },
-                {
                     id: 'calorieCal',
                     title: 'Calorie Calculator',
                     type: 'item',
@@ -206,22 +198,6 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
-                    id: 'services',
-                    title: 'Services',
-                    type: 'item',
-                    url: '/pages/services',
-                    icon: IconReportAnalytics,
-                    breadcrumbs: false
-                },
-                {
-                    id: 'employee-management',
-                    title: 'Employee Managment',
-                    type: 'item',
-                    url: '/pages/employeeManagement',
-                    icon: IconUsers,
-                    breadcrumbs: false
-                },
-                {
                     id: 'calorieCal',
                     title: 'Calorie Calculator',
                     type: 'item',
@@ -319,20 +295,20 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
-                  id: 'branch',
-                  title: 'Branch',
-                  type: 'item',
-                  url: '/pages/branch',
-                  icon: IconSubtask,
-                  breadcrumbs: false
+                    id: 'branch',
+                    title: 'Branch',
+                    type: 'item',
+                    url: '/pages/branch',
+                    icon: IconSubtask,
+                    breadcrumbs: false
                 },
                 {
-                  id: 'schedule',
-                  title: 'Schedule',
-                  type: 'item',
-                  url: '/pages/schedule',
-                  icon: IconCalendar,
-                  breadcrumbs: false
+                    id: 'schedule',
+                    title: 'Schedule',
+                    type: 'item',
+                    url: '/pages/schedule',
+                    icon: IconCalendar,
+                    breadcrumbs: false
                 },
                 {
                     id: 'notification',
@@ -351,26 +327,10 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
-                    id: 'services',
-                    title: 'Services',
-                    type: 'item',
-                    url: '/pages/services',
-                    icon: IconReportAnalytics,
-                    breadcrumbs: false
-                },
-                {
                     id: 'attendance',
                     title: 'Attendance',
                     type: 'item',
                     url: '/pages/attendance',
-                    icon: IconUsers,
-                    breadcrumbs: false
-                },
-                {
-                    id: 'employee-management',
-                    title: 'Employee Managment',
-                    type: 'item',
-                    url: '/pages/employeeManagement',
                     icon: IconUsers,
                     breadcrumbs: false
                 },
@@ -725,7 +685,6 @@ const pages = () => {
         children: pagesRoute()
     };
     return pages;
-
 };
 
 // const pages = {
