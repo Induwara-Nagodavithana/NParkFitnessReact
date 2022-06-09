@@ -14,6 +14,9 @@ import {
     IconReceipt,
     IconToolsKitchen2,
     IconToolsKitchen1
+    IconCalendar,
+    IconSubtask,
+    IconBike
 } from '@tabler/icons';
 
 // constant
@@ -139,6 +142,22 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
+                    id: 'gym',
+                    title: 'Gym',
+                    type: 'item',
+                    url: '/pages/gym',
+                    icon: IconBike,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'branch',
+                    title: 'Branch',
+                    type: 'item',
+                    url: '/pages/branch',
+                    icon: IconSubtask,
+                    breadcrumbs: false
+                },
+                {
                     id: 'employee-management',
                     title: 'Employee Managment',
                     type: 'item',
@@ -250,6 +269,22 @@ function pagesRoute() {
                     url: '/pages/employeeManagement',
                     icon: IconUsers,
                     breadcrumbs: false
+                },
+                {
+                  id: 'branch',
+                  title: 'Branch',
+                  type: 'item',
+                  url: '/pages/branch',
+                  icon: IconSubtask,
+                  breadcrumbs: false
+                },
+                {
+                  id: 'schedule',
+                  title: 'Schedule',
+                  type: 'item',
+                  url: '/pages/schedule',
+                  icon: IconCalendar,
+                  breadcrumbs: false
                 },
                 {
                     id: 'notification',
@@ -371,6 +406,14 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/notification',
                     icon: IconBellRinging,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'schedule',
+                    title: 'Schedule',
+                    type: 'item',
+                    url: '/pages/schedule',
+                    icon: IconCalendar,
                     breadcrumbs: false
                 },
                 {
@@ -618,6 +661,7 @@ const pages = () => {
         children: pagesRoute()
     };
     return pages;
+
 };
 
 // const pages = {

@@ -31,7 +31,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const gymArray = [];
 const bodyparts = ['ABS', 'Back', 'Biceps', 'Chest', 'Forearm', 'Hips', 'Legs', 'Shoulder', 'Triceps'];
-const status = ['Good', 'Warning', 'Bad'];
+const status = ['Availble', 'Not Available'];
 
 function ServiceType() {
     const [serviceData, setServiceData] = useState([]);
