@@ -73,19 +73,39 @@ const FirebaseLogin = ({ ...others }) => {
         setShowPassword(!showPassword);
     };
 
-    function navigateDashboard(type) {
+    function navigateDashboard(type, subscriptionStatus) {
         switch (type) {
             case 'Admin':
                 navigate('/pages/dashboard/admin');
                 break;
             case 'Owner':
-                navigate('/pages/dashboard/owner');
+                if (subscriptionStatus) {
+                    navigate('/pages/dashboard/owner');
+                } else {
+                    navigate('/pages/subscription');
+                }
                 break;
             case 'Manager':
-                navigate('/pages/dashboard/manager');
+                if (subscriptionStatus) {
+                    navigate('/pages/dashboard/manager');
+                } else {
+                    messages.addMessage({
+                        title: 'Gym Subscription Expired!',
+                        msg: `Your gym subscription expired. Contact your gym owner. `,
+                        type: 'danger'
+                    });
+                }
                 break;
             case 'Trainer':
-                navigate('/pages/dashboard/trainer');
+                if (subscriptionStatus) {
+                    navigate('/pages/dashboard/trainer');
+                } else {
+                    messages.addMessage({
+                        title: 'Gym Subscription Expired!',
+                        msg: `Your gym subscription expired. Contact your gym owner. `,
+                        type: 'danger'
+                    });
+                }
                 break;
             default:
                 messages.addMessage({ title: 'Error Occured!', msg: `${type} type clients cannot enter this system. `, type: 'danger' });
@@ -126,7 +146,7 @@ const FirebaseLogin = ({ ...others }) => {
                                 localStorage.setItem('type', response.data.data.type),
                                 localStorage.setItem('userID', response.data.data.id)
                             ]);
-                            navigateDashboard(response.data.data.type);
+                            navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
                             // navigate('/pages/dashboard/admin');
                         } else {
                             messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
@@ -185,7 +205,7 @@ const FirebaseLogin = ({ ...others }) => {
                     if (response.data.success) {
                         localStorage.setItem('type', response.data.data.type);
                         localStorage.setItem('userID', response.data.data.id);
-                        navigateDashboard(response.data.data.type);
+                        navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
                         // navigate('/pages/dashboard/admin');
                     } else {
                         localStorage.clear();
