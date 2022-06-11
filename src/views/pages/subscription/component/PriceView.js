@@ -33,6 +33,7 @@ import FlagIcon from '@mui/icons-material/Flag';
 import MapIcon from '@mui/icons-material/Map';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
+import messages from 'utils/messages';
 // assets
 
 const defaultOptions = {
@@ -95,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
         // width: '100%',
         // height: '29.7cm',
         // padding: '2cm',
-        margin: '0.5cm auto',
+        // margin: '20px auto',
         // border: '5px solid #916BD8',
         boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)',
         // borderRadius: '0px!important'
@@ -118,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
             background: `linear-gradient(275.9deg, ${theme.palette.secondary[800]} -50.02%, rgba(145, 107, 216, 0) 180.58%)`,
             borderRadius: '250%',
             top: '-500px',
-            right: '-350px'
+            right: '-500px'
         }
     },
     button: {
@@ -147,15 +148,39 @@ const Subscription = ({ subData }) => {
     theme = useTheme();
     const classes = useStyles();
     console.log(subData);
+    const today = new Date().toISOString().slice(0, 10);
+    const userid = localStorage.getItem('userID');
 
+    function createSubscription() {
+        // let arr = [];
+        HttpCommon.post(`/api/subscription/`, {
+            expireDate: today,
+            isActive: true,
+            userId: userid,
+            subscriptionTypeId: subData.id
+        }).then((response) => {
+            console.log(response.data);
+            if (response.data.success) {
+                messages.addMessage({ title: 'Succesful!', msg: 'Subscription Create Succesfully', type: 'success' });
+                window.location.reload();
+            } else {
+                messages.addMessage({ title: 'Error Occured!', msg: 'Subscription Create Fail', type: 'danger' });
+            }
+        });
+    }
+
+    const handleClick = () => {
+        createSubscription();
+    };
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
     return (
         <>
             <SubCard
+                className={classes.mainCard}
                 sx={{
                     color: 'white',
-                    minWidth: 100,
                     justifyContent: 'center',
+                    minHeight: 600,
                     alignItems: 'center',
                     marginRight: 2,
                     marginBottom: 2
@@ -177,7 +202,7 @@ const Subscription = ({ subData }) => {
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="10px">
                     {subData.description}
                 </Typography>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px' }}>
                     <Typography variant="h5" fontSize="25px" textAlign="center">
                         {subData.amount}
                     </Typography>
@@ -189,7 +214,7 @@ const Subscription = ({ subData }) => {
                     per year
                 </Typography>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }}>
-                    <Button className={classes.button} variant="outlined" color="secondary">
+                    <Button className={classes.button} variant="outlined" color="secondary" onClick={handleClick}>
                         Get Start
                     </Button>
                 </div>
@@ -317,42 +342,15 @@ const PriceView = () => {
             ) : (
                 <AuthWrapper1>
                     <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ minHeight: '100vh' }}>
-                        <Grid container xs={12} sm={12} md={8} lg={12} style={{ maxWidth: '100%', minWidth: 500 }}>
+                        <Grid container xs={12} sm={12} md={8} lg={12} style={{ maxWidth: '100%', minWidth: 100 }}>
                             <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
-                                <SubCard
-                                    className={classes.mainCard}
-                                    sx={{
-                                        color: 'white',
-                                        width: '100%',
-                                        minWidth: 100,
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Typography
-                                        color={theme.palette.secondary.main}
-                                        style={{
-                                            textShadow: '0px 0px 5px #D0B7FF',
-                                            textAlign: 'center',
-                                            marginTop: '20px',
-                                            marginBottom: '0px'
-                                        }}
-                                        gutterBottom
-                                        variant="h3"
-                                    >
-                                        Prices
-                                    </Typography>
-                                    <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
-                                        NPartFitness
-                                    </Typography>
-                                    <Grid container justifyContent="center" alignItems="center">
-                                        {subTypeData.map((element) => (
-                                            <Grid item sm={12} xs={12} md={6} lg={4} spacing={1}>
-                                                <Subscription subData={element} />
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </SubCard>
+                                <Grid container justifyContent="center" alignItems="center">
+                                    {subTypeData.map((element) => (
+                                        <Grid item sm={12} xs={12} md={6} lg={4} spacing={1}>
+                                            <Subscription subData={element} />
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sx={{ m: 3, mt: 1 }}>

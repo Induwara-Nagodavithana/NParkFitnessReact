@@ -89,7 +89,7 @@ const SubscriptionCard = (subscriptionData) => {
     if (subscriptionData.subscriptionData.isActive) {
         status = 'Active';
     } else {
-        status = 'InsActive';
+        status = 'InActive';
     }
 
     const [stripeError, setStripeError] = useState(null);
@@ -113,6 +113,10 @@ const SubscriptionCard = (subscriptionData) => {
 
             case 'Silver':
                 item.price = 'price_1L1SmyJhj4XbjMCUTgAPOMO8';
+                break;
+
+            case 'Platinum':
+                item.price = 'price_1L9PNEJhj4XbjMCUB9e9Fz0F';
                 break;
 
             default:

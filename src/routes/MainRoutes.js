@@ -28,7 +28,6 @@ const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
 const Branch = Loadable(lazy(() => import('views/pages/branch/Branch')));
 const Schedule = Loadable(lazy(() => import('views/pages/schedule/Schedule')));
 
-
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));

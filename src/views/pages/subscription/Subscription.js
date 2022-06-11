@@ -51,6 +51,7 @@ import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
 import messages from 'utils/messages';
+import PriceView from './component/PriceView';
 
 //= ==============================|| SHADOW BOX ||===============================//
 let theme;
@@ -333,233 +334,239 @@ const Subscription = () => {
                     <Lottie options={defaultOptions} height={400} width={400} />
                 </div>
             ) : (
-                <Grid spacing={gridSpacing}>
-                    {/* bgcolor: 'secondary.main', */}
-                    <SubCard sx={{ color: 'white' }} title="Subscription Detailes">
-                        <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
-                            <Grid align="center" item xs={12} sm={12} md={12} lg={6}>
-                                <div
-                                    style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        maxWidth: '400px',
-                                        minWidth: '400px'
-                                    }}
-                                >
-                                    {subscription !== null ? <SubscriptionCard subscriptionData={subscription} /> : <></>}
-                                </div>
-                            </Grid>
-                            {subscription !== null ? (
-                                <Grid
-                                    style={{ paddingLeft: '150px' }}
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    direction="column"
-                                    xs={12}
-                                    sm={12}
-                                    md={12}
-                                    lg={6}
-                                >
-                                    <div style={{ height: '20px' }} />
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBuildingCommunity color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Gym Count Available
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {subscription.subscriptionType.gymCount}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBuildingArch color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Branch Count Available
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {subscription.subscriptionType.branchCount}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBrandTinder color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Calorie Calculator
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {subscription.subscriptionType.isCalAvailable ? 'Available' : 'Not Available'}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconToolsKitchen2 color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Diet Plan
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {subscription.subscriptionType.isDietAvailable ? 'Available' : 'Not Available'}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconListCheck color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Plan Description
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {subscription.subscriptionType.description}
-                                        </MuiTypography>
-                                    </div>
+                <>
+                    {subscription !== null ? (
+                        <Grid spacing={gridSpacing}>
+                            {/* bgcolor: 'secondary.main', */}
+                            <SubCard sx={{ color: 'white' }} title="Subscription Detailes">
+                                <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
+                                    <Grid align="center" item xs={12} sm={12} md={12} lg={6}>
+                                        <div
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                maxWidth: '400px',
+                                                minWidth: '400px'
+                                            }}
+                                        >
+                                            {subscription !== null ? <SubscriptionCard subscriptionData={subscription} /> : <></>}
+                                        </div>
+                                    </Grid>
+                                    {subscription !== null ? (
+                                        <Grid
+                                            style={{ paddingLeft: '150px' }}
+                                            container
+                                            justifyContent="center"
+                                            alignItems="center"
+                                            direction="column"
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            lg={6}
+                                        >
+                                            <div style={{ height: '20px' }} />
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBuildingCommunity color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Gym Count Available
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {subscription.subscriptionType.gymCount}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBuildingArch color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Branch Count Available
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {subscription.subscriptionType.branchCount}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBrandTinder color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Calorie Calculator
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {subscription.subscriptionType.isCalAvailable ? 'Available' : 'Not Available'}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconToolsKitchen2 color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Diet Plan
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {subscription.subscriptionType.isDietAvailable ? 'Available' : 'Not Available'}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconListCheck color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Plan Description
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {subscription.subscriptionType.description}
+                                                </MuiTypography>
+                                            </div>
+                                        </Grid>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </Grid>
-                            ) : (
-                                <></>
-                            )}
-                        </Grid>
-                    </SubCard>
-                    <div style={{ height: '20px' }} />
-                    <SubCard sx={{ color: 'white' }} title="Renew Subscription">
-                        <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
-                            <Grid align="center" item xs={12} sm={12} md={12} lg={6}>
-                                <div
-                                    style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        maxWidth: '400px',
-                                        minWidth: '400px'
-                                    }}
-                                >
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={menuItems}
-                                        sx={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Subscription Plan" />}
-                                        onChange={handleChangePlan}
-                                    />
+                            </SubCard>
+                            <div style={{ height: '20px' }} />
+                            <SubCard sx={{ color: 'white' }} title="Renew Subscription">
+                                <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
+                                    <Grid align="center" item xs={12} sm={12} md={12} lg={6}>
+                                        <div
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                maxWidth: '400px',
+                                                minWidth: '400px'
+                                            }}
+                                        >
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={menuItems}
+                                                sx={{ width: 300 }}
+                                                renderInput={(params) => <TextField {...params} label="Subscription Plan" />}
+                                                onChange={handleChangePlan}
+                                            />
 
-                                    {plan.amount < 1 || plan.amount == null ? (
+                                            {plan.amount < 1 || plan.amount == null ? (
+                                                <></>
+                                            ) : (
+                                                <AnimateButton>
+                                                    <Button onClick={renewPlan} variant="contained" className={classes.button}>
+                                                        Renew Plan
+                                                    </Button>
+                                                </AnimateButton>
+                                                // <ButtonMaterial type="submit" variant="contained" className={classes.buttonMaterial2}>
+                                                //     Payment
+                                                // </ButtonMaterial>
+                                            )}
+                                        </div>
+                                    </Grid>
+                                    {plan === null || plan === '' ? (
                                         <></>
                                     ) : (
-                                        <AnimateButton>
-                                            <Button onClick={renewPlan} variant="contained" className={classes.button}>
-                                                Renew Plan
-                                            </Button>
-                                        </AnimateButton>
-                                        // <ButtonMaterial type="submit" variant="contained" className={classes.buttonMaterial2}>
-                                        //     Payment
-                                        // </ButtonMaterial>
-                                    )}
-                                </div>
-                            </Grid>
-                            {plan === null || plan === '' ? (
-                                <></>
-                            ) : (
-                                <Grid
-                                    style={{ paddingLeft: '150px' }}
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    direction="column"
-                                    xs={12}
-                                    sm={12}
-                                    md={12}
-                                    lg={6}
-                                >
-                                    <div style={{ height: '20px' }} />
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBuildingCommunity color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Gym Count Available
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.gymCount}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBuildingArch color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Branch Count Available
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.branchCount}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconBrandTinder color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Calorie Calculator
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.isCalAvailable ? 'Available' : 'NotAvailable'}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconToolsKitchen2 color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Diet Plan
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.isDietAvailable ? 'Available' : 'NotAvailable'}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconCash color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Amount
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.amount}
-                                        </MuiTypography>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
-                                        <IconListCheck color="black" />
-                                        <div style={{ width: '20px' }} />
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            Plan Description
-                                        </MuiTypography>
-                                        <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
-                                            {plan.description}
-                                        </MuiTypography>
-                                    </div>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </SubCard>
-                    <div style={{ height: '20px' }} />
-                    <SubCard title="Payment Activity">
-                        {subscriptionPayments !== null && subscriptionPayments.length > 0 ? (
-                            <Grid container spacing={gridSpacing}>
-                                <>
-                                    {subscriptionPayments.map((element) => (
-                                        <Grid item xs={12} sm={6} md={6} lg={4}>
-                                            <ActivityCard cardDetails={element} />
+                                        <Grid
+                                            style={{ paddingLeft: '150px' }}
+                                            container
+                                            justifyContent="center"
+                                            alignItems="center"
+                                            direction="column"
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            lg={6}
+                                        >
+                                            <div style={{ height: '20px' }} />
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBuildingCommunity color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Gym Count Available
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.gymCount}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBuildingArch color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Branch Count Available
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.branchCount}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconBrandTinder color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Calorie Calculator
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.isCalAvailable ? 'Available' : 'NotAvailable'}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconToolsKitchen2 color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Diet Plan
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.isDietAvailable ? 'Available' : 'NotAvailable'}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconCash color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Amount
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.amount}
+                                                </MuiTypography>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
+                                                <IconListCheck color="black" />
+                                                <div style={{ width: '20px' }} />
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    Plan Description
+                                                </MuiTypography>
+                                                <MuiTypography style={{ maxWidth: '200px', minWidth: '200px' }} variant="subtitle1">
+                                                    {plan.description}
+                                                </MuiTypography>
+                                            </div>
                                         </Grid>
-                                    ))}
-                                </>
-                            </Grid>
-                        ) : (
-                            <></>
-                        )}
-                        {/* <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12} sm={6} md={6} lg={4}>
-                        <ActivityCard />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={4}>
-                        <ActivityCard />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={4}>
-                        <ActivityCard />
-                    </Grid>
-                </Grid> */}
-                    </SubCard>
-                </Grid>
+                                    )}
+                                </Grid>
+                            </SubCard>
+                            <div style={{ height: '20px' }} />
+                            <SubCard title="Payment Activity">
+                                {subscriptionPayments !== null && subscriptionPayments.length > 0 ? (
+                                    <Grid container spacing={gridSpacing}>
+                                        <>
+                                            {subscriptionPayments.map((element) => (
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
+                                                    <ActivityCard cardDetails={element} />
+                                                </Grid>
+                                            ))}
+                                        </>
+                                    </Grid>
+                                ) : (
+                                    <></>
+                                )}
+                                {/* <Grid container spacing={gridSpacing}>
+ <Grid item xs={12} sm={6} md={6} lg={4}>
+     <ActivityCard />
+ </Grid>
+ <Grid item xs={12} sm={6} md={6} lg={4}>
+     <ActivityCard />
+ </Grid>
+ <Grid item xs={12} sm={6} md={6} lg={4}>
+     <ActivityCard />
+ </Grid>
+</Grid> */}
+                            </SubCard>
+                        </Grid>
+                    ) : (
+                        <PriceView />
+                    )}
+                </>
             )}
         </>
     );
