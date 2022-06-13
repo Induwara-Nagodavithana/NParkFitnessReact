@@ -27,6 +27,7 @@ const Membership = Loadable(lazy(() => import('views/pages/membership/Membership
 const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
 const Branch = Loadable(lazy(() => import('views/pages/branch/Branch')));
 const Schedule = Loadable(lazy(() => import('views/pages/schedule/Schedule')));
+const MembershipType = Loadable(lazy(() => import('views/pages/membershipType/MembershipType')));
 
 
 // utilities routing
@@ -106,6 +107,10 @@ const MainRoutes = {
         {
             path: '/membership',
             element: <Membership />
+        },
+        {
+            path: '/membershipType',
+            element: <MembershipType />
         },
         {
             path: '/attendance',
