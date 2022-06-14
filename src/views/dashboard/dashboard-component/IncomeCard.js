@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-//= ==========================|| DASHBOARD DEFAULT - EARNING CARD ||===========================//
+//= ==========================|| DASHBOARD INCOME CARD ||===========================//
 
 const IncomeCard = ({ isLoading, amount, title }) => {
     const classes = useStyles();

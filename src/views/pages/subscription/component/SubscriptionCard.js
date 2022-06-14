@@ -147,17 +147,6 @@ const SubscriptionCard = (subscriptionData) => {
                 messages.addMessage({ title: 'Payment Error Occured!', msg: err.message, type: 'danger' });
             });
 
-        // const stripe = await getStripe();
-        // const session = await stripe.checkout.sessions.create({
-        //     customer: subscriptionData.subscriptionData.userId,
-        //     success_url: `${window.location.origin}/pages/subscription`,
-        //     cancel_url: `${window.location.origin}/pages/subscription`,
-        //     line_items: [item],
-        //     mode: 'payment'
-        // });
-        // console.log('session');
-        // console.log(session);
-
         setLoading(false);
     };
 
@@ -210,50 +199,6 @@ const SubscriptionCard = (subscriptionData) => {
                             Pay
                         </Button>
                     </AnimateButton>
-
-                    {/* <form method="post" action="https://sandbox.payhere.lk/pay/checkout">
-                        <div style={{ display: 'none' }}>
-                            <input type="hidden" name="merchant_id" value="1217402" />
-                            <input type="hidden" name="return_url" value="http://localhost:3000/pages/subscription" />
-                            <input type="hidden" name="cancel_url" value="http://localhost:3000/pages/subscription" />
-                            <input type="hidden" name="notify_url" value="https://npark-fitness-test.herokuapp.com/payhere/notify" />
-                            <br />
-                            <br />
-                            Item Details
-                            <br />
-                            <input type="hidden" name="order_id" value="65321" />
-                            <input type="hidden" name="items" value="NParkFitness Monthly Subscription Payment" />
-                            <br />
-                            <input type="hidden" name="currency" value="LKR" />
-                            <input type="hidden" name="amount" value={subscriptionData.subscriptionData.subscriptionType.amount} />
-                            <br />
-                            <br />
-                            Customer Details
-                            <br />
-                            <input type="hidden" name="first_name" value={subscriptionData.subscriptionData.user.firstName} />
-                            <input type="hidden" name="last_name" value={subscriptionData.subscriptionData.user.lastName} />
-                            <br />
-                            <input type="hidden" name="email" value="" />
-                            <input type="hidden" name="phone" value="" />
-                            <br />
-                            <input type="hidden" name="address" value="{JSON.stringify(props.centers)}" />
-                            <input type="hidden" name="city" value="" />
-                            <input type="hidden" name="country" value="" />
-                            <input type="hidden" name="custom_1" value={subscriptionData.subscriptionData.userId} />
-                            <br />
-                            <br />
-                        </div>
-                        {subscriptionData.subscriptionData.subscriptionType.amount < 1 ||
-                        subscriptionData.subscriptionData.subscriptionType.amount == null ? (
-                            <></>
-                        ) : (
-                            <AnimateButton>
-                                <Button type="submit" variant="contained" className={classes.button}>
-                                    Pay
-                                </Button>
-                            </AnimateButton>
-                        )}
-                    </form> */}
                 </Grid>
             </CardContent>
         </Card>

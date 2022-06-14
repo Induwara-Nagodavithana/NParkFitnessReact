@@ -187,20 +187,6 @@ const TrainerDashboard = () => {
                                     <Grid item xs={6}>
                                         <SquareCard title="Pending DietPlan" amount={pendingDietCount} isPrimary icon="diet" />
                                     </Grid>
-                                    {/* <Grid item sm={6} xs={12} md={12} lg={12}>
-                                        <SmallDarkCard
-                                            isLoading={isLoading}
-                                            amount={`${serviceCount} Services`}
-                                            title="Total Services In Branch"
-                                        />
-                                    </Grid>
-                                    <Grid item sm={6} xs={12} md={12} lg={12}>
-                                        <SmallLightCard
-                                            isLoading={isLoading}
-                                            amount={`${pendingScheduleCount} Schedules`}
-                                            title="Total Pending Schedules"
-                                        />
-                                    </Grid> */}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -214,24 +200,6 @@ const TrainerDashboard = () => {
                             <Grid item xs={12} sm={12} md={12} lg={6}>
                                 <ServiceCard isLoading={isLoading} data={serviceData} />
                             </Grid>
-                            {/* <Grid item lg={4} md={12} sm={12} xs={12}>
-                                <Grid container spacing={gridSpacing}>
-                                    <Grid item sm={6} xs={12} md={12} lg={12}>
-                                        <SmallDarkCard
-                                            isLoading={isLoading}
-                                            amount={`${pendingDietCount} Diet Plan`}
-                                            title="Total Pending Diet Plan"
-                                        />
-                                    </Grid>
-                                    <Grid item sm={6} xs={12} md={12} lg={12}>
-                                        <SmallLightCard
-                                            isLoading={isLoading}
-                                            amount={`${exMemberCount} Membership`}
-                                            title="Total Expired Memberships"
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Grid> */}
                         </Grid>
                     </Grid>
                 </Grid>

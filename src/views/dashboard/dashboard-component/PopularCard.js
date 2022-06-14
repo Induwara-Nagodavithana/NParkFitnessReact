@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD DEFAULT - POPULAR CARD ||=========================== //
+// ===========================|| DASHBOARD POPULAR CARD ||=========================== //
 
 const PopularCard = ({ isLoading, data }) => {
     const classes = useStyles();

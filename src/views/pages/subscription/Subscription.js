@@ -225,14 +225,6 @@ const ActivityCard = ({ cardDetails }) => {
     );
 };
 
-//= ===========================|| UTILITIES SHADOW ||============================//
-
-// const CustomTypography = withStyles({
-//     root: {
-//         color: 'black'
-//     }
-// })(MuiTypography);
-
 const Subscription = () => {
     const classes = useStyles();
     const [plan, setPlan] = React.useState('');
@@ -244,7 +236,7 @@ const Subscription = () => {
 
     const navigate = useNavigate();
     const ownerName = 'Saman';
-    const userId = 1;
+    // const userId = 1;
 
     function getSubscriptionTypes() {
         // let arr = [];
@@ -297,19 +289,9 @@ const Subscription = () => {
     }
 
     useEffect(async () => {
-        // getData();
-        // console.log("token = " + token);
-        // const config = {
-        //     headers: { Authorization: `Bearer ${token}` }
-        // };
-        // if (token != null) {
         setDataLoading(true);
         getSubscription();
         getSubscriptionTypes();
-
-        // } else {
-        //     // navigate('/home')
-        // }
     }, []);
 
     const handleChangePlan = (event, value) => {
@@ -450,9 +432,6 @@ const Subscription = () => {
                                                         Renew Plan
                                                     </Button>
                                                 </AnimateButton>
-                                                // <ButtonMaterial type="submit" variant="contained" className={classes.buttonMaterial2}>
-                                                //     Payment
-                                                // </ButtonMaterial>
                                             )}
                                         </div>
                                     </Grid>

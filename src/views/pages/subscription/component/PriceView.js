@@ -51,34 +51,9 @@ const useStyles = makeStyles((theme) => ({
         color: '#fff',
         overflow: 'hidden',
         position: 'relative',
-        // width: '755px',
-        // border: '5px solid #916BD8',
         boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)'
-        // borderRadius: '0px!important'
-        // '&:after': {
-        //     content: '""',
-        //     zIndex: 1,
-        //     position: 'absolute',
-        //     width: '1200px',
-        //     height: '1500px',
-        //     background: `linear-gradient(210.04deg, ${theme.palette.secondary[200]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
-        //     // borderRadius: '50%',
-        //     top: '-300px',
-        //     right: '-250px'
-        // },
-        // '&:before': {
-        //     content: '""',
-        //     position: 'absolute',
-        //     width: '1500px',
-        //     height: '610px',
-        //     background: `linear-gradient(275.9deg, ${theme.palette.secondary[800]} -50.02%, rgba(145, 107, 216, 0) 180.58%)`,
-        //     borderRadius: '250%',
-        //     top: '-500px',
-        //     right: '-350px'
-        // }
     },
     page: {
-        // width: '100%',
         minHeight: '29.7cm',
         padding: '2cm',
         margin: '1cm auto',
@@ -88,29 +63,10 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)'
     },
     mainCard: {
-        // backgroundColor: theme.palette.secondary.dark,
         color: '#fff',
         overflow: 'hidden',
         position: 'relative',
-        // width: '800px',
-        // width: '100%',
-        // height: '29.7cm',
-        // padding: '2cm',
-        // margin: '20px auto',
-        // border: '5px solid #916BD8',
         boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)',
-        // borderRadius: '0px!important'
-        // '&:after': {
-        //     content: '""',
-        //     zIndex: 1,
-        //     position: 'absolute',
-        //     width: '1200px',
-        //     height: '1500px',
-        //     background: `linear-gradient(210.04deg, ${theme.palette.secondary[200]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
-        //     // borderRadius: '50%',
-        //     top: '-300px',
-        //     right: '-250px'
-        // },
         '&:before': {
             content: '""',
             position: 'absolute',
@@ -311,14 +267,6 @@ const PriceView = () => {
             setDataLoading(false);
         });
     }
-
-    const handleDisplay = () => {
-        setTimeout(() => {
-            setDisplay('block');
-            setDisplay('none');
-            console.log('Done');
-        }, 2000);
-    };
 
     useEffect(async () => {
         setDataLoading(true);
