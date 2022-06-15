@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import { makeStyles } from '@material-ui/styles';
-import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, Grid, Link, Stack, Typography } from '@material-ui/core';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { IconFileAnalytics, IconBulb, IconReceipt2, IconFileDescription, IconBulbOff } from '@tabler/icons';
+
+import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2 } from '@tabler/icons';
+import { loadStripe } from '@stripe/stripe-js';
+import HttpCommon from 'utils/http-common';
+import { Store } from 'react-notifications-component';
+import messages from 'utils/messages';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -61,16 +66,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const SubscriptionTypeCard = ({ row, handleEditClick }) => {
+// ===========================|| PROFILE MENU - UPGRADE PLAN CARD ||=========================== //
+
+const MembershipTypeCard = ({ row, handleEditClick, userType }) => {
     const classes = useStyles();
-
-    let status;
-    if (row.isActive) {
-        status = 'Active';
-    } else {
-        status = 'InsActive';
-    }
-
+    console.log(row);
     return (
         <Card className={classes.card}>
             <CardContent justifyContent="center" alignItems="center">
@@ -79,84 +79,60 @@ const SubscriptionTypeCard = ({ row, handleEditClick }) => {
                         <IconFileAnalytics color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Subscription Type :
+                            Membership Type
                         </Typography>
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                             {row !== null ? row.type : 'NotFound'}
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconCalendarEvent color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Gym Count :
+                            Description
                         </Typography>
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                            {row !== null ? row.gymCount : 'NotFound'}
-                        </Typography>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
-                        <div style={{ width: '20px' }} />
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Branch Count :
-                        </Typography>
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                            {row !== null ? row.branchCount : 'NotFound'}
+                            {row !== null ? row.description : 'NotFound'}
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
                         <IconBulb color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Status :
+                            Duration
                         </Typography>
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                            {row.isActive ? 'Active' : 'Not Active'}
+                            {row !== null ? row.periodInMonths : 'NotFound'}
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
                         <IconReceipt2 color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Amount :
+                            Amount
                         </Typography>
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                             {row !== null ? row.amount : 'NotFound'}
                         </Typography>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
-                        <div style={{ width: '20px' }} />
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Calorie Cal :
-                        </Typography>
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                            {row.isCalAvailable ? 'Available' : 'Not Available'}
-                        </Typography>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
-                        <div style={{ width: '20px' }} />
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
-                            Diet Plan :
-                        </Typography>
-                        <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
-                            {row.isDietAvailable ? 'Available' : 'Not Available'}
-                        </Typography>
-                    </div>
-                    <div style={{ height: 10 }} />
-                    <Grid container justifyContent="flex-end">
+                    {userType === 'Owner' ? (
                         <AnimateButton>
-                            <Button size="medium" variant="contained" color="secondary" onClick={(event) => handleEditClick(event, row)}>
+                            <Button
+                                type="button"
+                                variant="contained"
+                                className={classes.button}
+                                onClick={(event) => handleEditClick(event, row)}
+                            >
                                 Edit
                             </Button>
                         </AnimateButton>
-                    </Grid>
+                    ) : (
+                        <></>
+                    )}
                 </Grid>
             </CardContent>
         </Card>
     );
 };
 
-export default SubscriptionTypeCard;
+export default MembershipTypeCard;

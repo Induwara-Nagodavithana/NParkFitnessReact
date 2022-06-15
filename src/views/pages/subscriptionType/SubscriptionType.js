@@ -33,7 +33,28 @@ const choice = [
 function SubscriptionType() {
     const [subscriptionData, setSubscriptionData] = useState([]);
     const [userType, setUserType] = useState();
+    const [contacts, setContacts] = React.useState();
     const navigate = useNavigate();
+
+    const [editFormData, setEditFormData] = React.useState({
+        type: '',
+        description: '',
+        gymCount: '',
+        branchCount: '',
+        amount: '',
+        isActive: '',
+        isCalAvailable: '',
+        isDietAvailable: ''
+    });
+    const [editContactId, setEditContctId] = React.useState(null);
+
+    // Autocomplete data
+    const [status, setStatus] = React.useState();
+    const [caloriecal, setCaloriecal] = React.useState();
+    const [dietPlan, setDietPlan] = React.useState();
+
+    // Handle Dialog
+    const [openDialog, setOpenDialog] = React.useState(false);
 
     function getSubscriptionTypes() {
         HttpCommon.get('/api/subscriptionType/')
@@ -58,29 +79,6 @@ function SubscriptionType() {
             unauthorizedlogin();
         }
     }, []);
-
-    const [contacts, setContacts] = React.useState();
-
-    const [editFormData, setEditFormData] = React.useState({
-        type: '',
-        description: '',
-        gymCount: '',
-        branchCount: '',
-        amount: '',
-        isActive: '',
-        isCalAvailable: '',
-        isDietAvailable: ''
-    });
-    const [editContactId, setEditContctId] = React.useState(null);
-
-    // Autocomplete data
-    const [status, setStatus] = React.useState();
-    const [caloriecal, setCaloriecal] = React.useState();
-    const [dietPlan, setDietPlan] = React.useState();
-
-    // Handle Dialog
-    const [openDialog, setOpenDialog] = React.useState(false);
-
     // Handeling Data entering to text feilds in Add New Subscription Type
     const handlAddFormChange = (event) => {
         const fieldName = event.target.getAttribute('name');

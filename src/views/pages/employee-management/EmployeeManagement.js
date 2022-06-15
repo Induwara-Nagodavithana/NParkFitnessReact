@@ -58,16 +58,18 @@ const steps = ['Sign Up', 'Personal Info', 'Contact Details'];
 function ManageEmployee() {
     const [userType, setUserType] = React.useState();
     const [branchId, setBranchId] = React.useState();
+    const [nullBranchStaff, setNullBranchStaff] = React.useState(false);
 
     const [radioValue, setRadioValue] = React.useState();
 
     const [employeeData, setEmployeeData] = React.useState([]);
     const [openAddNewMemberDialog, setOpenAddNewMemberDialog] = React.useState(false);
-    const [openEditMemberDialog, setEditMemberDialog] = React.useState(false);
-    const [openViewMemberDialog, setViewMemberDialog] = React.useState(false);
+    const [openViewEditMemberDialog, setViewEditMemberDialog] = React.useState(false);
 
     const [branchArray, setBranchArray] = React.useState([]);
+    const [editedMemberBranchArray, seteditedMemberBranchArray] = React.useState([]);
     const [editEmployeeId, setEditEmployeeId] = React.useState();
+    const [isEdit, setIsEdit] = React.useState(false);
 
     // Form Data
     const [email, setEmail] = React.useState('');
@@ -145,18 +147,11 @@ function ManageEmployee() {
 
     function showDataToManager() {
         setRadioValue('Trainer');
-        const link = '/api/user/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/user/${localStorage.getItem('userID')}`)
             .then((res) => {
                 if (res.data.data !== null) {
                     setBranchId(res.data.data.branchId);
-                    const link2 = '/api/user/findUserByBranchId/';
-                    const key2 = res.data.data.branchId;
-                    const url2 = link2 + key2;
-
-                    HttpCommon.get(url2)
+                    HttpCommon.get(`/api/user/findUserByBranchId/${res.data.data.branchId}`)
                         .then((res) => {
                             const tempArr = [];
                             res.data.data.forEach((element) => {
@@ -184,12 +179,24 @@ function ManageEmployee() {
         navigate('/', { replace: true });
     }
 
+    function checkSubscription() {
+        HttpCommon.get(`/api/subscription/getSubscriptionByUserId/${localStorage.getItem('userID')}`).then((res) => {
+            HttpCommon.get(`/api/subscription/${res.data.data.id}`).then((res) => {
+                if (res.data.data !== null && res.data.data.isActive) {
+                    getGym();
+                } else {
+                    navigate('/pages/subscription', { replace: true });
+                }
+            });
+        });
+    }
+
     useEffect(() => {
         setUserType(localStorage.getItem('type'));
         if (localStorage.getItem('type') === 'Admin') {
             getAllMembers();
         } else if (localStorage.getItem('type') === 'Owner') {
-            getGym();
+            checkSubscription();
         } else if (localStorage.getItem('type') === 'Manager') {
             showDataToManager();
         } else if (localStorage.getItem('type') === 'Trainer') {
@@ -198,18 +205,31 @@ function ManageEmployee() {
     }, []);
 
     const handleGymSelect = (event, newValue) => {
+        setNullBranchStaff(false);
         if (newValue !== null) {
-            const link = '/api/branch/getBranchByGymId/';
-            const key = newValue.value;
-            const url = link + key;
-
-            HttpCommon.get(url)
+            HttpCommon.get(`/api/branch/getBranchByGymId/${newValue.value}`)
                 .then((res) => {
                     const tempArr = [];
                     res.data.data.forEach((element) => {
                         tempArr.push({ label: element.name, value: element.id });
                     });
                     setBranchArray(tempArr);
+                })
+                .catch((err) => {
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+                });
+        }
+    };
+    const handleAddNullBranchEmployee = (event, newValue) => {
+        if (newValue !== null) {
+            HttpCommon.get(`/api/branch/getBranchByGymId/${newValue.value}`)
+                .then((res) => {
+                    const tempArr = [];
+                    res.data.data.forEach((element) => {
+                        tempArr.push({ label: element.name, value: element.id });
+                    });
+                    seteditedMemberBranchArray(tempArr);
+                    // setNullBranchStaff(false);
                 })
                 .catch((err) => {
                     messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
@@ -228,25 +248,36 @@ function ManageEmployee() {
     };
 
     const handleSearch = () => {
-        const link = '/api/user/findUserByBranchId/';
-        const key = branchId;
-        const url = link + key;
-        HttpCommon.get(url)
-            .then((res) => {
-                const tempArr = [];
-                res.data.data.forEach((element) => {
-                    if (element.type === radioValue) {
-                        tempArr.push(element);
-                    }
+        if (branchArray.length === 0) {
+            setNullBranchStaff(true);
+            HttpCommon.post('/api/user/findNullBranchStaff')
+                .then((res) => {
+                    console.log(res);
+                    setEmployeeData(res.data.data);
+                    setAddNewStaffButton(false);
+                    setShowTable(false);
+                })
+                .catch((err) => {
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
                 });
-                setEmployeeData(tempArr);
+        } else {
+            HttpCommon.get(`/api/user/findUserByBranchId/${branchId}`)
+                .then((res) => {
+                    const tempArr = [];
+                    res.data.data.forEach((element) => {
+                        if (element.type === radioValue) {
+                            tempArr.push(element);
+                        }
+                    });
+                    setEmployeeData(tempArr);
 
-                setAddNewStaffButton(false);
-                setShowTable(false);
-            })
-            .catch((err) => {
-                messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
-            });
+                    setAddNewStaffButton(false);
+                    setShowTable(false);
+                })
+                .catch((err) => {
+                    messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
+                });
+        }
     };
 
     const handleAddNewMemberSubmit = () => {
@@ -298,25 +329,11 @@ function ManageEmployee() {
             });
     };
 
-    const handleViewClick = (event, row) => {
-        setViewMemberDialog(true);
-        setFirstName(row.firstName);
-        setLastName(row.lastName);
-        setEmail(row.email);
-        setBirthday(row.birthDay);
-        setContactNo(row.contactNo);
-        setGenderValue(row.gender);
-        setEmployeeType(row.type);
-        setStreet(row.street);
-        setLane(row.lane);
-        setCity(row.city);
-        setProvince(row.province);
-    };
-
-    // Handling edit click
-    const handleEditClick = (event, row) => {
+    const handleViewEditClick = (event, row) => {
+        console.log(isEdit);
         setEditEmployeeId(row.id);
-        setEditMemberDialog(true);
+
+        setViewEditMemberDialog(true);
         setFirstName(row.firstName);
         setLastName(row.lastName);
         setEmail(row.email);
@@ -331,12 +348,32 @@ function ManageEmployee() {
     };
 
     const handleEditMemberSubmit = () => {
-        const link = '/api/user/';
-        const key = editEmployeeId;
-        const url = link + key;
+        console.log(isEdit);
+        console.log(editEmployeeId);
 
-        HttpCommon.put(url, {
-            type: employeeType
+        HttpCommon.put(`/api/user/${editEmployeeId}`, {
+            type: employeeType,
+            branchId
+        })
+            .then((res) => {
+                handleSearch();
+                messages.addMessage({ title: 'Edit Successfully !', msg: 'Member Details Edited Successfully', type: 'success' });
+            })
+            .catch((error) => {
+                messages.addMessage({ title: 'Fail !', msg: error.message, type: 'danger' });
+            });
+
+        setEditEmployeeId(null);
+        setViewEditMemberDialog(false);
+        setIsEdit(false);
+        if (nullBranchStaff === true) {
+            setBranchArray([]);
+        }
+    };
+
+    const handleRemoveClick = (event, row) => {
+        HttpCommon.put(`/api/user/${row.id}`, {
+            branchId: null
         })
             .then((res) => {
                 handleSearch();
@@ -345,9 +382,6 @@ function ManageEmployee() {
             .catch((error) => {
                 messages.addMessage({ title: 'Fail !', msg: error.message, type: 'danger' });
             });
-
-        setEditEmployeeId(null);
-        setEditMemberDialog(false);
     };
 
     // Add New Member Dialog
@@ -359,16 +393,14 @@ function ManageEmployee() {
     };
 
     const handleEmployeeType = (event) => {
+        console.log(editEmployeeId);
         setEmployeeType(event.target.value);
     };
 
-    const handleCloseEditMember = () => {
+    const handleCloseViewEditMember = () => {
+        console.log(isEdit);
         setEditEmployeeId(null);
-        setEditMemberDialog(false);
-    };
-
-    const handleCloseViewMember = () => {
-        setViewMemberDialog(false);
+        setViewEditMemberDialog(false);
     };
 
     // Stepper
@@ -497,7 +529,8 @@ function ManageEmployee() {
                                 sx={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Gym" />}
                             />
-                            {branchArray.length > 0 ? (
+
+                            {branchArray.length > 0 && nullBranchStaff === false ? (
                                 <Autocomplete
                                     disablePortal
                                     id="branchs"
@@ -526,7 +559,7 @@ function ManageEmployee() {
                 )}
 
                 <div style={{ height: 20 }} />
-                {showTable !== true ? (
+                {showTable !== true && nullBranchStaff === false ? (
                     <Grid container justifyContent="flex-end">
                         <AnimateButton>
                             <Button
@@ -560,6 +593,18 @@ function ManageEmployee() {
                                 <TableCell align="center" sx={{ color: 'white' }}>
                                     Contact No
                                 </TableCell>
+                                {nullBranchStaff === true ? (
+                                    <>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Started Date
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Last Job Role
+                                        </TableCell>
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
                                 <TableCell align="right" sx={{ color: 'white' }} />
                             </TableRow>
                         </TableHead>
@@ -573,8 +618,11 @@ function ManageEmployee() {
                                             <ReadOnlyRow
                                                 row={row}
                                                 userType={userType}
-                                                handleViewClick={handleViewClick}
-                                                handleEditClick={handleEditClick}
+                                                handleViewEditClick={handleViewEditClick}
+                                                // handleEditClick={handleEditClick}
+                                                handleRemoveClick={handleRemoveClick}
+                                                nullBranchStaff={nullBranchStaff}
+                                                setIsEdit={setIsEdit}
                                             />
                                         )}
                                     </React.Fragment>
@@ -669,21 +717,27 @@ function ManageEmployee() {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={openEditMemberDialog} onClose={handleCloseAddNewMember}>
-                <DialogTitle>Edit Staff Member Details</DialogTitle>
+            <Dialog open={openViewEditMemberDialog} onClose={handleCloseViewEditMember}>
+                <DialogTitle>Member Details</DialogTitle>
                 <DialogContent>
-                    {userType !== 'Admin' ? (
+                    {isEdit === true ? (
                         <>
-                            {userType !== 'Owner' ? (
-                                <DialogContentText>Manager can change only the type of member</DialogContentText>
-                            ) : (
+                            {userType !== 'Admin' ? (
                                 <>
-                                    <DialogContentText>Owner can change only the type of member</DialogContentText>
+                                    {userType !== 'Owner' ? (
+                                        <DialogContentText>Manager can change only the type of member</DialogContentText>
+                                    ) : (
+                                        <>
+                                            <DialogContentText>Owner can change only the type of member</DialogContentText>
+                                        </>
+                                    )}
                                 </>
+                            ) : (
+                                <DialogContentText>Admin can change only the type of member</DialogContentText>
                             )}
                         </>
                     ) : (
-                        <DialogContentText>Admin can change only the type of member</DialogContentText>
+                        <></>
                     )}
 
                     <TextField
@@ -719,90 +773,65 @@ function ManageEmployee() {
                             <FormControlLabel value="female" control={<Radio />} label="Female" />
                         </RadioGroup>
                     </FormControl>
-                    <Box sx={{ minWidth: 120 }}>
-                        <FormControl fullWidth>
-                            <InputLabel id="type-lable" required>
-                                Type
-                            </InputLabel>
-                            <Select
-                                labelId="type-lable"
-                                id="type-select"
-                                value={employeeType}
-                                label="Type**"
-                                onChange={handleEmployeeType}
-                                required
-                            >
-                                {userType === 'Admin' ? (
-                                    <MenuItem value="Admin">Admin</MenuItem>
-                                ) : (
-                                    <>
-                                        {userType === 'Manager' ? (
-                                            <MenuItem value="Trainer">Trainer</MenuItem>
-                                        ) : (
-                                            <>
-                                                <MenuItem value="Manager">Manager</MenuItem>
-                                                <MenuItem value="Trainer">Trainer</MenuItem>
-                                            </>
-                                        )}
-                                    </>
-                                )}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    {isEdit === true ? (
+                        <>
+                            <Box sx={{ minWidth: 120 }}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="type-lable" required>
+                                        Type
+                                    </InputLabel>
+                                    <Select
+                                        labelId="type-lable"
+                                        id="type-select"
+                                        value={employeeType}
+                                        label="Type**"
+                                        onChange={handleEmployeeType}
+                                        required
+                                    >
+                                        <MenuItem value="Manager">Manager</MenuItem>
+                                        <MenuItem value="Trainer">Trainer</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            <div style={{ height: 10 }} />
+                            {nullBranchStaff === true ? (
+                                <Stack spacing={2}>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="gyms"
+                                        options={gymArray}
+                                        onChange={handleAddNullBranchEmployee}
+                                        sx={{ width: 300 }}
+                                        renderInput={(params) => <TextField {...params} label="Gym" />}
+                                    />
+                                    {editedMemberBranchArray.length > 0 ? (
+                                        <Autocomplete
+                                            disablePortal
+                                            id="branchs"
+                                            options={editedMemberBranchArray}
+                                            onChange={handleBranchSelect}
+                                            sx={{ width: 300 }}
+                                            renderInput={(params) => <TextField {...params} label="Branch" />}
+                                        />
+                                    ) : (
+                                        <></>
+                                    )}
+                                </Stack>
+                            ) : (
+                                <></>
+                            )}
+                        </>
+                    ) : (
+                        <TextField fullWidth value={employeeType} label="Employee Type" margin="dense" inputProps={{ readOnly: true }} />
+                    )}
                     <TextField fullWidth value={street} label="Street" margin="dense" name="street" inputProps={{ readOnly: true }} />
                     <TextField fullWidth value={lane} label="Lane" margin="dense" name="lane" inputProps={{ readOnly: true }} />
                     <TextField fullWidth value={city} label="City" margin="dense" name="city" inputProps={{ readOnly: true }} />
                     <TextField fullWidth value={province} label="Province" margin="dense" name="province" inputProps={{ readOnly: true }} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseEditMember}>Cancel</Button>
-                    <Button onClick={handleEditMemberSubmit}>Save</Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog open={openViewMemberDialog} onClose={handleCloseAddNewMember}>
-                <DialogTitle>Member Details</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        value={firstName}
-                        label="First Name"
-                        margin="dense"
-                        name="firstName"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        value={lastName}
-                        label="Last Name"
-                        margin="dense"
-                        name="lastName"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <TextField fullWidth value={email} label="Email" margin="dense" name="email" inputProps={{ readOnly: true }} />
-                    <TextField fullWidth value={birthday} label="Birthday" margin="dense" name="birthDay" inputProps={{ readOnly: true }} />
-                    <TextField
-                        fullWidth
-                        value={contactNo}
-                        label="Contact Number"
-                        margin="dense"
-                        name="contactNo"
-                        inputProps={{ readOnly: true }}
-                    />
-                    <FormControl>
-                        <FormLabel id="gender">Gender</FormLabel>
-                        <RadioGroup row value={genderValue}>
-                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                        </RadioGroup>
-                    </FormControl>
-                    <TextField fullWidth value={employeeType} label="Employee Type" margin="dense" inputProps={{ readOnly: true }} />
-                    <TextField fullWidth value={street} label="Street" margin="dense" name="street" inputProps={{ readOnly: true }} />
-                    <TextField fullWidth value={lane} label="Lane" margin="dense" name="lane" inputProps={{ readOnly: true }} />
-                    <TextField fullWidth value={city} label="City" margin="dense" name="city" inputProps={{ readOnly: true }} />
-                    <TextField fullWidth value={province} label="Province" margin="dense" name="province" inputProps={{ readOnly: true }} />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseViewMember}>Cancel</Button>
+                    <Button onClick={handleCloseViewEditMember}>Cancel</Button>
+                    {isEdit === true ? <Button onClick={handleEditMemberSubmit}>Save</Button> : <></>}
                 </DialogActions>
             </Dialog>
         </>

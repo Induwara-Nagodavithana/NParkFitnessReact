@@ -43,7 +43,7 @@ const SecondStep = ({ firstName, lastName, birthday, genderValue, setFirstName, 
                     label="Birthday"
                     value={birthday}
                     onChange={(newValue) => {
-                        setBirthday(newValue.slice(0, 15));
+                        setBirthday(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} />}
                 />
