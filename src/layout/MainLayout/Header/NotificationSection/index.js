@@ -115,7 +115,6 @@ const NotificationSection = () => {
     const [unReadCount, setUnReadCount] = React.useState(0);
     const anchorRef = React.useRef(null);
 
-    const userId = 1;
     const db = getDatabase();
 
     const [notifications, setNotifications] = React.useState();
@@ -171,6 +170,7 @@ const NotificationSection = () => {
     };
 
     function getNotifications() {
+        const userId = localStorage.getItem('userID');
         const db = getDatabase();
         const userRef = ref(db, `/users/${userId}/notifications`);
         onValue(userRef, async (snapshot) => {

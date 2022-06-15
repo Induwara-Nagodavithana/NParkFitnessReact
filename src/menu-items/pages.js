@@ -687,12 +687,4 @@ const pages = () => {
     return pages;
 };
 
-// const pages = {
-//     id: 'pages',
-//     title: 'Pages',
-//     caption: 'Pages Caption',
-//     type: 'group',
-//     children: pagesRoute()
-// };
-
 export default pages;

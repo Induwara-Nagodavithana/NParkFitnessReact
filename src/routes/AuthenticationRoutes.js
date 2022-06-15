@@ -13,7 +13,7 @@ const TrainerReport = Loadable(lazy(() => import('views/pages/reports/trainer-re
 const BranchReport = Loadable(lazy(() => import('views/pages/reports/branch-report/BranchReport')));
 const GymReport = Loadable(lazy(() => import('views/pages/reports/gym-report/GymReport')));
 const PaymentReport = Loadable(lazy(() => import('views/pages/reports/payment-report/PaymentReport')));
-const PariceView = Loadable(lazy(() => import('views/pages/reports/priceView/PriceView')));
+const PariceView = Loadable(lazy(() => import('views/pages/subscription/component/PriceView')));
 const AdminReport = Loadable(lazy(() => import('views/pages/reports/admin-report/AdminReport')));
 
 // ===========================|| AUTHENTICATION ROUTING ||=========================== //

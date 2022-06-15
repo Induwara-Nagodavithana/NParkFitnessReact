@@ -226,7 +226,7 @@ const TrainerReport = () => {
     const [display, setDisplay] = React.useState('none');
 
     const trainerId = 4;
-    const userId = 1;
+    // const userId = 1;
     const branchId = 1;
     function getTrainerDetails() {
         // let arr = [];

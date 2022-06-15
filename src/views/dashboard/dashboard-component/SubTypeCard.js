@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD DEFAULT - POPULAR CARD ||=========================== //
+// ===========================|| DASHBOARD SUB TYPE CARD ||=========================== //
 
 const SubTypeCard = ({ isLoading, data }) => {
     const classes = useStyles();

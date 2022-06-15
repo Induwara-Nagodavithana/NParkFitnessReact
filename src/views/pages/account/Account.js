@@ -249,7 +249,6 @@ const Account = () => {
 
     const navigate = useNavigate();
     const ownerName = 'Saman';
-    const userId = 1;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -317,6 +316,7 @@ const Account = () => {
     }
 
     function changeFirebaseEmail() {
+        const userId = localStorage.getItem('userID');
         const auth = getAuth();
         const user = auth.currentUser;
         if (values.email !== undefined && values.email !== '') {
@@ -356,6 +356,7 @@ const Account = () => {
     }
 
     function saveProfileDetails() {
+        const userId = localStorage.getItem('userID');
         // let arr = [];
         // if (values.email !== undefined && values.email !== '') {
         //     changeFirebaseEmail();
@@ -410,9 +411,10 @@ const Account = () => {
 
     function uploadProfileImage(file) {
         // let arr = [];
+        const key = localStorage.getItem('userID');
         const formData = new FormData();
         formData.append('image', file);
-        formData.append('userId', userId);
+        formData.append('userId', key);
         HttpCommon.post(`/api/user/upload`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -423,7 +425,7 @@ const Account = () => {
                 messages.addMessage({ title: 'Uploaded!', msg: 'Profile Image Uploaded', type: 'success' });
             }
             setDataLoading(true);
-            const key = localStorage.getItem('userID');
+
             getUserDetails(key);
         });
     }

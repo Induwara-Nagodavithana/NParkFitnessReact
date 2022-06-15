@@ -97,24 +97,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD DEFAULT - POPULAR CARD ||=========================== //
+// ===========================|| DASHBOARD MEMBER CARD ||=========================== //
 
 const MemberCard = ({ isLoading, data }) => {
     const classes = useStyles();
     console.log(data);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [isSchedule, setIsSchedule] = React.useState(false);
-    // if (data !== undefined && data.length > 0) {
-    //     if (element.scheduleExpireDate !== null) {
-    //         const d1 = Date.parse(element.scheduleExpireDate);
-    //         const today = new Date().toISOString().slice(0, 10);
-    //         console.log(`${d1}<${today}`);
-    //         console.log(d1 < today);
-    //         if (d1 < today) {
-    //             setIsSchedule(true);
-    //         }
-    //     }
-    // }
 
     function scheduleStatus(element) {
         const today = new Date().toISOString().slice(0, 10);

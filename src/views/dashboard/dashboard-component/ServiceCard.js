@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD DEFAULT - POPULAR CARD ||=========================== //
+// ===========================|| DASHBOARD SEVICE CARD ||=========================== //
 
 const ServiceCard = ({ isLoading, data }) => {
     const classes = useStyles();

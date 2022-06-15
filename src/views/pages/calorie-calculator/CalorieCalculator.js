@@ -195,7 +195,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CalorieCalculator = () => {
-    const userId = 1;
     const classes = useStyles();
     const theme = useTheme();
     const matchDownMD = useMediaQuery(theme.breakpoints.down('md'));

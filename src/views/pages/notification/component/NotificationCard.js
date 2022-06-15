@@ -137,7 +137,6 @@ const ShadowBox = () => {
 const NotificationCard = (notificationData) => {
     const classes = useStyles();
     const db = getDatabase();
-    const userId = 1;
     let time = '';
     // console.log(notificationData);
     // console.log(subscriptionData.subscriptionData.id);
@@ -156,6 +155,7 @@ const NotificationCard = (notificationData) => {
     }
 
     const handleClickNew = () => {
+        const userId = localStorage.getItem('userID');
         console.info('You clicked the New Chip.');
         const updates = {};
         updates[`/users/${userId}/notifications/${notificationData.notificationData.key}/isNew`] = false;
@@ -164,6 +164,7 @@ const NotificationCard = (notificationData) => {
     };
 
     const handleClickRead = () => {
+        const userId = localStorage.getItem('userID');
         console.info('You clicked the Read Chip.');
         const updates = {};
         updates[`/users/${userId}/notifications/${notificationData.notificationData.key}/isRead`] = true;
