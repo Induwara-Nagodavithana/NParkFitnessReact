@@ -43,7 +43,7 @@ const SecondStep = ({ firstName, lastName, birthday, genderValue, setFirstName, 
                     label="Birthday"
                     value={birthday}
                     onChange={(newValue) => {
-                        setBirthday(newValue);
+                        setBirthday(newValue.toLocaleDateString('en-CA'));
                     }}
                     renderInput={(params) => <TextField {...params} />}
                 />
@@ -54,8 +54,8 @@ const SecondStep = ({ firstName, lastName, birthday, genderValue, setFirstName, 
             <FormControl>
                 <FormLabel id="gender">Gender</FormLabel>
                 <RadioGroup row value={genderValue} onChange={handleGender}>
-                    <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                    <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                    <FormControlLabel value="male" control={<Radio />} label="Male" />
+                    <FormControlLabel value="female" control={<Radio />} label="Female" />
                 </RadioGroup>
             </FormControl>
         </div>
