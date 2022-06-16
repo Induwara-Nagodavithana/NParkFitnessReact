@@ -277,6 +277,7 @@ function DietPlan() {
                         memberId={memberId}
                         getDietPlans={getDietPlans}
                         setOpenAddNewDietPlanDialog={setOpenAddNewDietPlanDialog}
+                        setActiveStep={setActiveStep}
                     />
                 );
             default:
