@@ -94,6 +94,9 @@ function ManageEmployee() {
     const [showTable, setShowTable] = React.useState(true);
     const navigate = useNavigate();
 
+    // Regex email validation
+    const validEmail = new RegExp('^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$');
+
     function showDataToAdmin() {
         const allMembers = [...adminArray, ...ownerArray, ...managerArray, ...trainerArray];
         setEmployeeData(allMembers);
@@ -480,6 +483,10 @@ function ManageEmployee() {
                     setActiveStep(0);
                     setPassword('');
                     setConfirmPassword('');
+                } else if (!validEmail.test(email)) {
+                    messages.addMessage({ title: 'Fail !', msg: 'Invalid email type', type: 'danger' });
+                    setActiveStep(0);
+                    setEmail('');
                 } else if (password === confirmPassword && email !== '') {
                     handleNext();
                 }

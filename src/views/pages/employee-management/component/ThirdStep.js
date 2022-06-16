@@ -30,6 +30,7 @@ const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setS
                 variant="outlined"
                 label="Contact No"
                 required
+                inputProps={{ maxLength: 12 }}
             />
 
             <TextField

@@ -76,11 +76,13 @@ const MembershipType = () => {
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
+            console.log(newValue);
             setGymId(newValue.value);
         }
     };
 
     const handleSearch = () => {
+        console.log(gymId);
         HttpCommon.get(`/api/membershipType/getMembershipTypeByGymId/${gymId}`)
             .then((res) => {
                 console.log(res);
