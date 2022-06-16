@@ -56,8 +56,8 @@ const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }
     };
 
     const handleFoodItem = (event) => {
-        console.log(event.target.value);
-        setFoodItem(event.target.value);
+        console.log(event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1));
+        setFoodItem(event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1));
     };
 
     const handleAmount = (event) => {
