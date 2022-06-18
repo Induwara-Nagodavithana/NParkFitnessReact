@@ -236,10 +236,11 @@ const BranchReport = () => {
     const [branchCount, setBranchCount] = React.useState();
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
-
+    const { state } = useLocation();
+    const gymId = state !== null ? state.gymId : 1;
     // const trainerId = 4;
     // const userId = 1;
-    const gymId = 1;
+    // const gymId = 1;
 
     function getManagerData() {
         const userId = localStorage.getItem('userID');
