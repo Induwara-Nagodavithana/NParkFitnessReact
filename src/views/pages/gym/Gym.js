@@ -19,6 +19,7 @@ function Gym() {
 
     const [gymData, setGymData] = React.useState();
     const [editContactId, setEditContctId] = React.useState(null);
+    const [hideAdd, setHideAdd] = useState(true);
 
     const [userId, setUserId] = useState([]);
     const [type, setType] = useState([]);
@@ -205,6 +206,7 @@ function Gym() {
                     });
                 });
         } 
+        setHideAdd(true);
     };
 
     const handleEditFormChange = (event) => {
@@ -305,6 +307,7 @@ function Gym() {
                 width: 500
             });
         }else{
+            setHideAdd(false);
             myRef.current.scrollIntoView();
         }
     };
@@ -315,19 +318,21 @@ function Gym() {
             <>
             <MainCard title="Gym">
             <div style={{ height: 5 }} />
+            <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                            <AnimateButton>
+                                <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
+                                    Add New Gym
+                                </Button>
+                            </AnimateButton>
+                        </Grid>
+                        <div style={{ height: 10 }} />
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                    <TableHead>
+            <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+            <TableHead sx={{ backgroundColor: '#512da8' }}>
                         <TableRow>
-                            <TableCell align="center">Gym Name</TableCell>
-                            <TableCell align="center">Created At</TableCell>
-                            <TableCell align="right">
-                                <AnimateButton>
-                                    <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
-                                        Add New Gym
-                                    </Button>
-                                </AnimateButton>
-                            </TableCell>
+                            <TableCell align="center" sx={{ color: 'white' }}>Gym Name</TableCell>
+                            <TableCell align="center" sx={{ color: 'white' }}>Created At</TableCell>
+                            <TableCell align="center" sx={{ color: 'white' }} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -349,7 +354,7 @@ function Gym() {
             </TableContainer>
         </MainCard>
         <div style={{ height: 10 }} />
-            <MainCard title="Add New Gym" ref={myRef}>
+            <MainCard title="Add New Gym" ref={myRef} hidden={hideAdd}>
                 <TextField required fullWidth onChange={handlAddFormChange} label="Gym Name" margin="dense" name="name" />
 
                

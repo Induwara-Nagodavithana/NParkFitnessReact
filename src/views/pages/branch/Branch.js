@@ -36,8 +36,13 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const provinceArray = ['Western', 'Southern', 'Central', 'Nouthern', 'Eastern', 'North Central', 'Uva', 'Sabaragamuwa', 'North Western'];
 const activeStatusArray = ['true', 'false'];
 const gymArray = [];
+const possibleGymsArray = [];
 
 function Branch() {
+    const [addButton, setAddButtonDisable] = useState(true);
+    const [showAdd, setShowAdd] = useState(true);
+    const [showAddBranch,setShowAddBranch] = useState(true);
+
     const [branchData, setBranchData] = useState([]);
     
     // get all branch
@@ -52,6 +57,10 @@ function Branch() {
     }, []);
 
     const [getGymId, setGymId] = useState([]);
+    const handleBranchDetails = (event,newValue) => {
+            setGymId(newValue.value);
+            setShowAddBranch(false);
+    };
 
     // get gym by gym id
     const [getGymByGymId, setGymByGymId] = useState([]);
@@ -198,6 +207,7 @@ function Branch() {
     useEffect(() => {
         branchCountByUser();
     },[branchByGymData,getGymId]);
+    
 
     // get subscription by userId
     const [getSubscriptionData,setSubscriptionData] = React.useState();
@@ -256,10 +266,40 @@ function Branch() {
     const [openDialog, setOpenDialog] = React.useState(false);
 
     // provinces & isActive autocomplete values
-    const [proviceName, setProvince] = useState([]);
-    const [ActiveStatus, setIsActive] = useState([]);
+    const [getNameBranch, setNameBranch] = useState(null);
+    const [getStreet, setStreet] = useState(null);
+    const [getLane, setLane] = useState(null);
+    const [getCity, setCity] = useState(null);
+    const [proviceName, setProvince] = useState(null);
+    const [getGymName,setGymName] = useState(null);
+    const [ActiveStatus, setIsActive] = useState(null);
 
-    //  Add New Branch
+    const handleBranchName = (event) => {
+        setNameBranch(event.target.value);
+    };
+    const handlestreet = (event) => {
+        setStreet(event.target.value);
+    };
+    const handleLane = (event) => {
+        setLane(event.target.value);
+    };
+    const handleCity = (event) => {
+        setCity(event.target.value);
+    };
+    const handleProvince = (event,newValue) => {
+        setProvince(newValue);
+    };
+    const handleGym = (event,newValue) => {
+        setGymName(newValue.value);
+    };
+    const handleIsActive = (event,newValue) => {
+        setIsActive(newValue);
+        if (getNameBranch != null && getStreet != null && getLane != null && getCity != null && proviceName != null && getGymId != null) {
+            setAddButtonDisable(false);
+        }
+    };
+
+    /* //  Add New Branch
     const handlAddFormChange = (event) => {
         const fieldName = event.target.getAttribute('name');
         const fieldValue = event.target.value;
@@ -269,11 +309,12 @@ function Branch() {
 
         setNewBranchData(newFormData);
         console.log(newBranchData);
-    };
+    }; */
 
     // Send New branch data to server
     const handleAddFormSubmit = () => {
         if(parseInt(branchCountToUser, 10) >= parseInt(branchCountPossible, 10)){
+            setShowAdd(true);
             Store.addNotification({
                 title: 'Fail to add new gym!',
                 message: 'Your branch count exceeded',
@@ -290,12 +331,11 @@ function Branch() {
             });
         }else{
         console.log(newBranchData);
-
         HttpCommon.post('/api/branch/', {
-            name: newBranchData.name,
-            street: newBranchData.street,
-            lane: newBranchData.lane,
-            city: newBranchData.city,
+            name: getNameBranch,
+            street: getStreet,
+            lane: getLane,
+            city: getCity,
             province: proviceName,
             gymId: getGymId,
             isActive: ActiveStatus
@@ -339,6 +379,13 @@ function Branch() {
                 });
             });
         }
+        setNameBranch( "");
+        setStreet(" ");
+        setLane(" ");
+        setCity(" ");
+        setProvince(null);
+        setIsActive(null);
+        setShowAdd(true);
     };
     // Data entering to text feilds in Edit branch details
     const handleEditFormChange = (event) => {
@@ -466,7 +513,7 @@ function Branch() {
                 });
             });
 
-        setBranchId(null);
+      //  setBranchId(null);
         setOpenDialog(false);
     };
 
@@ -498,6 +545,7 @@ function Branch() {
      // Scroll to myRef view
      const executeScroll = () => {
         if(parseInt(branchCountToUser, 10) >= parseInt(branchCountPossible, 10)){
+            setShowAdd(true);
             Store.addNotification({
                 title: 'Fail to add new gym! ',
                 message: 'Your Branch count exceeded, Use new subscription',
@@ -513,9 +561,34 @@ function Branch() {
                 width: 500
             });
         }else{
+            setShowAdd(false);
             myRef.current.scrollIntoView();
         }
     };
+
+
+    const handleEditGym = (event,newValue) => {
+        setGymId(newValue.value);
+        setEditedValueGym(newValue.value);
+    }
+    const getGymsPossible = () => {
+        const link = '/api/gym/getAllGymByUserId/';
+        const id = userId;
+        const url = link+id;
+
+        HttpCommon.get(url)
+            .then((res) => {
+                if(parseInt(branchCountToUser, 10) < parseInt(branchCountPossible, 10)){
+                     res.data.data.map((row) => possibleGymsArray.push({ label: row.name, value: row.id }));
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    useEffect(() => {
+        getGymsPossible();
+    },[getGymId])
 
     return (
         <>
@@ -613,9 +686,7 @@ function Branch() {
                                 disablePortal
                                 id="controllable-states-demo"
                                 options={gymArray}
-                                onChange={(event, newValue) => {
-                                    setGymId(newValue.value);
-                                }}
+                                onChange={handleBranchDetails}
                                 sx={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Select Gym" />}
                             />
@@ -623,20 +694,11 @@ function Branch() {
                                 Search
                             </Button>
                         </Stack>
+                        </MainCard>
                         <div style={{ height: 5 }} />
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">BranchName</TableCell>
-                                        <TableCell align="center">Street</TableCell>
-                                        <TableCell align="center">Lane</TableCell>
-                                        <TableCell align="center">City</TableCell>
-                                        <TableCell align="center">Province</TableCell>
-                                        <TableCell align="center">isActive</TableCell>
-
-                                        <TableCell align="right">
-                                            <AnimateButton>
+                        <MainCard title="Add New Branch" hidden={showAddBranch}>
+                        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                        <AnimateButton>
                                                 <Button
                                                     disableElevation
                                                     size="medium"
@@ -647,7 +709,20 @@ function Branch() {
                                                     Add New Branch
                                                 </Button>
                                             </AnimateButton>
-                                        </TableCell>
+                                            </Grid>
+                                            <div style={{ height: 10 }} />
+                        <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+                        <TableHead sx={{ backgroundColor: '#512da8' }}>
+                                    <TableRow>
+                                        <TableCell align="center" sx={{ color: 'white' }}>BranchName</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>Street</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>Lane</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>City</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>Province</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>isActive</TableCell>
+
+                                        <TableCell align="right" />
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -670,33 +745,64 @@ function Branch() {
                     </MainCard>
 
                     <div style={{ height: 10 }} />
-                    <MainCard title="Add New Branch" ref={myRef}>
-                        <TextField required fullWidth onChange={handlAddFormChange} label="Branch Name" margin="dense" name="name" />
-                        <TextField required fullWidth onChange={handlAddFormChange} label="Street" margin="dense" name="street" />
-                        <TextField required fullWidth onChange={handlAddFormChange} label="Lane" margin="dense" name="lane" />
-                        <TextField required fullWidth onChange={handlAddFormChange} label="City" margin="dense" name="city" />
+                    <MainCard title="Add New Branch" hidden={showAdd} ref={myRef}>
+                    <TextField
+                        required
+                        fullWidth
+                        value={getNameBranch}
+                        onChange={handleBranchName}
+                        label="Branch"
+                        margin="dense"
+                        name="name"
+                        color="secondary"
+                    />
+                    <TextField
+                        required
+                        fullWidth
+                        value={getStreet}
+                        onChange={handlestreet}
+                        label="Street"
+                        margin="dense"
+                        name="street"
+                        color="secondary"
+                    />
+                    <TextField
+                        required
+                        fullWidth
+                        value={getLane}
+                        onChange={handleLane}
+                        label="Lane"
+                        margin="dense"
+                        name="lane"
+                        color="secondary"
+                    />
+                    <TextField
+                        required
+                        fullWidth
+                        value={getCity}
+                        onChange={handleCity}
+                        label="City"
+                        margin="dense"
+                        name="city"
+                        color="secondary"
+                    />
 
                         <Autocomplete
+                        required
                             id="controllable-states-demo"
                             value={proviceName}
-                            onChange={(event, value) => setProvince(value)}
+                            onChange={handleProvince}
                             options={provinceArray}
-                            renderInput={(params) => <TextField {...params} label="Province" variant="outlined" fullWidth margin="dense" />}
+                            renderInput={(params) => <TextField {...params} label="Province" variant="outlined" fullWidth margin="dense" name="province" />}
                         />
-
+                      
                         <Autocomplete
-                            id="controllable-states-demo"
-                            onChange={(event, value) => setGymId(value.value)}
-                            options={gymArray}
-                            renderInput={(params) => <TextField {...params} label="Gym" variant="outlined" fullWidth margin="dense" />}
-                        />
-
-                        <Autocomplete
+                        required
                             id="controllable-states-demo"
                             value={ActiveStatus}
-                            onChange={(event, value) => setIsActive(value)}
+                            onChange={handleIsActive}
                             options={activeStatusArray}
-                            renderInput={(params) => <TextField {...params} label="isActive" variant="outlined" fullWidth margin="dense" />}
+                            renderInput={(params) => <TextField {...params} label="isActive" variant="outlined" fullWidth margin="dense" name="isActive" />}
                         />
                         <Grid container direction="row" justifyContent="flex-end" spacing={3}>
                             <Grid item>
@@ -706,7 +812,7 @@ function Branch() {
                                     size="medium"
                                     variant="contained"
                                     color="secondary"
-                                    disabled={!newBranchData}
+                                    disabled={addButton}
                                 >
                                     Add
                                 </Button>
@@ -785,11 +891,9 @@ function Branch() {
                             />
                             <Autocomplete
                                 value={getGymByGymId.name}
-                                onChange={(event, newValue) => {
-                                    setEditedValueGym(newValue.value);
-                                }}
+                                onChange={handleEditGym}
                                 id="controllable-states-demo"
-                                options={gymArray}
+                                options={possibleGymsArray}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Gym" variant="outlined" fullWidth margin="dense" name="gymId" />
                                 )}

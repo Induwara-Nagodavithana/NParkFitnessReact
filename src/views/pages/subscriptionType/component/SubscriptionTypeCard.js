@@ -6,7 +6,7 @@ import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { IconFileAnalytics, IconBulb, IconReceipt2, IconFileDescription } from '@tabler/icons';
+import { IconFileAnalytics, IconBulb, IconReceipt2, IconBulbOff } from '@tabler/icons';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -86,7 +86,7 @@ const SubscriptionTypeCard = ({ row, handleEditClick }) => {
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconBulbOff color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Gym Count :
@@ -96,7 +96,7 @@ const SubscriptionTypeCard = ({ row, handleEditClick }) => {
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconBulbOff color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Branch Count :
@@ -126,7 +126,7 @@ const SubscriptionTypeCard = ({ row, handleEditClick }) => {
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconBulbOff color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Calorie Cal :
@@ -136,7 +136,7 @@ const SubscriptionTypeCard = ({ row, handleEditClick }) => {
                         </Typography>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                        <IconFileDescription color="black" />
+                        <IconBulbOff color="black" />
                         <div style={{ width: '20px' }} />
                         <Typography align="left" variant="subtitle1" style={{ maxWidth: '150px', minWidth: '150px' }}>
                             Diet Plan :

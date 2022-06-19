@@ -24,12 +24,18 @@ const ReadOnlyRowScheduleManager = ({
         setScheduleId(row.id);
         handleDialog();
     };
+    const q = new Date();
+    const m = q.getMonth() + 1;
+    const d = q.getDay();
+    const y = q.getFullYear();
+
+    const date = new Date(y, m, d);
     return (
         <>
             <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center">{row.expireDate.substring(0, 10)}</TableCell>
 
-                {row.expireDate > '2022-05-30' ? (
+                {new Date(row.expireDate.substring(0, 10)) > date ? (
                     <TableCell align="center">Not Expired</TableCell>
                 ) : (
                     <TableCell align="center">Expired</TableCell>
