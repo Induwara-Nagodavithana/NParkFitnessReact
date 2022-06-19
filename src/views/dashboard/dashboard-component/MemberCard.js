@@ -31,6 +31,7 @@ import KeyboardArrowDownOutlinedIcon from '@material-ui/icons/KeyboardArrowDownO
 
 import { IconFileAnalytics, IconCalendarEvent, IconBulb, IconReceipt2 } from '@tabler/icons';
 import User1 from 'assets/images/users/user-round.svg';
+import { useNavigate } from 'react-router';
 // style constant
 const useStyles = makeStyles((theme) => ({
     cardAction: {
@@ -99,11 +100,13 @@ const useStyles = makeStyles((theme) => ({
 
 // ===========================|| DASHBOARD MEMBER CARD ||=========================== //
 
-const MemberCard = ({ isLoading, data }) => {
+const MemberCard = ({ isLoading, data, isViewAll }) => {
     const classes = useStyles();
     console.log(data);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [isSchedule, setIsSchedule] = React.useState(false);
+    const ViewAll = isViewAll !== undefined ? isViewAll : false;
+    const navigate = useNavigate();
 
     function scheduleStatus(element) {
         const today = new Date().toISOString().slice(0, 10);
@@ -122,6 +125,10 @@ const MemberCard = ({ isLoading, data }) => {
         setAnchorEl(null);
     };
 
+    const handleOnClick = (event) => {
+        navigate('/pages/membership');
+    };
+
     return (
         <>
             {isLoading ? (
@@ -135,7 +142,7 @@ const MemberCard = ({ isLoading, data }) => {
                                     <Grid item>
                                         <Typography variant="h4">Members</Typography>
                                     </Grid>
-                                    <Grid item>
+                                    {/* <Grid item>
                                         <MoreHorizOutlinedIcon
                                             fontSize="small"
                                             className={classes.primaryLight}
@@ -163,7 +170,7 @@ const MemberCard = ({ isLoading, data }) => {
                                             <MenuItem onClick={handleClose}> This Month</MenuItem>
                                             <MenuItem onClick={handleClose}> This Year </MenuItem>
                                         </Menu>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                             {/* <Grid item xs={12} sx={{ pt: '16px !important' }}>
@@ -280,12 +287,14 @@ const MemberCard = ({ isLoading, data }) => {
                             </Grid>
                         </Grid>
                     </CardContent>
-                    <CardActions className={classes.cardAction}>
-                        <Button size="small" disableElevation>
-                            View All
-                            <ChevronRightOutlinedIcon />
-                        </Button>
-                    </CardActions>
+                    {ViewAll && (
+                        <CardActions className={classes.cardAction}>
+                            <Button size="small" disableElevation onClick={handleOnClick}>
+                                View All
+                                <ChevronRightOutlinedIcon />
+                            </Button>
+                        </CardActions>
+                    )}
                 </MainCard>
             )}
         </>

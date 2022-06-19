@@ -238,7 +238,7 @@ const ManagerDashboard = () => {
                                     </Grid>
                                 </Grid>
                                 <div style={{ height: '20px' }} />
-                                <ServiceCard isLoading={isLoading} data={serviceData} />
+                                <ServiceCard isLoading={isLoading} data={{ serviceType: serviceData.serviceType.slice(0, 5) }} isViewAll />
                             </Grid>
                         </Grid>
                     </Grid>
