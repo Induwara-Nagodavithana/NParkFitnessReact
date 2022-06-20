@@ -238,10 +238,11 @@ const BranchReport = () => {
     const [serviceData, setServiceData] = React.useState();
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
-
+    const { state } = useLocation();
+    const branchId = state !== null ? state.branchId : 1;
     // const trainerId = 4;
     // const userId = 1;
-    const branchId = 1;
+    // const branchId = 1;
 
     function getManagerData() {
         // let arr = [];

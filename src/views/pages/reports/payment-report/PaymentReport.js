@@ -247,10 +247,12 @@ const PaymentReport = () => {
     const [display, setDisplay] = React.useState('none');
     const { state } = useLocation();
     const type = state !== null ? state.type : 'gym';
+    const gymId = state !== null ? state.gymId : 1;
+    const branchId = state !== null ? state.branchId : 1;
     // const trainerId = 4;
     // const userId = 1;
-    const gymId = 1;
-    const branchId = 1;
+    // const gymId = 1;
+    // const branchId = 1;
 
     function getAdminDashboard() {
         // let arr = [];

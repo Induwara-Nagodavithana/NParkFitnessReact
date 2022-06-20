@@ -16,6 +16,7 @@ import ChevronRightOutlinedIcon from '@material-ui/icons/ChevronRightOutlined';
 import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@material-ui/icons/KeyboardArrowUpOutlined';
 import KeyboardArrowDownOutlinedIcon from '@material-ui/icons/KeyboardArrowDownOutlined';
+import { useNavigate } from 'react-router';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -61,11 +62,15 @@ const useStyles = makeStyles((theme) => ({
 
 // ===========================|| DASHBOARD POPULAR CARD ||=========================== //
 
-const PopularCard = ({ isLoading, data }) => {
+const PopularCard = ({ isLoading, data, isViewAll }) => {
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-
+    const ViewAll = isViewAll !== undefined ? isViewAll : false;
+    const navigate = useNavigate();
+    const handleOnClick = (event) => {
+        navigate('/pages/branch');
+    };
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -87,7 +92,7 @@ const PopularCard = ({ isLoading, data }) => {
                                     <Grid item>
                                         <Typography variant="h4">Branches</Typography>
                                     </Grid>
-                                    <Grid item>
+                                    {/* <Grid item>
                                         <MoreHorizOutlinedIcon
                                             fontSize="small"
                                             className={classes.primaryLight}
@@ -115,7 +120,7 @@ const PopularCard = ({ isLoading, data }) => {
                                             <MenuItem onClick={handleClose}> This Month</MenuItem>
                                             <MenuItem onClick={handleClose}> This Year </MenuItem>
                                         </Menu>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                             {/* <Grid item xs={12} sx={{ pt: '16px !important' }}>
@@ -176,12 +181,14 @@ const PopularCard = ({ isLoading, data }) => {
                             </Grid>
                         </Grid>
                     </CardContent>
-                    <CardActions className={classes.cardAction}>
-                        <Button size="small" disableElevation>
-                            View All
-                            <ChevronRightOutlinedIcon />
-                        </Button>
-                    </CardActions>
+                    {ViewAll && (
+                        <CardActions className={classes.cardAction}>
+                            <Button size="small" disableElevation onClick={handleOnClick}>
+                                View All
+                                <ChevronRightOutlinedIcon />
+                            </Button>
+                        </CardActions>
+                    )}
                 </MainCard>
             )}
         </>

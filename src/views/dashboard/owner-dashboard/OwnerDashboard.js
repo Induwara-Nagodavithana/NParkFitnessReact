@@ -217,7 +217,7 @@ const OwnerDashboard = () => {
                                     </Grid>
                                 </Grid>
                                 <div style={{ height: '20px' }} />
-                                <PopularCard isLoading={isLoading} data={branchesData} />
+                                <PopularCard isLoading={isLoading} data={branchesData.slice(0, 5)} isViewAll />
                             </Grid>
                         </Grid>
                     </Grid>

@@ -214,7 +214,7 @@ const AdminDashboard = () => {
                                     </Grid>
                                 </Grid>
                                 <div style={{ height: '20px' }} />
-                                <SubTypeCard isLoading={isLoading} data={subTypeData} />
+                                <SubTypeCard isLoading={isLoading} data={subTypeData.slice(0, 5)} isViewAll />
                             </Grid>
                         </Grid>
                     </Grid>
