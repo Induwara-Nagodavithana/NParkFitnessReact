@@ -255,10 +255,14 @@ function ManageEmployee() {
             setNullBranchStaff(true);
             HttpCommon.post('/api/user/findNullBranchStaff')
                 .then((res) => {
-                    console.log(res);
-                    setEmployeeData(res.data.data);
-                    setAddNewStaffButton(false);
-                    setShowTable(false);
+                    console.log(res.data.data.length);
+                    if (res.data.data.length !== 0) {
+                        setEmployeeData(res.data.data);
+                        setAddNewStaffButton(false);
+                        setShowTable(false);
+                    } else {
+                        messages.addMessage({ title: 'No Data', msg: 'There are no employees with out branch', type: 'danger' });
+                    }
                 })
                 .catch((err) => {
                     messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
@@ -404,6 +408,10 @@ function ManageEmployee() {
         console.log(isEdit);
         setEditEmployeeId(null);
         setViewEditMemberDialog(false);
+    };
+
+    const handleShowTrainerReport = () => {
+        navigate('/pages/report/trainerReport', { state: { trainerId: editEmployeeId, branchId } });
     };
 
     // Stepper
@@ -838,6 +846,7 @@ function ManageEmployee() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseViewEditMember}>Cancel</Button>
+                    {radioValue === 'Trainer' ? <Button onClick={handleShowTrainerReport}>Trainer Report</Button> : <></>}
                     {isEdit === true ? <Button onClick={handleEditMemberSubmit}>Save</Button> : <></>}
                 </DialogActions>
             </Dialog>
