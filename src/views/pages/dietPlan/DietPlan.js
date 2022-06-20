@@ -277,6 +277,7 @@ function DietPlan() {
                         memberId={memberId}
                         getDietPlans={getDietPlans}
                         setOpenAddNewDietPlanDialog={setOpenAddNewDietPlanDialog}
+                        setActiveStep={setActiveStep}
                     />
                 );
             default:
@@ -381,11 +382,6 @@ function DietPlan() {
                                         Back
                                     </Button>
                                     <Box sx={{ flex: '1 1 auto' }} />
-                                    {/* if(activeStep === steps.length - 1)<Button onClick={handleNext}>Finish</Button>else if(activeStep===0 )
-                                    <Button onClick={handleNext} disabled={checkConfirm}>
-                                        Next
-                                    </Button>
-                                    else<Button onClick={handleNext}>Next</Button> */}
                                     <Button onClick={handleNext}>{activeStep === steps.length - 1 ? '' : 'Next'}</Button>
                                 </Box>
                             </>
@@ -472,9 +468,6 @@ function DietPlan() {
                             </Grid>
                         </Grid>
                     </div>
-                    {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-                        Weight {weightloss > 0 ? 'Gain' : 'Loss'} is {Math.abs(weightloss)} kg
-                    </div> */}
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
                         {weightData !== undefined && weightData.length > 0 ? (
                             <WeightChart data={weightData} weightLoss={weightloss} />

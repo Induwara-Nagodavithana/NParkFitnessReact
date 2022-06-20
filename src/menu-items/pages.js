@@ -158,6 +158,14 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
+                    id: 'membershipCreation',
+                    title: 'MembershipTypes',
+                    type: 'item',
+                    url: '/pages/membershipType',
+                    icon: IconReceipt,
+                    breadcrumbs: false
+                },
+                {
                     id: 'membership',
                     title: 'Membership',
                     type: 'item',
@@ -284,6 +292,14 @@ function pagesRoute() {
                     type: 'item',
                     url: '/pages/services',
                     icon: IconReportAnalytics,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'membershipCreation',
+                    title: 'MembershipTypes',
+                    type: 'item',
+                    url: '/pages/membershipType',
+                    icon: IconReceipt,
                     breadcrumbs: false
                 },
                 {
@@ -686,13 +702,5 @@ const pages = () => {
     };
     return pages;
 };
-
-// const pages = {
-//     id: 'pages',
-//     title: 'Pages',
-//     caption: 'Pages Caption',
-//     type: 'group',
-//     children: pagesRoute()
-// };
 
 export default pages;

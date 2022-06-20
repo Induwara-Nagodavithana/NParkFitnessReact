@@ -293,6 +293,7 @@ const CustomerPayment = ({ memberId }) => {
                     </Grid>
                     <Grid align="left" item xs={12} sm={6} md={3} lg={3}>
                         <TextField
+                            type="number"
                             style={{ maxWidth: '200px', minWidth: '200px' }}
                             id="outlined-basic"
                             variant="outlined"

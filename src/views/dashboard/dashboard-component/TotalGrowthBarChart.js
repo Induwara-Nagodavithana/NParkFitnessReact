@@ -342,7 +342,8 @@ const TotalGrowthBarChart = ({ isLoading, incomeData, rawData }) => {
         console.log(categoryValues);
         const chartValueArr = [];
         const chartCategoryValuesArr = [];
-        if (rawData.rawCardPaymentArr !== undefined && value !== 'year') {
+        console.log(rawData);
+        if (rawData !== undefined && rawData.rawCardPaymentArr !== undefined && value !== 'year') {
             chartValueArr.push({
                 name: 'Cash',
                 data: chartValues[0]

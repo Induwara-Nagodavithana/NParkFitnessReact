@@ -25,7 +25,7 @@ import SubTypeCard from '../dashboard-component/SubTypeCard';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-// ===========================|| DEFAULT DASHBOARD ||=========================== //
+// ===========================|| ADMIN DASHBOARD ||=========================== //
 const defaultOptions = {
     loop: true,
     autoplay: true,

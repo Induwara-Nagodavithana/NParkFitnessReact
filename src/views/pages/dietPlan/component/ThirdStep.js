@@ -122,7 +122,8 @@ const ThirdStep = ({
     setSelectedFoodData,
     memberId,
     getDietPlans,
-    setOpenAddNewDietPlanDialog
+    setOpenAddNewDietPlanDialog,
+    setActiveStep
 }) => {
     const classes = useStyles();
     console.log('selectedFoodData');
@@ -160,6 +161,11 @@ const ThirdStep = ({
             if (response.data.success) {
                 getDietPlans();
                 setOpenAddNewDietPlanDialog(false);
+                setSelectedFoodData([]);
+                setItems([]);
+                setActiveStep(0);
+                setAmount();
+                setMealType('');
                 messages.addMessage({ title: 'Saved!', msg: 'Diet Plan Uploaded', type: 'success' });
 
                 // window.location.reload(false);
@@ -236,7 +242,7 @@ const ThirdStep = ({
                                                         id="outlined-basic"
                                                         label="Food"
                                                         variant="outlined"
-                                                        value={element.name}
+                                                        value={element.name.charAt(0).toUpperCase() + element.name.slice(1)}
                                                         onChange={handleFoodChange(index)}
                                                     />
                                                 </div>

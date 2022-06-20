@@ -93,7 +93,7 @@ const FirebaseRegister = ({ ...others }) => {
     };
     const [showNewPassword, setShowNewPassword] = useState(false);
     const showNewPasswordHandler = () => {
-        setShowNewPassword(!showPassword);
+        setShowNewPassword(!showNewPassword);
     };
 
     const [activeStep, setActiveStep] = React.useState(0);
@@ -170,7 +170,7 @@ const FirebaseRegister = ({ ...others }) => {
             email,
             contactNo: contactNumber,
             gender,
-            type: 'owner',
+            type: 'Owner',
             street,
             lane,
             city,
@@ -309,8 +309,8 @@ const FirebaseRegister = ({ ...others }) => {
                         <FormControl fullWidth sx={{ ...theme.typography.customInput, mb: 1 }}>
                             <InputLabel>Confirm Password</InputLabel>
                             <OutlinedInput
-                                type={showNewPassword ? 'text' : 'password'}
-                                value={newPassword}
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
                                 onChange={(event) => {
                                     setPassword(event.target.value);
                                 }}

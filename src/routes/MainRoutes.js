@@ -27,19 +27,11 @@ const Membership = Loadable(lazy(() => import('views/pages/membership/Membership
 const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
 const Branch = Loadable(lazy(() => import('views/pages/branch/Branch')));
 const Schedule = Loadable(lazy(() => import('views/pages/schedule/Schedule')));
+const MembershipType = Loadable(lazy(() => import('views/pages/membershipType/MembershipType')));
 
-
-// utilities routing
-const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
-const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
-const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
-const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
-const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 
 const AuthLogin3 = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
 
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 // ===========================|| MAIN ROUTING ||=========================== //
 
@@ -108,6 +100,10 @@ const MainRoutes = {
             element: <Membership />
         },
         {
+            path: '/membershipType',
+            element: <MembershipType />
+        },
+        {
             path: '/attendance',
             element: <Attendance />
         },
@@ -118,31 +114,6 @@ const MainRoutes = {
         {
             path: '/dietPlan',
             element: <DietPlan />
-        },
-        {
-            path: '/utils/util-typography',
-            element: <UtilsTypography />
-        },
-        {
-            path: '/utils/util-color',
-            element: <UtilsColor />
-        },
-        {
-            path: '/utils/util-shadow',
-            element: <UtilsShadow />
-        },
-        {
-            path: '/icons/tabler-icons',
-            element: <UtilsTablerIcons />
-        },
-        {
-            path: '/icons/material-icons',
-            element: <UtilsMaterialIcons />
-        },
-
-        {
-            path: '/sample-page',
-            element: <SamplePage />
         },
         {
             path: '/gym',

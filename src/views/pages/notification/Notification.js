@@ -54,12 +54,12 @@ import { getDatabase, ref, onValue } from 'firebase/database';
 //= =============================|| SAMPLE PAGE ||==============================//
 
 const Notification = () => {
-    const userId = 1;
     // const classes = useStyles();
     const [plan, setPlan] = React.useState('');
     const [notifications, setNotifications] = React.useState();
 
     function getSubscription() {
+        const userId = localStorage.getItem('userID');
         const db = getDatabase();
         const userRef = ref(db, `/users/${userId}/notifications`);
         onValue(userRef, async (snapshot) => {
@@ -73,9 +73,6 @@ const Notification = () => {
             });
 
             setNotifications(notificationArr.slice(0, 6));
-            //   updateStarCount(postElement, data);
-            // console.log(notificationArr.slice(0, 6));
-            // console.log(data);
         });
     }
 
@@ -99,15 +96,6 @@ const Notification = () => {
                 ) : (
                     <></>
                 )}
-                {/* <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
-                    <NotificationCard notificationData={notifications} />
-                </Grid>
-                <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
-                    <NotificationCard />
-                </Grid>
-                <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
-                    <NotificationCard />
-                </Grid> */}
             </Grid>
         </MainCard>
     );

@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD - TOTAL INCOME DARK CARD ||=========================== //
+// ===========================|| DASHBOARD SMALL DARK CARD ||=========================== //
 
 const SmallDarkCard = ({ isLoading, amount, title }) => {
     const classes = useStyles();

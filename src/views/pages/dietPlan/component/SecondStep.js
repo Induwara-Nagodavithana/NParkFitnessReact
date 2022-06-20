@@ -91,7 +91,7 @@ const SecondStep = ({
         calorieInstance.get(`/nutrition?query=${foodText}`).then(async (response) => {
             console.log(response.data);
             if (response.data.items.length === 0) {
-                messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
+                // messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
 
                 setIsLoading(false);
             } else {

@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// ===========================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||=========================== //
+// ===========================|| DASHBOARD SMALL LIGHT CARD ||=========================== //
 
 const SmallLightCard = ({ isLoading, amount, title }) => {
     const classes = useStyles();
