@@ -230,7 +230,10 @@ const FirebaseRegister = ({ ...others }) => {
     const Validation = () => {
         switch (activeStep) {
             case 0:
-                if (password === '' || email === '') {
+                if (fName === '' || lName === '') {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
+                    setActiveStep(0);
+                } else if (password === '' || email === '') {
                     messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
                     setActiveStep(0);
                 } else if (!emailRegEx.test(email)) {
@@ -243,19 +246,11 @@ const FirebaseRegister = ({ ...others }) => {
                     setNewPassword('');
                 } else if (password === newPassword && email !== '') {
                     handleComplete();
+                    handleNext();
                 }
                 break;
             case 1:
-                if (
-                    fName !== '' &&
-                    lName !== '' &&
-                    birthday !== '' &&
-                    contactNumber !== '' &&
-                    street !== '' &&
-                    lane !== '' &&
-                    city !== '' &&
-                    province !== ''
-                ) {
+                if (birthday !== '' && contactNumber !== '' && street !== '' && lane !== '' && city !== '' && province !== '') {
                     handleComplete();
                 } else {
                     messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
@@ -565,7 +560,15 @@ const FirebaseRegister = ({ ...others }) => {
 
                             <Box sx={{ mt: 2 }}>
                                 <AnimateButton>
-                                    <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="secondary">
+                                    <Button
+                                        disableElevation
+                                        fullWidth
+                                        size="large"
+                                        type="submit"
+                                        variant="contained"
+                                        color="secondary"
+                                        disabled={!checked}
+                                    >
                                         Sign up
                                     </Button>
                                 </AnimateButton>
@@ -658,17 +661,26 @@ const FirebaseRegister = ({ ...others }) => {
                                 Back
                             </Button>
                             <Box sx={{ flex: '1 1 auto' }} />
-                            <Button onClick={handleNext} sx={{ mr: 1 }} disabled={activeStep === 2}>
+                            {/* <Button onClick={handleNext} sx={{ mr: 1 }} disabled={activeStep === 2}>
                                 Next
-                            </Button>
+                            </Button> */}
                             {activeStep !== steps.length &&
                                 (completed[activeStep] ? (
-                                    <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                                        Step {activeStep + 1} already completed
-                                    </Typography>
+                                    // <Typography variant="caption" sx={{ display: 'inline-block' }}>
+                                    //     Step {activeStep + 1} already completed
+                                    // </Typography>
+                                    <Button
+                                        onClick={() => {
+                                            Validation();
+                                        }}
+                                        sx={{ mr: 1 }}
+                                        disabled={activeStep === 2}
+                                    >
+                                        Next
+                                    </Button>
                                 ) : (
                                     <Button onClick={Validation} disabled={activeStep === 2}>
-                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                        {completedSteps() === totalSteps() - 1 ? '' : 'Next'}
                                     </Button>
                                 ))}
                         </Box>
