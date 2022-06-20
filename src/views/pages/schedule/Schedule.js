@@ -40,17 +40,31 @@ import ReadOnlyRowScheduleItem from '../scheduleItem/component/ReadOnlyRowSchedu
 import ReadOnlyRowScheduleItemManager from '../scheduleItem/component/ReadOnlyScheduleItemManager';
 import ReadOnlyRowScheduleManager from './component/ReadOnlyRowScheduleManager';
 import EditableRowScheduleItem from '../scheduleItem/component/EditableRowScheduleItem';
+import { ConstructionRounded } from '@material-ui/icons';
+
 /* eslint prefer-arrow-callback: [ "error", { "allowNamedFunctions": true } ] */
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const serviceArray = [];
 function Schedule() {
+    const [addButton, setAddButtonDisable] = useState(true);
+    const [disableSearch, setDisableSearch] = useState(true);
+    const [serviceArray, setServiceArray] = useState([]);
+    const current = new Date();
     const navigate = useNavigate();
-    const viewGoal = () => {
-        navigate('/', { replace: true });
-    };
+
+    const q = new Date();
+    const m = q.getMonth() + 1;
+    const d = q.getDay();
+    const y = q.getFullYear();
+
+    //  const date = new Date(y, m, d);
+    const date = new Date();
+
+    const [getSchedule, setSchedule] = useState(true);
+    const [getAddSchedule, setAddSchedule] = useState(true);
+
     // dialog box
     const [openDialogEdit, setOpenDialogEdit] = React.useState(false);
     const [openDialogScheduleItem, setOpenDialogScheduleItem] = React.useState(false);
@@ -61,12 +75,17 @@ function Schedule() {
     const handleDialogAdd = () => {
         setopenDialogScheduleItemAdd(true);
     };
-    const [userId, setUserId] = useState([]);
+    const [userId, setUserId] = useState(0);
     const [type, setType] = useState([]);
 
     const [goalData, setGoalData] = React.useState();
 
     useEffect(() => {
+        const userId = localStorage.getItem('userID');
+        const type = localStorage.getItem('type');
+        setUserId(userId);
+        setType(type);
+        console.log(date);
         HttpCommon.get('api/goal')
             .then((res) => {
                 setGoalData(res.data.data);
@@ -80,14 +99,10 @@ function Schedule() {
     const [scheduleData, setScheduleData] = React.useState();
     const [editContactIdSchedule, setEditContctIdSchedule] = React.useState(null);
     const [getMemberId, setMemberId] = React.useState();
+    const [getBranchIdToService, setBranchIdToService] = React.useState();
 
-    //should take membership id
+    //take membership id
     const getScheduleToView = () => {
-        const userId = localStorage.getItem('userID');
-        const type = localStorage.getItem('type');
-        setUserId(userId);
-        setType(type);
-
         const link = '/api/schedule/getAllScheduleByMemberId/';
         const id = getMemberId;
         const url = link + id;
@@ -99,13 +114,51 @@ function Schedule() {
             .catch((err) => {
                 console.log(err);
             });
+        if (setScheduleData === null) {
+            Store.addNotification({
+                title: 'Fail to add new gym!',
+                message: 'Your branch count exceeded',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right',
+                animationIn: ['animate__animated', 'animate__fadeIn'],
+                animationOut: ['animate__animated', 'animate__fadeOut'],
+                dismiss: {
+                    duration: 2000,
+                    onScreen: true
+                },
+                width: 500
+            });
+        }
     };
 
     const viewMemberSchedule = () => {
         getScheduleToView();
     };
 
-    const [getExpireDate, setExpireDate] = React.useState();
+    const getServicesAvailable = () => {
+        const link = '/api/user/';
+        const id = userId;
+        const url = link + id;
+        console.log(url);
+        if (userId > 0) {
+            console.log('Starting');
+
+            HttpCommon.get(url)
+                .then((res) => {
+                    console.log(res.data.data);
+                    setBranchIdToService(res.data.data.branchId);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    };
+    useEffect(() => {
+        getServicesAvailable();
+    }, [userId]);
+
+    const [getExpireDate, setExpireDate] = useState(null);
 
     const [newScheduleData, setNewScheduleData] = React.useState();
 
@@ -115,121 +168,137 @@ function Schedule() {
 
     const [editContactId, setEditContctId] = React.useState(null);
 
-    //  Add New schedule data
-    const handleAddFormChangeSchedule = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...newScheduleData };
-        newFormData[fieldName] = fieldValue;
-
-        setNewScheduleData(newFormData);
-    };
-
     // Send New schedule data to server
     const handleAddFormSubmitSchedule = () => {
-        HttpCommon.post('/api/schedule/', {
-            expireDate: getExpireDate,
-            membershipId: getMemberId,
-            trainerId: userId
-        })
-            .then((res) => {
-                getScheduleToView();
-                setNewScheduleData(null);
-
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Schedule Created Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: 'Fail to create schedule',
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+        if (new Date(getExpireDate) < date) {
+            Store.addNotification({
+                title: 'Fail to create schedule !',
+                message: 'You can not add past dates as expire date',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right',
+                animationIn: ['animate__animated', 'animate__fadeIn'],
+                animationOut: ['animate__animated', 'animate__fadeOut'],
+                dismiss: {
+                    duration: 2000,
+                    onScreen: true
+                },
+                width: 500
             });
+        } else {
+            HttpCommon.post('/api/schedule/', {
+                expireDate: getExpireDate,
+                membershipId: getMemberId,
+                trainerId: userId
+            })
+                .then((res) => {
+                    getScheduleToView();
+                    setNewScheduleData(null);
+
+                    Store.addNotification({
+                        title: 'Successfully Done!',
+                        message: 'Schedule Created Successfully',
+                        type: 'success',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 2000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+
+                    Store.addNotification({
+                        title: 'Fail !',
+                        message: 'Fail to create schedule',
+                        type: 'danger',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 2000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                });
+            setExpireDate(null);
+            setAddSchedule(true);
+        }
     };
 
-    const handleEditFormChangeSchedule = (event) => {
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...editFormDataSchedule };
-        newFormData[fieldName] = fieldValue;
-
-        setEditFormDataSchedule(newFormData);
-    };
     const handleEditFormSubmitSchedule = () => {
-        const link = '/api/schedule/';
-        const key = editContactId;
-        const url = link + key;
-
-        HttpCommon.put(url, {
-            expireDate: getExpireDate
-        })
-            .then((res) => {
-                getScheduleToView();
-                Store.addNotification({
-                    title: 'Successfully Done!',
-                    message: 'Schedule Updated Successfully',
-                    type: 'success',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-
-                Store.addNotification({
-                    title: 'Fail !',
-                    message: error,
-                    type: 'danger',
-                    insert: 'top',
-                    container: 'top-right',
-                    animationIn: ['animate__animated', 'animate__fadeIn'],
-                    animationOut: ['animate__animated', 'animate__fadeOut'],
-                    dismiss: {
-                        duration: 2000,
-                        onScreen: true
-                    },
-                    width: 500
-                });
+        if (new Date(getExpireDate) < date) {
+            Store.addNotification({
+                title: 'Fail to create schedule !',
+                message: 'You can not add past dates as expire date',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right',
+                animationIn: ['animate__animated', 'animate__fadeIn'],
+                animationOut: ['animate__animated', 'animate__fadeOut'],
+                dismiss: {
+                    duration: 2000,
+                    onScreen: true
+                },
+                width: 500
             });
+        } else {
+            const link = '/api/schedule/';
+            const key = editContactId;
+            const url = link + key;
 
-        setEditContctId(null);
-        setOpenDialogEdit(false);
+            HttpCommon.put(url, {
+                expireDate: getExpireDate
+            })
+                .then((res) => {
+                    getScheduleToView();
+                    Store.addNotification({
+                        title: 'Successfully Done!',
+                        message: 'Schedule Updated Successfully',
+                        type: 'success',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 2000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+
+                    Store.addNotification({
+                        title: 'Fail !',
+                        message: error,
+                        type: 'danger',
+                        insert: 'top',
+                        container: 'top-right',
+                        animationIn: ['animate__animated', 'animate__fadeIn'],
+                        animationOut: ['animate__animated', 'animate__fadeOut'],
+                        dismiss: {
+                            duration: 2000,
+                            onScreen: true
+                        },
+                        width: 500
+                    });
+                });
+            setExpireDate(null);
+            setEditContctId(null);
+            setOpenDialogEdit(false);
+        }
     };
 
-    const handleEditClickSchedule = (event, row) => {
+    const handleEditClick = (event, row) => {
         setEditContctId(row.id);
         setOpenDialogEdit(true);
 
@@ -253,11 +322,40 @@ function Schedule() {
     // Scroll to myRef view
     const executeScroll = () => {
         myRef.current.scrollIntoView();
+        setAddSchedule(false);
     };
 
+    const handleShowSchedule = (event) => {
+        setDisableSearch(false);
+        setMemberId(event.target.value);
+        setSchedule(false);
+        setAddSchedule(true);
+    };
+    const [getScheduleId, setScheduleId] = React.useState();
+
+    /* const getScheduleByScheduleId = () => {
+        const link = '/api/schedule/';
+        const id = getScheduleId;
+        const url = link + id;
+        HttpCommon.get(url)
+            .then((res) => {
+                console.log(res.data);
+                setExpireDate(res.data.data.expireDate);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    useEffect(() => {
+        getScheduleByScheduleId();
+    }, [getScheduleId]);*/
+    const viewGoal = () => {
+        navigate('/pages/report/memberReport', { replace: false }, { state: { memberid: getMemberId } });
+    };
+
+    const [getDateDissable, setDateDissable] = useState();
     //----------------------------------scheduleItem-------------------------------
     const [scheduleItemData, setScheduleItemData] = React.useState();
-    const [getScheduleId, setScheduleId] = React.useState();
     const [getServiceId, setServiceId] = React.useState();
     const [getService, setService] = React.useState();
     const getScheduleItemData = () => {
@@ -280,10 +378,9 @@ function Schedule() {
     }, [getScheduleId]);
 
     //get service by servie id
-    const serviceId = 1;
-    const getServiceToView = () => {
+    /* const getServiceToView = () => {
         const link = '/api/serviceType/';
-        const id = setServiceId;
+        const id = getServiceId;
         const url = link + id;
         HttpCommon.get(url)
             .then((res) => {
@@ -296,18 +393,39 @@ function Schedule() {
     };
     useEffect(() => {
         getServiceToView();
-    }, [getServiceId]);
-
+    }, [getServiceId]);*/
     // get all services for autocomplete
-    useEffect(() => {
-        HttpCommon.get('/api/serviceType')
-            .then((res) => {
-                res.data.data.map((row) => serviceArray.push({ label: row.name, value: row.id }));
+    const getServiceToArray = () => {
+        const link = '/api/serviceType/getServiceTypeByBranchId/';
+        const id = getBranchIdToService;
+        const url = link + id;
+        console.log(url);
+        HttpCommon.get(url)
+            .then(async (res) => {
+                const tempArr = [];
+                console.log(res);
+
+                await Promise.all(
+                    res.data.data.serviceType.map((row) => {
+                        console.log(tempArr);
+                        return tempArr.push({ label: row.name, value: row.id });
+                    })
+                );
+                console.log(tempArr);
+                setServiceArray(tempArr);
             })
             .catch((err) => {
                 console.log(err);
             });
-    }, []);
+    };
+    useEffect(() => {
+        getServiceToArray();
+    }, [getBranchIdToService]);
+
+    const handleScheduleAdd = (event, value) => {
+        setAddButtonDisable(false);
+        setServiceId(value.value);
+    };
 
     // dialog box
     const [openDialog, setOpenDialog] = React.useState(false);
@@ -384,6 +502,7 @@ function Schedule() {
                     width: 500
                 });
             });
+        setAddButtonDisable(true);
     };
 
     // Data entering to text feilds in Edit scheduleitem details
@@ -484,6 +603,7 @@ function Schedule() {
         setEditContctId(null);
         setopenDialogScheduleItemAdd(false);
     };
+    const [expireDate, setExpireDateT] = useState(null);
 
     return (
         <>
@@ -500,6 +620,7 @@ function Schedule() {
                                 margin="dense"
                                 name="name"
                                 inputProps={{ maxLength: 150 }}
+                                type="number"
                             />
                             <Button disableElevation size="medium" variant="contained" color="secondary" onClick={viewMemberSchedule}>
                                 Search
@@ -516,11 +637,15 @@ function Schedule() {
                     <MainCard title="Schedule">
                         <div style={{ height: 5 }} />
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                                <TableHead>
+                            <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+                                <TableHead sx={{ backgroundColor: '#512da8' }}>
                                     <TableRow>
-                                        <TableCell align="center">Expire Date</TableCell>
-                                        <TableCell align="center">Status</TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Expire Date
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Status
+                                        </TableCell>
                                         <TableCell align="center" />
                                         <TableCell align="center" />
                                     </TableRow>
@@ -535,7 +660,7 @@ function Schedule() {
                                                     <>
                                                         <ReadOnlyRowScheduleManager
                                                             row={row}
-                                                            handleEditClick={handleEditClickSchedule}
+                                                            handleEditClick={handleEditClick}
                                                             handleDialog={handleDialog}
                                                             handleDialogAdd={handleDialogAdd}
                                                             setScheduleId={setScheduleId}
@@ -564,9 +689,7 @@ function Schedule() {
                                                                                             <>
                                                                                                 <ReadOnlyRowScheduleItemManager
                                                                                                     row={row}
-                                                                                                    handleEditClick={
-                                                                                                        handleEditClickSchedule
-                                                                                                    }
+                                                                                                    handleEditClick={handleEditClick}
                                                                                                     handleDialog={handleDialog}
                                                                                                     handleDialogAdd={handleDialogAdd}
                                                                                                     setScheduleId={setScheduleId}
@@ -606,48 +729,58 @@ function Schedule() {
                             <p>Enter Member Id to view schedule</p>
                             <TextField
                                 required
-                                onChange={(event, newValue) => {
-                                    setMemberId(event.target.value);
-                                }}
+                                onChange={handleShowSchedule}
                                 margin="dense"
                                 name="name"
                                 inputProps={{ maxLength: 150 }}
+                                type="number"
                             />
-                            <Button disableElevation size="medium" variant="contained" color="secondary" onClick={viewMemberSchedule}>
+                            <Button
+                                disableElevation
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                onClick={getScheduleToView}
+                                disabled={disableSearch}
+                            >
                                 Search
                             </Button>
                         </Stack>
                         <AnimateButton>
                             <Button disableElevation size="medium" variant="contained" color="secondary" onClick={viewGoal}>
-                                Member Report
+                                Show Profile
                             </Button>
                         </AnimateButton>
                     </MainCard>
                     <br />
 
-                    <MainCard title="Schedule">
+                    <MainCard title="ScheduleItems" hidden={getSchedule}>
                         <div style={{ height: 5 }} />
+                        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                            <AnimateButton>
+                                <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
+                                    Add New Schedule
+                                </Button>
+                            </AnimateButton>
+                        </Grid>
+                        <div style={{ height: 10 }} />
+
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                                <TableHead>
+                            <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
+                                <TableHead sx={{ backgroundColor: '#512da8' }}>
                                     <TableRow>
-                                        <TableCell align="center">Expire Date</TableCell>
-                                        <TableCell align="center">Status</TableCell>
-                                        <TableCell align="center" />
-                                        <TableCell align="center" />
-                                        <TableCell align="right">
-                                            <AnimateButton>
-                                                <Button
-                                                    disableElevation
-                                                    size="medium"
-                                                    variant="contained"
-                                                    color="secondary"
-                                                    onClick={executeScroll}
-                                                >
-                                                    Add New Schedule
-                                                </Button>
-                                            </AnimateButton>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Expire Date
                                         </TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Status
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ color: 'white' }}>
+                                            Duration
+                                        </TableCell>
+                                        <TableCell align="center" />
+                                        <TableCell align="center" />
+                                        <TableCell align="right" />
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -660,7 +793,7 @@ function Schedule() {
                                                     <>
                                                         <ReadOnlyRowSchedule
                                                             row={row}
-                                                            handleEditClick={handleEditClickSchedule}
+                                                            handleEditClick={handleEditClick}
                                                             handleDialog={handleDialog}
                                                             handleDialogAdd={handleDialogAdd}
                                                             setScheduleId={setScheduleId}
@@ -669,8 +802,12 @@ function Schedule() {
                                                             <DialogTitle>ScheduleItems</DialogTitle>
                                                             <DialogContent>
                                                                 <TableContainer component={Paper}>
-                                                                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                                                                        <TableHead>
+                                                                    <Table
+                                                                        sx={{ minWidth: 650, backgroundColor: 'white' }}
+                                                                        size="small"
+                                                                        aria-label="a dense table"
+                                                                    >
+                                                                        <TableHead sx={{ backgroundColor: 'white' }}>
                                                                             <TableRow>
                                                                                 <TableCell align="center">Activity</TableCell>
                                                                                 <TableCell align="center">No of Sets</TableCell>
@@ -685,6 +822,7 @@ function Schedule() {
                                                                                     <React.Fragment key={row.id}>
                                                                                         {editContactIdSchedueItem === row.id ? (
                                                                                             <EditableRowScheduleItem
+                                                                                                row={row}
                                                                                                 editFormDataScheduleItem={
                                                                                                     editFormDataScheduleItem
                                                                                                 }
@@ -701,7 +839,6 @@ function Schedule() {
                                                                                                     setEditedValueService
                                                                                                 }
                                                                                                 serviceArray={serviceArray}
-                                                                                                getService={getService}
                                                                                             />
                                                                                         ) : (
                                                                                             <>
@@ -712,7 +849,7 @@ function Schedule() {
                                                                                                     }
                                                                                                     handleDialog={handleDialog}
                                                                                                     handleDialogAdd={handleDialogAdd}
-                                                                                                    getService={getService}
+                                                                                                    setScheduleId={setScheduleId}
                                                                                                 />
                                                                                             </>
                                                                                         )}
@@ -741,12 +878,12 @@ function Schedule() {
                         </TableContainer>
                     </MainCard>
 
-                    <MainCard title="Add New Schedule" ref={myRef}>
+                    <MainCard title="Add New Schedule" hidden={getAddSchedule} ref={myRef}>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <Grid item lg={6}>
                                 <DesktopDatePicker
                                     label="Expire Date"
-                                    value={getExpireDate}
+                                    value={date}
                                     inputFormat="MM/dd/yyyy"
                                     sx={{ width: 600 }}
                                     onChange={(newValue) => {
@@ -778,6 +915,7 @@ function Schedule() {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Grid item lg={6}>
                                     <DesktopDatePicker
+                                        selected={new Date()}
                                         label="Expire Date"
                                         inputFormat="MM/dd/yyyy"
                                         value={getExpireDate}
@@ -801,7 +939,7 @@ function Schedule() {
                         <DialogContent>
                             <Autocomplete
                                 id="controllable-states-demo"
-                                onChange={(event, value) => setServiceId(value.value)}
+                                onChange={handleScheduleAdd}
                                 options={serviceArray}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Activity" variant="outlined" fullWidth margin="dense" />
@@ -812,6 +950,7 @@ function Schedule() {
                                 fullWidth
                                 onChange={handlAddFormChangeScheduleItem}
                                 type="number"
+                                InputProps={{ inputProps: { min: 0 } }}
                                 label="No of Sets"
                                 margin="dense"
                                 name="noOfSet"
@@ -821,6 +960,7 @@ function Schedule() {
                                 fullWidth
                                 onChange={handlAddFormChangeScheduleItem}
                                 type="number"
+                                InputProps={{ inputProps: { min: 0 } }}
                                 label="No of Repetitions"
                                 margin="dense"
                                 name="noOfRepetition"
@@ -830,6 +970,7 @@ function Schedule() {
                                 fullWidth
                                 onChange={handlAddFormChangeScheduleItem}
                                 type="number"
+                                InputProps={{ inputProps: { min: 0 } }}
                                 label="Time(seconds)"
                                 margin="dense"
                                 name="timeBySeconds"
@@ -839,6 +980,7 @@ function Schedule() {
                                 fullWidth
                                 onChange={handlAddFormChangeScheduleItem}
                                 type="number"
+                                InputProps={{ inputProps: { min: 0 } }}
                                 label="CalAmount"
                                 margin="dense"
                                 name="calAmount"
@@ -852,7 +994,7 @@ function Schedule() {
                                         size="medium"
                                         variant="contained"
                                         color="secondary"
-                                        disabled={!newScheduleItemData}
+                                        disabled={addButton}
                                     >
                                         Add
                                     </Button>

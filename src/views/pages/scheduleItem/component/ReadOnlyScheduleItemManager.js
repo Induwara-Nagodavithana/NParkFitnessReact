@@ -7,7 +7,7 @@ const ReadOnlyRowScheduleItemManager = ({ row, handleEditClick, getDate, getServ
     <>
         <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell component="th" scope="row" align="center">
-                {getService}
+                {row.service.name}
             </TableCell>
 
             <TableCell align="center">{row.noOfSet}</TableCell>

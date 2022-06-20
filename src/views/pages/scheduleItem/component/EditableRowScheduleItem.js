@@ -15,11 +15,9 @@ const EditableRowScheduleItem = ({
     setServiceId
 }) => {
     const handleSetServiceId = () => {
-        console.log('row.id');
         console.log(row.serviceId);
 
         setServiceId(row.serviceId);
-        handleEditFormSubmitScheduleItem();
     };
     const indexOfArrayService = (element) => element === `${editFormDataScheduleItem.serviceId}`;
     const indexService = serviceArray.findIndex(indexOfArrayService);
@@ -29,7 +27,7 @@ const EditableRowScheduleItem = ({
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="right">
                     <Autocomplete
-                        value={getService}
+                        value={row.service.name}
                         onChange={(event, newValue) => {
                             setEditedValueService(newValue.value);
                         }}
@@ -85,7 +83,7 @@ const EditableRowScheduleItem = ({
 
                 <TableCell align="right">
                     <AnimateButton>
-                        <IconButton aria-label="edit" color="secondary" onClick={handleSetServiceId}>
+                        <IconButton aria-label="edit" color="secondary" onClick={handleEditFormSubmitScheduleItem}>
                             <Save />
                         </IconButton>
                         <IconButton aria-label="edit" color="secondary" onClick={handleCancelClickScheduleItem}>
