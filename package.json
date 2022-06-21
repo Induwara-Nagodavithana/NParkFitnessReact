@@ -2,6 +2,9 @@
     "name": "berry-material-react-free",
     "version": "2.0.0",
     "private": true,
+    "engines": {
+        "node": "16.x"
+      },
     "dependencies": {
         "@date-io/date-fns": "^2.13.1",
         "@devexpress/dx-react-core": "^3.0.2",
