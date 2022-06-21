@@ -46,6 +46,8 @@ function ServiceType() {
     const [editableBodyPart, setEditableBodyPart] = useState(null);
     const [editServiceId, setEditServiceId] = useState(null);
     const [showTable, setShowTable] = useState(true);
+    const [showButton, setShowButton] = useState(false);
+    const [showAddServicesCard, setShowAddServicesCard] = useState(true);
 
     // Create and get my reference in Add New Subscription type
     const mainCard2Ref = useRef(null);
@@ -58,10 +60,7 @@ function ServiceType() {
     }
 
     function getGym() {
-        const link = '/api/gym/getAllGymByUserId/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
             })
@@ -71,16 +70,10 @@ function ServiceType() {
     }
 
     function getServices() {
-        const link = '/api/user/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/user/${localStorage.getItem('userID')}`)
             .then((res) => {
                 setBranchId(res.data.data.branchId);
-                const link2 = '/api/serviceType/getServiceTypeByBranchId/';
-                const key2 = res.data.data.branchId;
-                const url2 = link2 + key2;
-                HttpCommon.get(url2)
+                HttpCommon.get(`/api/serviceType/getServiceTypeByBranchId/${res.data.data.branchId}`)
                     .then((res) => {
                         setServiceData(res.data.data.serviceType);
                         setShowTable(false);
@@ -107,10 +100,7 @@ function ServiceType() {
 
     const handleGymSelect = (event, newValue) => {
         if (newValue !== null) {
-            const link = '/api/branch/getBranchByGymId/';
-            const key = newValue.value;
-            const url = link + key;
-            HttpCommon.get(url)
+            HttpCommon.get(`/api/branch/getBranchByGymId/${newValue.value}`)
                 .then((res) => {
                     const tempArr = [];
                     res.data.data.forEach((element) => {
@@ -131,12 +121,10 @@ function ServiceType() {
     };
 
     const handleSearch = () => {
-        const link = '/api/serviceType/getServiceTypeByBranchId/';
-        const key = BranchId;
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/serviceType/getServiceTypeByBranchId/${BranchId}`)
             .then((res) => {
                 setServiceData(res.data.data.serviceType);
+                setShowButton(true);
                 setShowTable(false);
             })
             .catch((err) => {
@@ -166,6 +154,11 @@ function ServiceType() {
         if (serviceName != null && serviceStatus != null) {
             setAddButtonDisable(false);
         }
+    };
+
+    const handleAddNewServices = () => {
+        setShowAddServicesCard(false);
+        executeScroll();
     };
 
     const handleAddFormSubmit = () => {
@@ -257,14 +250,26 @@ function ServiceType() {
                     ) : (
                         <></>
                     )}
-                    {userType !== 'Trainer' ? (
-                        <Grid container direction="row" justifyContent="flex-end" alignItems="center">
-                            <AnimateButton>
-                                <Button disableElevation size="medium" variant="contained" color="secondary" onClick={executeScroll}>
-                                    Add New Service
-                                </Button>
-                            </AnimateButton>
-                        </Grid>
+                    {showButton === true ? (
+                        <>
+                            {userType !== 'Trainer' ? (
+                                <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+                                    <AnimateButton>
+                                        <Button
+                                            disableElevation
+                                            size="medium"
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={handleAddNewServices}
+                                        >
+                                            Add New Service
+                                        </Button>
+                                    </AnimateButton>
+                                </Grid>
+                            ) : (
+                                <></>
+                            )}
+                        </>
                     ) : (
                         <></>
                     )}
@@ -300,7 +305,12 @@ function ServiceType() {
                                                     handleEditFormSubmit={handleEditFormSubmit}
                                                 />
                                             ) : (
-                                                <ReadOnlyRow row={row} handleEditClick={handleEditClick} userType={userType} />
+                                                <ReadOnlyRow
+                                                    row={row}
+                                                    handleEditClick={handleEditClick}
+                                                    userType={userType}
+                                                    handleSearch={handleSearch}
+                                                />
                                             )}
                                         </React.Fragment>
                                     ))
@@ -314,7 +324,7 @@ function ServiceType() {
             </MainCard>
             <div style={{ height: 10 }} />
             {userType !== 'Trainer' ? (
-                <MainCard title="Add New Service" ref={mainCard2Ref}>
+                <MainCard title="Add New Service" ref={mainCard2Ref} hidden={showAddServicesCard}>
                     <TextField
                         required
                         fullWidth
