@@ -15,6 +15,7 @@ const GymReport = Loadable(lazy(() => import('views/pages/reports/gym-report/Gym
 const PaymentReport = Loadable(lazy(() => import('views/pages/reports/payment-report/PaymentReport')));
 const PariceView = Loadable(lazy(() => import('views/pages/subscription/component/PriceView')));
 const AdminReport = Loadable(lazy(() => import('views/pages/reports/admin-report/AdminReport')));
+const SubPaymentReport = Loadable(lazy(() => import('views/pages/reports/subPay-report/SubPaymentReport')));
 
 // ===========================|| AUTHENTICATION ROUTING ||=========================== //
 
@@ -61,6 +62,10 @@ const AuthenticationRoutes = {
         {
             path: '/pages/price',
             element: <PariceView />
+        },
+        {
+            path: '/pages/report/subPaymentReport',
+            element: <SubPaymentReport />
         },
         {
             path: '/pages/report/adminReport',
