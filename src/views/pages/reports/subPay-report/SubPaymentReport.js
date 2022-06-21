@@ -172,7 +172,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Report = ({ paymentData }) => {
     theme = useTheme();
     const classes = useStyles();
-
+    const today = new Date();
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 0);
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
     return (
         <>
@@ -197,10 +198,24 @@ const Report = ({ paymentData }) => {
                     gutterBottom
                     variant="h3"
                 >
-                    Payment Report
+                    Subscription Payment Report
+                </Typography>
+                <Typography
+                    color={theme.palette.secondary.main}
+                    style={{
+                        textShadow: '0px 0px 5px #D0B7FF',
+                        textAlign: 'center',
+                        marginTop: '3px',
+                        marginBottom: '0px'
+                    }}
+                    gutterBottom
+                    fontSize="16px"
+                    variant="h3"
+                >
+                    Card Payment
                 </Typography>
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
-                    NPartFitness
+                    {lastDayOfMonth.toISOString().slice(0, 7)}-01 to {lastDayOfMonth.toISOString().slice(0, 10)}
                 </Typography>
                 <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
                     <Grid align="center" item xs={12}>
@@ -208,21 +223,21 @@ const Report = ({ paymentData }) => {
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                 <TableHead>
                                     <TableRow>
-                                        <StyledTableCell style={{ marginLeft: '50px' }}>Date</StyledTableCell>
-                                        <StyledTableCell align="center">Method</StyledTableCell>
+                                        <StyledTableCell style={{ marginLeft: '50px' }}>Owner ID</StyledTableCell>
+                                        <StyledTableCell align="center">First Name</StyledTableCell>
+                                        <StyledTableCell align="center">Last Name</StyledTableCell>
                                         <StyledTableCell align="center">Amount</StyledTableCell>
-                                        <StyledTableCell align="center">Membership</StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {paymentData.map((row) => (
                                         <StyledTableRow key={row.name}>
                                             <StyledTableCell style={{ marginLeft: '50px' }} component="th" scope="row">
-                                                {row.date}
+                                                {row.userId}
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">{row.method}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.amount}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.membershipId}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.firstName}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.lastName}</StyledTableCell>
+                                            <StyledTableCell align="center">{row.totAmount.toFixed(2)}</StyledTableCell>
                                         </StyledTableRow>
                                     ))}
                                 </TableBody>
@@ -237,7 +252,7 @@ const Report = ({ paymentData }) => {
 
 //= ===============================|| Payment Success Page ||================================//
 
-const PaymentReport = () => {
+const SubPaymentReport = () => {
     const theme = useTheme();
     const classes = useStyles();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -246,9 +261,9 @@ const PaymentReport = () => {
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
     const { state } = useLocation();
-    const type = state !== null ? state.type : 'gym';
-    const gymId = state !== null ? state.gymId : 1;
-    const branchId = state !== null ? state.branchId : 1;
+    // const type = state !== null ? state.type : 'gym';
+    // const gymId = state !== null ? state.gymId : 1;
+    // const branchId = state !== null ? state.branchId : 1;
     // const trainerId = 4;
     // const userId = 1;
     // const gymId = 1;
@@ -256,25 +271,11 @@ const PaymentReport = () => {
 
     function getAdminDashboard() {
         // let arr = [];
-        if (type === 'branch') {
-            HttpCommon.get(`api/dashboard/getBranchRawMonthlyTotalIncome/${branchId}`).then(async (response) => {
-                console.log(response.data.data);
-                setPaymentData(response.data.data);
-                setDataLoading(false);
-            });
-        } else if (type === 'admin') {
-            HttpCommon.get(`/api/payment/getAllPaymentGroupByOwner/1`).then(async (response) => {
-                console.log(response.data.data);
-                setPaymentData(response.data.data);
-                setDataLoading(false);
-            });
-        } else {
-            HttpCommon.get(`api/dashboard/getGymRawMonthlyTotalIncome/${gymId}`).then(async (response) => {
-                console.log(response.data.data);
-                setPaymentData(response.data.data);
-                setDataLoading(false);
-            });
-        }
+        HttpCommon.get(`/api/payment/getAllPaymentGroupByOwner/1`).then(async (response) => {
+            console.log(response.data.data);
+            setPaymentData(response.data.data);
+            setDataLoading(false);
+        });
     }
 
     const handleDisplay = () => {
@@ -389,4 +390,4 @@ export class ComponentToPrint extends React.PureComponent {
     }
 }
 
-export default PaymentReport;
+export default SubPaymentReport;

@@ -127,6 +127,15 @@ function pagesRoute() {
                             external: true,
                             target: true,
                             breadcrumbs: false
+                        },
+                        {
+                            id: 'subPayment-report',
+                            title: 'Sub Payment Report',
+                            type: 'item',
+                            url: '/pages/report/subPaymentReport',
+                            external: true,
+                            target: true,
+                            breadcrumbs: false
                         }
                     ]
                 }
