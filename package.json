@@ -61,7 +61,7 @@
         "redux": "^4.0.5",
         "yup": "^0.32.9"
     },
-    "optionalDependencies": { "fsevents": "2.1.2" },
+    "optionalDependencies": { "fsevents": "*" },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
