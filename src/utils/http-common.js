@@ -13,8 +13,8 @@ import Message from 'utils/messages';
 // console.log(token);
 // console.log(store.getState().token);
 const instance = axios.create({
-    // baseURL: 'http://node-env.eba-pakmdcpw.us-east-2.elasticbeanstalk.com/',
-    baseURL: 'http://localhost:3005',
+    baseURL: 'http://node-env.eba-pakmdcpw.us-east-2.elasticbeanstalk.com/',
+    // baseURL: 'http://localhost:3005',
     // baseURL: "http://192.168.1.24:3005",
     timeout: 30000,
     headers: {
