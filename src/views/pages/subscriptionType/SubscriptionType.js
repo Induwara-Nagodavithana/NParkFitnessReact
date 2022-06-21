@@ -204,7 +204,11 @@ function SubscriptionType() {
                                     <Dialog />
                                 ) : (
                                     <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
-                                        <SubscriptionTypeCard row={row} handleEditClick={handleEditClick} />
+                                        <SubscriptionTypeCard
+                                            row={row}
+                                            handleEditClick={handleEditClick}
+                                            getSubscriptionTypes={getSubscriptionTypes}
+                                        />
                                     </Grid>
                                 )}
                             </React.Fragment>
