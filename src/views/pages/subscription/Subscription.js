@@ -46,7 +46,7 @@ import { useNavigate } from 'react-router-dom';
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
-import { Payhere, AccountCategory, Customer, CurrencyType, PayhereCheckout, CheckoutParams } from 'payhere-js-sdk';
+// import { Payhere, AccountCategory, Customer, CurrencyType, PayhereCheckout, CheckoutParams } from 'payhere-js-sdk';
 import { Store } from 'react-notifications-component';
 import Lottie from 'react-lottie';
 import * as success from 'assets/images/loading.json';
@@ -57,7 +57,7 @@ import PriceView from './component/PriceView';
 let theme;
 
 // Sandbox
-Payhere.init('1217402', AccountCategory.SANDBOX);
+// Payhere.init('1217402', AccountCategory.SANDBOX);
 
 // Live
 // Payhere.init("12xxxxx",AccountCategory.LIVE)

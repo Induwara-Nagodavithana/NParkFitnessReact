@@ -45,7 +45,6 @@ import { useNavigate } from 'react-router-dom';
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
-import { Payhere, AccountCategory, Customer, CurrencyType, PayhereCheckout, CheckoutParams } from 'payhere-js-sdk';
 import { Store } from 'react-notifications-component';
 import NotificationCard from './component/NotificationCard';
 
