@@ -20,9 +20,10 @@ const Item = styled(Paper)(({ theme }) => ({
 const Reviews = () => {
     const [userReviews, setUserReviews] = useState([]);
     const [userName, setUserName] = useState();
-    const [comment, setComment] = useState();
-    const [value, setValue] = useState();
+    const [comment, setComment] = useState('');
+    const [value, setValue] = useState('');
     const [userType, setUserType] = useState();
+    const [postButtonDisable, setPostButtonDisable] = useState(true);
 
     function getUserData() {
         HttpCommon.get(`/api/user/${localStorage.getItem('userID')}`)
@@ -67,8 +68,26 @@ const Reviews = () => {
         }
     }, []);
 
+    const postButton = () => {
+        if (comment !== '' && value !== '') {
+            console.log(comment);
+            console.log(value);
+            setPostButtonDisable(false);
+        }
+    };
+
     const handleComment = (event) => {
         setComment(event.target.value);
+        if (event.target.value !== '' && value !== '') {
+            setPostButtonDisable(false);
+        }
+    };
+
+    const handleRating = (event, newValue) => {
+        setValue(newValue);
+        if (comment !== '' && newValue !== '') {
+            setPostButtonDisable(false);
+        }
     };
 
     const handleAddReview = () => {
@@ -115,16 +134,15 @@ const Reviews = () => {
                             inputProps={{ maxLength: 255 }}
                         />
                         <Typography component="legend">Your Rating : </Typography>
-                        <Rating
-                            name="simple-controlled"
-                            value={value}
-                            size="large"
-                            onChange={(event, newValue) => {
-                                setValue(newValue);
-                            }}
-                        />
+                        <Rating name="simple-controlled" value={value} size="large" onChange={handleRating} />
                         <Grid container justifyContent="flex-end">
-                            <Button size="large" variant="contained" color="secondary" onClick={handleAddReview}>
+                            <Button
+                                size="large"
+                                variant="contained"
+                                color="secondary"
+                                onClick={handleAddReview}
+                                disabled={postButtonDisable}
+                            >
                                 Post
                             </Button>
                         </Grid>

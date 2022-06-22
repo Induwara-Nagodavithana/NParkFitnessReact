@@ -48,6 +48,7 @@ function ServiceType() {
     const [showTable, setShowTable] = useState(true);
     const [showButton, setShowButton] = useState(false);
     const [showAddServicesCard, setShowAddServicesCard] = useState(true);
+    const [searchButtonDisable, setSearchButtonDisable] = useState(true);
 
     // Create and get my reference in Add New Subscription type
     const mainCard2Ref = useRef(null);
@@ -60,6 +61,7 @@ function ServiceType() {
     }
 
     function getGym() {
+        gymArray.length = 0;
         HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
@@ -117,6 +119,7 @@ function ServiceType() {
     const handleBranchSelect = (event, newValue) => {
         if (newValue !== null) {
             setBranchId(newValue.value);
+            setSearchButtonDisable(false);
         }
     };
 
@@ -241,7 +244,14 @@ function ServiceType() {
                                     <></>
                                 )}
 
-                                <Button variant="contained" startIcon={<Search />} size="medium" color="secondary" onClick={handleSearch}>
+                                <Button
+                                    variant="contained"
+                                    startIcon={<Search />}
+                                    size="medium"
+                                    color="secondary"
+                                    onClick={handleSearch}
+                                    disabled={searchButtonDisable}
+                                >
                                     Search
                                 </Button>
                             </Stack>
