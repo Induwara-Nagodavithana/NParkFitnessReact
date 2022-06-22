@@ -22,6 +22,7 @@ const SubscriptionTypes = Loadable(lazy(() => import('views/pages/subscriptionTy
 const EmployeeManagement = Loadable(lazy(() => import('views/pages/employee-management/EmployeeManagement')));
 const Attendance = Loadable(lazy(() => import('views/pages/attendance/Attendance')));
 const Account = Loadable(lazy(() => import('views/pages/account/Account')));
+const Reviews = Loadable(lazy(() => import('views/pages/reviews/Reviews')))
 const DietPlan = Loadable(lazy(() => import('views/pages/dietPlan/DietPlan')));
 const Membership = Loadable(lazy(() => import('views/pages/membership/Membership')));
 const Gym = Loadable(lazy(() => import('views/pages/gym/Gym')));
@@ -110,6 +111,10 @@ const MainRoutes = {
         {
             path: '/account',
             element: <Account />
+        },
+        {
+            path: '/review',
+            element: <Reviews />
         },
         {
             path: '/dietPlan',
