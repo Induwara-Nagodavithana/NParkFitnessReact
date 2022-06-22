@@ -1,12 +1,22 @@
 import React from 'react';
-import { TableRow, TableCell, IconButton, Button } from '@material-ui/core';
+import { TableRow, TableCell, IconButton, Button, Stack } from '@material-ui/core';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { Edit } from '@material-ui/icons';
+import { Edit, Delete } from '@material-ui/icons';
 
 const date = new Date();
 
 // eslint-disable-next-line no-unused-vars
-const ReadOnlyRowSchedule = ({ row, handleEditClick, handleDialog, handleDialogAdd, setScheduleId, getScheduleId, scheduleData }) => {
+const ReadOnlyRowSchedule = ({
+    row,
+    handleEditClick,
+    handleDialog,
+    handleDialogAdd,
+    setScheduleId,
+    getScheduleId,
+    scheduleData,
+    setExpireDate,
+    handleDeleteClick
+}) => {
     const handleItemClick = () => {
         console.log('row.id');
         console.log(row.id);
@@ -63,15 +73,24 @@ const ReadOnlyRowSchedule = ({ row, handleEditClick, handleDialog, handleDialogA
                 </TableCell>
 
                 <TableCell align="right">
-                    {new Date(row.expireDate.substring(0, 10)) > date ? (
-                        <AnimateButton>
-                            <IconButton aria-label="edit" color="secondary" onClick={(event) => handleEditClick(event, row)}>
-                                <Edit />
-                            </IconButton>
-                        </AnimateButton>
-                    ) : (
-                        <></>
-                    )}
+                    <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={2}>
+                        {new Date(row.expireDate.substring(0, 10)) > date ? (
+                            <>
+                                <AnimateButton>
+                                    <IconButton aria-label="edit" color="secondary" onClick={(event) => handleEditClick(event, row)}>
+                                        <Edit />
+                                    </IconButton>
+                                </AnimateButton>
+                                <AnimateButton>
+                                    <IconButton aria-label="edit" color="secondary" onClick={(event) => handleDeleteClick(event, row)}>
+                                        <Delete />
+                                    </IconButton>
+                                </AnimateButton>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </Stack>
                 </TableCell>
             </TableRow>
         </>
