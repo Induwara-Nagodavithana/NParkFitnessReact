@@ -11,7 +11,7 @@ const Message = ({ title, msg, type }) => {
         animationIn: ['animate__animated', 'animate__fadeIn'],
         animationOut: ['animate__animated', 'animate__fadeOut'],
         dismiss: {
-            duration: 5000,
+            duration: 2500,
             onScreen: true
         },
         width: 500
@@ -28,7 +28,7 @@ const addMessage = ({ title, msg, type }) =>
         animationIn: ['animate__animated', 'animate__fadeIn'],
         animationOut: ['animate__animated', 'animate__fadeOut'],
         dismiss: {
-            duration: 5000,
+            duration: 2500,
             onScreen: true
         },
         width: 500

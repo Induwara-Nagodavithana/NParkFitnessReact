@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 import User1 from 'assets/images/dp.jpg';
 import HttpCommon from 'utils/http-common';
 import { deepOrange, deepPurple } from '@mui/material/colors';
@@ -152,6 +153,11 @@ const ProfileSection = () => {
 
     const handleAccount = (event) => {
         navigate('/pages/account');
+        setOpen(false);
+    };
+
+    const handleReview = (event) => {
+        navigate('/pages/review');
         setOpen(false);
     };
 
@@ -296,6 +302,17 @@ const ProfileSection = () => {
                                                         <IconUser stroke={1.5} size="1.3rem" />
                                                     </ListItemIcon>
                                                     <ListItemText primary={<Typography variant="body2">Account</Typography>} />
+                                                </ListItemButton>
+                                                <ListItemButton
+                                                    className={classes.listItem}
+                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    selected={selectedIndex === 4}
+                                                    onClick={handleReview}
+                                                >
+                                                    <ListItemIcon>
+                                                        <ReviewsIcon stroke={1.5} size="1.3rem" />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={<Typography variant="body2">Reviews</Typography>} />
                                                 </ListItemButton>
                                             </List>
                                             <Divider />
