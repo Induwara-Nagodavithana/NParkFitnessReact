@@ -119,7 +119,7 @@ const SubscriptionCard = (subscriptionData) => {
                 item.price = 'price_1L9PNEJhj4XbjMCUB9e9Fz0F';
                 break;
 
-                case 'Platinum':
+            case 'Diamond':
                 item.price = 'price_1LDpRJJhj4XbjMCUqQP65kha';
                 break;
 
