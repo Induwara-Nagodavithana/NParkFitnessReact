@@ -1,7 +1,9 @@
-import React from 'react';
-import { TableRow, TableCell, IconButton, Button } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { TableRow, TableCell, IconButton, Button, Stack } from '@material-ui/core';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { Edit } from '@material-ui/icons';
+import { Edit, Delete } from '@material-ui/icons';
+
+const date = new Date();
 
 const ReadOnlyRowScheduleItem = ({
     row,
@@ -11,7 +13,7 @@ const ReadOnlyRowScheduleItem = ({
     getServiceId,
     isExpired,
     getService,
-    getExpireDate
+    handleDeleteClickScheduleItem
 }) => {
     console.log(row);
     return (
@@ -29,11 +31,32 @@ const ReadOnlyRowScheduleItem = ({
                 <TableCell align="center">{row.calAmount}</TableCell>
 
                 <TableCell align="right">
-                    <AnimateButton>
-                        <IconButton aria-label="edit" color="secondary" onClick={(event) => handleEditClickScheduleItem(event, row)}>
-                            <Edit />
-                        </IconButton>
-                    </AnimateButton>
+                    <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={2}>
+                        {new Date(row.schedule.expireDate.substring(0, 10)) > date ? (
+                            <>
+                                <AnimateButton>
+                                    <IconButton
+                                        aria-label="edit"
+                                        color="secondary"
+                                        onClick={(event) => handleEditClickScheduleItem(event, row)}
+                                    >
+                                        <Edit />
+                                    </IconButton>
+                                </AnimateButton>
+                                <AnimateButton>
+                                    <IconButton
+                                        aria-label="edit"
+                                        color="secondary"
+                                        onClick={(event) => handleDeleteClickScheduleItem(event, row)}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </AnimateButton>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </Stack>
                 </TableCell>
             </TableRow>
         </>

@@ -26,7 +26,7 @@ const ReadOnlyRow = ({ row, handleEditClick }) => {
                 <TableCell align="right">
                     <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={2}>
                         <Button variant="contained" color="secondary" onClick={handleShowProfile}>
-                            Show Profile
+                            Show Branch
                         </Button>
                         <AnimateButton>
                             <IconButton aria-label="edit" color="secondary" onClick={(event) => handleEditClick(event, row)}>

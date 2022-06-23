@@ -25,7 +25,7 @@ const EditableRowScheduleItem = ({
     return (
         <>
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell align="right">
+                <TableCell align="right" style={{ padding: '0px 12px 0px 0px' }}>
                     <Autocomplete
                         value={row.service.name}
                         onChange={(event, newValue) => {
@@ -36,7 +36,7 @@ const EditableRowScheduleItem = ({
                         renderInput={(params) => <TextField {...params} variant="outlined" fullWidth margin="dense" name="serviceId" />}
                     />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" style={{ padding: '0px 12px 0px 0px' }}>
                     <TextField
                         required
                         fullWidth
@@ -47,7 +47,7 @@ const EditableRowScheduleItem = ({
                         onChange={handleEditFormChangeScheduleItem}
                     />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" style={{ padding: '0px 12px 0px 0px' }}>
                     <TextField
                         required
                         fullWidth
@@ -58,7 +58,7 @@ const EditableRowScheduleItem = ({
                         onChange={handleEditFormChangeScheduleItem}
                     />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" style={{ padding: '0px 12px 0px 0px' }}>
                     <TextField
                         required
                         fullWidth
@@ -69,7 +69,7 @@ const EditableRowScheduleItem = ({
                         onChange={handleEditFormChangeScheduleItem}
                     />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" style={{ padding: '0px 12px 0px 0px' }}>
                     <TextField
                         required
                         fullWidth
