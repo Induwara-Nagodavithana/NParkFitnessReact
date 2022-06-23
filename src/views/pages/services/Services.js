@@ -37,9 +37,9 @@ function ServiceType() {
     const [serviceData, setServiceData] = useState([]);
     const [BranchId, setBranchId] = useState();
     const [branchArray, setBranchArray] = useState([]);
-    const [serviceName, setServiceName] = useState(null);
-    const [serviceStatus, setServiceStatus] = useState(null);
-    const [bodyPart, setBodyPart] = useState(null);
+    const [serviceName, setServiceName] = useState('');
+    const [serviceStatus, setServiceStatus] = useState('');
+    const [bodyPart, setBodyPart] = useState('');
     const [addButton, setAddButtonDisable] = useState(true);
     const [editableServiceName, setEditableServiceName] = useState();
     const [editableServiceStatus, setEditableServiceStatus] = useState(null);
@@ -79,6 +79,7 @@ function ServiceType() {
                     .then((res) => {
                         setServiceData(res.data.data.serviceType);
                         setShowTable(false);
+                        setShowButton(true);
                     })
                     .catch((err) => {
                         messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
@@ -154,7 +155,7 @@ function ServiceType() {
 
     const handleBodyPart = (event, newValue) => {
         setBodyPart(newValue);
-        if (serviceName != null && serviceStatus != null) {
+        if (serviceName !== '' && serviceStatus !== '') {
             setAddButtonDisable(false);
         }
     };
@@ -174,14 +175,15 @@ function ServiceType() {
             .then((res) => {
                 handleSearch();
                 messages.addMessage({ title: 'Successfully Done!', msg: 'New Service Added Successfully', type: 'success' });
+                setAddButtonDisable(true);
             })
             .catch((error) => {
                 messages.addMessage({ title: 'Fail !', msg: 'Fill all required Data', type: 'danger' });
             });
 
-        setServiceName(null);
-        setServiceStatus(null);
-        setBodyPart(null);
+        setServiceName('');
+        setServiceStatus('');
+        setBodyPart('');
         addButtonClickExecuteScroll();
     };
 
