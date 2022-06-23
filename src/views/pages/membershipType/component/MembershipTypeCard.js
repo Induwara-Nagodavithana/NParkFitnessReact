@@ -46,7 +46,8 @@ const useStyles = makeStyles((theme) => ({
             borderColor: theme.palette.secondary.dark,
             borderRadius: '50%',
             top: '65px',
-            right: '-150px'
+            right: '-150px',
+            opacity: 0.5
         },
         '&:before': {
             content: '""',
@@ -66,8 +67,8 @@ const useStyles = makeStyles((theme) => ({
         opacity: 0.6
     },
     button: {
-        color: theme.palette.white,
-        backgroundColor: theme.palette.secondary.main,
+        color: 'white',
+        backgroundColor: theme.palette.white,
         marginBottom: -10,
         textTransform: 'capitalize',
         boxShadow: 'none',

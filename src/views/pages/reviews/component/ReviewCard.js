@@ -33,7 +33,7 @@ import GradeIcon from '@mui/icons-material/Grade';
 const useStyles = makeStyles((theme) => ({
     card: {
         paddingTop: '20px',
-        background: theme.palette.secondary.main,
+        background: '#E9C7FC',
         marginTop: '5px',
         marginBottom: '5px',
         marginLeft: '20px',
@@ -42,30 +42,31 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         '&:hover': {
             boxShadow: theme.shadows[8]
+        },
+        '&:after': {
+            content: '""',
+            position: 'absolute',
+            width: '200px',
+            height: '200px',
+            border: '19px solid ',
+            borderColor: theme.palette.secondary.dark,
+            borderRadius: '50%',
+            top: '65px',
+            right: '-150px',
+            opacity: 0.5
+        },
+        '&:before': {
+            content: '""',
+            position: 'absolute',
+            width: '200px',
+            height: '200px',
+            border: '3px solid ',
+            borderColor: theme.palette.secondary.dark,
+            borderRadius: '50%',
+            top: '145px',
+            right: '-70px',
+            opacity: 0.5
         }
-        // '&:after': {
-        //     content: '""',
-        //     position: 'absolute',
-        //     width: '200px',
-        //     height: '200px',
-        //     border: '19px solid ',
-        //     borderColor: 'white',
-        //     borderRadius: '50%',
-        //     top: '65px',
-        //     right: '-150px'
-        // },
-        // '&:before': {
-        //     content: '""',
-        //     position: 'absolute',
-        //     width: '600px',
-        //     height: '600px',
-        //     border: '20px solid ',
-        //     borderColor: 'white',
-        //     borderRadius: '50%',
-        //     top: '145px',
-        //     right: '-70px',
-        //     opacity: 0.3
-        // }
     },
     tagLine: {
         color: theme.palette.grey[900],
@@ -150,32 +151,32 @@ const ReviewCard = ({ row, getUserReviews }) => {
                 <CardContent justifyContent="center" alignItems="left">
                     <Grid container justifyContent="center" alignItems="center" direction="column">
                         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                            <PersonIcon sx={{ color: 'white' }} />
+                            <PersonIcon sx={{ color: 'black' }} />
                             <div style={{ width: '20px' }} />
-                            <Typography align="left" variant="h4" color="white" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                            <Typography align="left" variant="h4" style={{ maxWidth: '150px', minWidth: '150px' }}>
                                 Name :
                             </Typography>
-                            <Typography align="left" variant="subtitle1" color="white" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                                 {row !== null ? row.name : 'NotFound'}
                             </Typography>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                            <CommentIcon sx={{ color: 'white' }} />
+                            <CommentIcon sx={{ color: 'black' }} />
                             <div style={{ width: '20px' }} />
-                            <Typography align="left" variant="h4" color="white" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                            <Typography align="left" variant="h4" style={{ maxWidth: '150px', minWidth: '150px' }}>
                                 Comment :
                             </Typography>
-                            <Typography align="left" variant="subtitle1" color="white" style={{ maxWidth: '100px', minWidth: '110px' }}>
+                            <Typography align="left" variant="subtitle1" style={{ maxWidth: '100px', minWidth: '110px' }}>
                                 {row !== null ? row.comment : 'NotFound'}
                             </Typography>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'left', margin: '5px' }}>
-                            <GradeIcon sx={{ color: 'white' }} />
+                            <GradeIcon sx={{ color: 'black' }} />
                             <div style={{ width: '20px' }} />
-                            <Typography align="left" variant="h4" color="white" style={{ maxWidth: '150px', minWidth: '150px' }}>
+                            <Typography align="left" variant="h4" style={{ maxWidth: '150px', minWidth: '150px' }}>
                                 Rating :
                             </Typography>
-                            <Rating sx={{ color: 'white' }} name="size-large" value={row.rating} size="medium" readOnly />
+                            <Rating sx={{ color: 'secondary.main' }} name="size-large" value={row.rating} size="medium" readOnly />
                         </div>
                         <div style={{ height: 10 }} />
                         <Grid container direction="row" justifyContent="flex-end" spacing={2}>

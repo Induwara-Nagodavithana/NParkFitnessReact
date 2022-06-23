@@ -102,6 +102,7 @@ const Reviews = () => {
                 getUserReviews();
                 setValue('');
                 setComment('');
+                setPostButtonDisable(true);
             })
             .catch((err) => {
                 messages.addMessage({ title: 'Fail !', msg: err, type: 'danger' });
@@ -126,6 +127,7 @@ const Reviews = () => {
                             id="comment"
                             label="Comment"
                             variant="outlined"
+                            value={comment}
                             onChange={handleComment}
                             fullWidth
                             multiline

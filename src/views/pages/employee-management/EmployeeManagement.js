@@ -411,6 +411,17 @@ function ManageEmployee() {
         console.log(isEdit);
         setEditEmployeeId(null);
         setViewEditMemberDialog(false);
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setBirthday(null);
+        setContactNo('');
+        setGenderValue('Male');
+        setEmployeeType('');
+        setStreet('');
+        setLane('');
+        setCity('');
+        setProvince('');
     };
 
     const handleShowTrainerReport = () => {
