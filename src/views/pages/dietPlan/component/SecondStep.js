@@ -46,19 +46,19 @@ const SecondStep = ({
     const searchText = [...items];
     const data = [
         {
-            food: 'Carrot',
-            amount: '10',
-            calAmount: '153'
+            foodName: 'Carrot',
+            amount: 35,
+            calAmount: 13.6
         },
         {
-            food: 'Tomato',
-            amount: '20',
-            calAmount: '421'
+            foodName: 'Tomato',
+            amount: 45,
+            calAmount: 8.2
         },
         {
-            food: 'Apple',
-            amount: '35',
-            calAmount: '120'
+            foodName: 'Apple',
+            amount: 35,
+            calAmount: 18.5
         }
     ];
 
@@ -92,8 +92,7 @@ const SecondStep = ({
             console.log(response.data);
             if (response.data.items.length === 0) {
                 // messages.addMessage({ title: 'Error Occured!', msg: 'Enter Foods Cannot Find', type: 'danger' });
-
-                setIsLoading(false);
+                // setIsLoading(false);
             } else {
                 await Promise.all(
                     response.data.items.map((element) => {
@@ -118,12 +117,14 @@ const SecondStep = ({
                     //     calorie: extrafoodData[foodIndex].calAmount
                     // });
                     setFinalFoodData(temp);
+                    setIsLoading(false);
+
                     console.log('Final');
                     console.log(temp);
                 } else {
                     setFoodData(temp);
                 }
-                setIsLoading(false);
+                // setIsLoading(false);
             }
             return temp;
         });
@@ -151,7 +152,7 @@ const SecondStep = ({
                 }
                 console.log('result2');
 
-                const foodAmount = Math.round((100 / element.calorie) * avgFoodCalorie * portionPointer);
+                const foodAmount = Math.round((100 / element.calorie) * avgFoodCalorie * ((portionPointer * (getRndInteger(5) + 5)) / 10));
                 console.log(avgFoodCalorie);
                 console.log(foodAmount);
                 const data = {
@@ -198,31 +199,41 @@ const SecondStep = ({
         let count = 0;
         console.log(extrafoodData);
         const tempArr = [];
-        while (count < 3) {
-            const tempFinalFoodData = [...finalFoodData];
+        if (finalFoodData.length > 0) {
+            while (count < 3) {
+                const tempFinalFoodData = [...finalFoodData];
 
-            // if (count > finalFoodData.length - 1) {
-            //     tempFinalFoodData.push(finalFoodData[finalFoodData.length - 1]);
-            // } else {
-            //     tempFinalFoodData.push(finalFoodData[count]);
-            // }
-            const foodIndex = getRndInteger(extrafoodData.length);
-            console.log('foodIndexFinal');
-            console.log(foodIndex);
-            console.log(extrafoodData[foodIndex]);
-            console.log(tempFinalFoodData);
-            if (extrafoodData.length > 0) {
-                tempFinalFoodData.push({
-                    name: extrafoodData[foodIndex].foodName,
-                    amount: extrafoodData[foodIndex].amount,
-                    calorie: extrafoodData[foodIndex].calAmount
-                });
+                // if (count > finalFoodData.length - 1) {
+                //     tempFinalFoodData.push(finalFoodData[finalFoodData.length - 1]);
+                // } else {
+                //     tempFinalFoodData.push(finalFoodData[count]);
+                // }
+                const foodIndex = getRndInteger(extrafoodData.length);
+                console.log('foodIndexFinal');
+                console.log(foodIndex);
+                console.log(extrafoodData[foodIndex]);
+                console.log(tempFinalFoodData);
+                if (extrafoodData.length > 2) {
+                    tempFinalFoodData.push({
+                        name: extrafoodData[count].foodName,
+                        amount: extrafoodData[count].amount,
+                        calorie: extrafoodData[count].calAmount
+                    });
+                } else {
+                    tempFinalFoodData.push({
+                        name: data[count].foodName,
+                        amount: data[count].amount,
+                        calorie: data[count].calAmount
+                    });
+                }
+
+                tempArr.push(tempFinalFoodData);
+                count += 1;
             }
-
-            tempArr.push(tempFinalFoodData);
-            count += 1;
+            setSugestionArr(tempArr);
+            setIsLoading(false);
         }
-        setSugestionArr(tempArr);
+
         console.log(tempArr);
     }, [finalFoodData]);
 
