@@ -28,9 +28,11 @@ const MembershipType = () => {
     const [addNewMembershipTypeDialog, setAddNewMembershipTypeDialog] = useState(false);
     const [editMembershipTypeDialog, setEditMembershipTypeDialog] = useState(false);
     const [showAddButton, setShowAddButton] = useState(false);
+    const [searchButtonDisable, setSearchButtonDisable] = useState(true);
     const navigate = useNavigate();
 
     function getGym() {
+        gyms.length = 0;
         HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`).then((res) => {
             res.data.data.map((row) => gyms.push({ label: row.name, value: row.id }));
         });
@@ -83,6 +85,7 @@ const MembershipType = () => {
         if (newValue !== null) {
             console.log(newValue);
             setGymId(newValue.value);
+            setSearchButtonDisable(false);
         }
     };
 
@@ -216,9 +219,16 @@ const MembershipType = () => {
                                 options={gyms}
                                 onChange={handleGymSelect}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Gym" />}
+                                renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                             />
-                            <Button size="medium" variant="contained" color="secondary" startIcon={<Search />} onClick={handleSearch}>
+                            <Button
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                startIcon={<Search />}
+                                onClick={handleSearch}
+                                disabled={searchButtonDisable}
+                            >
                                 Search
                             </Button>
                         </Stack>

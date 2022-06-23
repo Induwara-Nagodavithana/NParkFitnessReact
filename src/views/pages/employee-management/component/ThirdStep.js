@@ -5,8 +5,8 @@ import MuiPhoneNumber from 'material-ui-phone-number';
 // import { Box } from '@material-ui/core';
 
 const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setStreet, setLane, setCity, setProvince }) => {
-    const handleContactNo = (value) => {
-        setContactNo(value);
+    const handleContactNo = (event) => {
+        setContactNo(event.target.value);
     };
     const handleStreet = (event) => {
         setStreet(event.target.value);
@@ -23,7 +23,7 @@ const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setS
     return (
         <div>
             <div style={{ height: 15 }} />
-            <MuiPhoneNumber
+            {/* <MuiPhoneNumber
                 defaultCountry="lk"
                 value={contactNo}
                 onChange={handleContactNo}
@@ -31,8 +31,17 @@ const ThirdStep = ({ contactNo, street, lane, city, province, setContactNo, setS
                 label="Contact No"
                 required
                 inputProps={{ maxLength: 12 }}
+            /> */}
+            <TextField
+                required
+                fullWidth
+                value={contactNo}
+                onChange={handleContactNo}
+                label="Contact No"
+                margin="dense"
+                name="contactNo"
+                // inputProps={{ maxLength: 255 }}
             />
-
             <TextField
                 required
                 fullWidth

@@ -43,10 +43,8 @@ const Membership = () => {
     const navigate = useNavigate();
 
     function getGym() {
-        const link = '/api/gym/getAllGymByUserId/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        gymArray.length = 0;
+        HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
             })
@@ -56,10 +54,7 @@ const Membership = () => {
     }
 
     function getBranchMembers() {
-        const link = '/api/user/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/user/${localStorage.getItem('userID')}`)
             .then((res) => {
                 setBranchId(res.data.data.branchId);
                 const link2 = '/api/membership/getAllMembershipByBranchId/';
@@ -200,7 +195,7 @@ const Membership = () => {
                             options={gymArray}
                             onChange={handleGymSelect}
                             sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Gym" />}
+                            renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                         />
                         <Autocomplete
                             disablePortal
@@ -208,7 +203,7 @@ const Membership = () => {
                             options={branchArray}
                             onChange={handleBranchSelect}
                             sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Branch" />}
+                            renderInput={(params) => <TextField {...params} label="Branch" color="secondary" />}
                         />
                         <Stack direction="row">
                             <Button variant="contained" color="secondary" startIcon={<Search />} size="smaLL" onClick={handleSearch}>

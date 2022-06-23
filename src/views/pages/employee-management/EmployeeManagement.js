@@ -96,6 +96,9 @@ function ManageEmployee() {
 
     // Regex email validation
     const validEmail = new RegExp('^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$');
+    const validContactNo = new RegExp(
+        '^(?:0|94|\\+94)?(?:(11|21|23|24|25|26|27|31|32|33|34|35|36|37|38|41|45|47|51|52|54|55|57|63|65|66|67|81|912)(0|2|3|4|5|7|9)|7(0|1|2|4|5|6|7|8)\\d)\\d{6}$'
+    ); // eslint-disable-line
 
     function showDataToAdmin() {
         const allMembers = [...adminArray, ...ownerArray, ...managerArray, ...trainerArray];
@@ -186,6 +189,7 @@ function ManageEmployee() {
         HttpCommon.get(`/api/subscription/getSubscriptionByUserId/${localStorage.getItem('userID')}`).then((res) => {
             HttpCommon.get(`/api/subscription/${res.data.data.id}`).then((res) => {
                 if (res.data.data !== null && res.data.data.isActive) {
+                    gymArray.length = 0;
                     getGym();
                 } else {
                     navigate('/pages/subscription', { replace: true });
@@ -288,51 +292,63 @@ function ManageEmployee() {
     };
 
     const handleAddNewMemberSubmit = () => {
-        HttpCommon.post('/api/user/', {
-            firstName,
-            lastName,
-            password: confirmPassword,
-            birthDay: birthday,
-            email,
-            contactNo,
-            gender: genderValue,
-            type: radioValue,
-            street,
-            lane,
-            city,
-            province,
-            fireUID: uId,
-            branchId
-        })
-            .then((res) => {
-                if (userType === 'Admin') {
-                    showDataToAdmin();
-                } else if (userType === 'Owner') {
-                    handleSearch();
-                } else {
-                    showDataToManager();
-                }
+        const auth = getAuth(app);
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                setUID(userCredential.user.uid);
+                HttpCommon.post('/api/user/', {
+                    firstName,
+                    lastName,
+                    password: confirmPassword,
+                    birthDay: birthday,
+                    email,
+                    contactNo,
+                    gender: genderValue,
+                    type: radioValue,
+                    street,
+                    lane,
+                    city,
+                    province,
+                    fireUID: userCredential.user.uid,
+                    branchId
+                })
+                    .then((res) => {
+                        if (userType === 'Admin') {
+                            showDataToAdmin();
+                        } else if (userType === 'Owner') {
+                            handleSearch();
+                        } else {
+                            showDataToManager();
+                        }
 
-                messages.addMessage({ title: 'Successfully Added!', msg: 'New member added to the data base.', type: 'success' });
+                        messages.addMessage({ title: 'Successfully Added!', msg: 'New member added to the data base.', type: 'success' });
 
-                setOpenAddNewMemberDialog(false);
-                setActiveStep(0);
-                setEmail('');
-                setPassword('');
-                setConfirmPassword('');
-                setFirstName('');
-                setLastName('');
-                setBirthday(null);
-                setGenderValue('Male');
-                setContactNo('');
-                setStreet('');
-                setLane('');
-                setCity('');
-                setProvince('');
-                setUID('');
+                        setOpenAddNewMemberDialog(false);
+                        setActiveStep(0);
+                        setEmail('');
+                        setPassword('');
+                        setConfirmPassword('');
+                        setFirstName('');
+                        setLastName('');
+                        setBirthday(null);
+                        setGenderValue('Male');
+                        setContactNo('');
+                        setStreet('');
+                        setLane('');
+                        setCity('');
+                        setProvince('');
+                        setUID('');
+                    })
+                    .catch((error) => {
+                        messages.addMessage({ title: 'Fail !', msg: error.massage, type: 'danger' });
+                    });
             })
             .catch((error) => {
-                messages.addMessage({ title: 'Fail !', msg: error.massage, type: 'danger' });
+                messages.addMessage({
+                    title: 'Fail!',
+                    msg: error.message,
+                    type: 'danger'
+                });
             });
     };
 
@@ -376,19 +392,6 @@ function ManageEmployee() {
         if (nullBranchStaff === true) {
             setBranchArray([]);
         }
-    };
-
-    const handleRemoveClick = (event, row) => {
-        HttpCommon.put(`/api/user/${row.id}`, {
-            branchId: null
-        })
-            .then((res) => {
-                handleSearch();
-                messages.addMessage({ title: 'Edit Successfully !', msg: 'Subscription Type Edited Successfully', type: 'success' });
-            })
-            .catch((error) => {
-                messages.addMessage({ title: 'Fail !', msg: error.message, type: 'danger' });
-            });
     };
 
     // Add New Member Dialog
@@ -495,6 +498,9 @@ function ManageEmployee() {
                     messages.addMessage({ title: 'Fail !', msg: 'Invalid email type', type: 'danger' });
                     setActiveStep(0);
                     setEmail('');
+                } else if (password.length < 6) {
+                    console.log(password.length);
+                    messages.addMessage({ title: 'Fail !', msg: 'Password must be at least 6 characters', type: 'danger' });
                 } else if (password === confirmPassword && email !== '') {
                     handleNext();
                 }
@@ -507,20 +513,16 @@ function ManageEmployee() {
                 }
                 break;
             case 2:
-                if (contactNo !== '' && street !== '' && lane !== '' && city !== '' && province !== '') {
-                    const auth = getAuth(app);
-                    createUserWithEmailAndPassword(auth, email, password)
-                        .then((userCredential) => {
-                            setUID(userCredential.user.uid);
-                            handleNext();
-                        })
-                        .catch((error) => {
-                            messages.addMessage({
-                                title: 'Fail!',
-                                msg: error.message,
-                                type: 'danger'
-                            });
-                        });
+                if (contactNo === '' || street === '' || lane === '' || city === '' || province === '') {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
+                    setActiveStep(2);
+                } else if (!validContactNo.test(contactNo)) {
+                    console.log(validContactNo.test(contactNo));
+                    messages.addMessage({ title: 'Fail !', msg: 'Invalid Contact Number', type: 'danger' });
+                    setActiveStep(2);
+                    setContactNo('');
+                } else if (contactNo !== '' && street !== '' && lane !== '' && city !== '' && province !== '') {
+                    handleNext();
                 } else {
                     messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
                 }
@@ -542,7 +544,7 @@ function ManageEmployee() {
                                 options={gymArray}
                                 onChange={handleGymSelect}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Gym" />}
+                                renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                             />
 
                             {branchArray.length > 0 && nullBranchStaff === false ? (
@@ -552,7 +554,7 @@ function ManageEmployee() {
                                     options={branchArray}
                                     onChange={handleBranchSelect}
                                     sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField {...params} label="Branch" />}
+                                    renderInput={(params) => <TextField {...params} label="Branch" color="secondary" />}
                                 />
                             ) : (
                                 <></>
@@ -608,6 +610,13 @@ function ManageEmployee() {
                                 <TableCell align="center" sx={{ color: 'white' }}>
                                     Contact No
                                 </TableCell>
+                                {userType === 'Admin' ? (
+                                    <TableCell align="center" sx={{ color: 'white' }}>
+                                        Type
+                                    </TableCell>
+                                ) : (
+                                    <></>
+                                )}
                                 {nullBranchStaff === true ? (
                                     <>
                                         <TableCell align="center" sx={{ color: 'white' }}>
@@ -634,8 +643,7 @@ function ManageEmployee() {
                                                 row={row}
                                                 userType={userType}
                                                 handleViewEditClick={handleViewEditClick}
-                                                // handleEditClick={handleEditClick}
-                                                handleRemoveClick={handleRemoveClick}
+                                                handleSearch={handleSearch}
                                                 nullBranchStaff={nullBranchStaff}
                                                 setIsEdit={setIsEdit}
                                             />
@@ -710,6 +718,9 @@ function ManageEmployee() {
                                 )}
 
                                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                    <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
+                                        Back
+                                    </Button>
                                     <Button color="inherit" onClick={handleCloseAddNewMember} sx={{ mr: 1 }}>
                                         Close
                                     </Button>
