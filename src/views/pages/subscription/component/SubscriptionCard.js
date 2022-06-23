@@ -103,7 +103,7 @@ const SubscriptionCard = (subscriptionData) => {
         setLoading(true);
         console.log('redirectToCheckout');
         const item = {
-            price: 'price_1L1SmyJhj4XbjMCUTgAPOMO8',
+            price: 'price_1LDpT7Jhj4XbjMCUjmUsvtEy',
             quantity: 1
         };
         switch (subscriptionData.subscriptionData.subscriptionType.type) {
@@ -117,6 +117,10 @@ const SubscriptionCard = (subscriptionData) => {
 
             case 'Platinum':
                 item.price = 'price_1L9PNEJhj4XbjMCUB9e9Fz0F';
+                break;
+
+            case 'Diamond':
+                item.price = 'price_1LDpRJJhj4XbjMCUqQP65kha';
                 break;
 
             default:

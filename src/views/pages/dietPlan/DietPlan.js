@@ -327,6 +327,7 @@ function DietPlan() {
                         <Button
                             variant="contained"
                             color="secondary"
+                            type="number"
                             startIcon={<Search />}
                             size="large"
                             onClick={handleSearch}
