@@ -122,6 +122,7 @@ const Membership = () => {
         const url = link + key;
         HttpCommon.get(url)
             .then((res) => {
+                console.log(res.data.data.memberData);
                 setIsDataAvailable(false);
                 setMemberData(res.data.data.memberData);
             })
@@ -222,6 +223,7 @@ const Membership = () => {
                     <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} arial-label="member table">
                         <TableHead sx={{ backgroundColor: '#512da8' }}>
                             <TableRow>
+                                <TableCell sx={{ color: 'white' }}>Id</TableCell>
                                 <TableCell sx={{ color: 'white' }}>Name</TableCell>
                                 <TableCell align="center" sx={{ color: 'white' }}>
                                     Expire Date
@@ -237,12 +239,15 @@ const Membership = () => {
                                 memberData.map((row) => (
                                     <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                         <TableCell component="th" scope="row">
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row">
                                             {row.user.firstName.concat(' ', row.user.lastName)}
                                         </TableCell>
                                         {checkDate('Ex', row.expireDate) === true ? (
                                             <Tooltip title="Expierd" arrow>
                                                 <TableCell align="center" sx={{ color: 'red' }}>
-                                                    {row.expireDate}
+                                                    {row.expireDate.toString().slice(0, 10)}
                                                 </TableCell>
                                             </Tooltip>
                                         ) : (
@@ -250,12 +255,12 @@ const Membership = () => {
                                                 {checkDate('Between', row.expireDate) === true ? (
                                                     <Tooltip title="Will Expire within a week" placement="bottom" arrow>
                                                         <TableCell align="center" sx={{ color: '#E7BF1E' }}>
-                                                            {row.expireDate}
+                                                            {row.expireDate.toString().slice(0, 10)}
                                                         </TableCell>
                                                     </Tooltip>
                                                 ) : (
                                                     <>
-                                                        <TableCell align="center">{row.expireDate}</TableCell>
+                                                        <TableCell align="center">{row.expireDate.toString().slice(0, 10)}</TableCell>
                                                     </>
                                                 )}
                                             </>
