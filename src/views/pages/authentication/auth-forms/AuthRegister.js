@@ -149,15 +149,12 @@ const FirebaseRegister = ({ ...others }) => {
     //     console.error('Register');
     // };
 
-    const changePassword = (value) => {
-        const temp = strengthIndicator(value);
+    const handleChangePassword = (event) => {
+        setPassword(event.target.value);
+        const temp = strengthIndicator(event.target.value);
         setStrength(temp);
         setLevel(strengthColor(temp));
     };
-
-    useEffect(() => {
-        changePassword('123456');
-    }, []);
 
     const handleContactNo = (newValue) => {
         if (newValue.target.validity.valid) {
@@ -322,9 +319,7 @@ const FirebaseRegister = ({ ...others }) => {
                             <OutlinedInput
                                 type={showNewPassword ? 'text' : 'password'}
                                 value={password}
-                                onChange={(event) => {
-                                    setPassword(event.target.value);
-                                }}
+                                onChange={handleChangePassword}
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -561,6 +556,9 @@ const FirebaseRegister = ({ ...others }) => {
                             <Box sx={{ mt: 2 }}>
                                 <AnimateButton>
                                     <Button
+                                        onClick={() => {
+                                            messages.addMessage({ title: 'Success !', msg: 'Account Created', type: 'success' });
+                                        }}
                                         disableElevation
                                         fullWidth
                                         size="large"
