@@ -71,7 +71,7 @@ import Slide from '@mui/material/Slide';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 
-import { getAuth, updatePassword, updateEmail, reauthenticateWithCredential } from 'firebase/auth';
+import { getAuth, updatePassword, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import messages from 'utils/messages';
 //= ==============================|| SHADOW BOX ||===============================//
 let theme;
@@ -222,6 +222,8 @@ const Account = () => {
     const [open3, setOpen3] = React.useState(false);
     const [strength, setStrength] = React.useState(0);
     const [level, setLevel] = React.useState();
+    const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = React.useState(false);
     const [showNewPassword, setShowNewPassword] = React.useState(false);
 
     const inputFile = useRef(null);
@@ -430,28 +432,46 @@ const Account = () => {
         });
     }
 
-    function changeFirebasePassword() {
+    const changeFirebasePassword = async () => {
         const auth = getAuth();
-
         const user = auth.currentUser;
-        const newPassword = password;
 
-        if (password === confirmPassword) {
-            updatePassword(user, newPassword)
-                .then(() => {
-                    // Update successful.
-                    messages.addMessage({ title: 'Password Changed!', msg: 'User Account Password Changed', type: 'success' });
+        const cred = EmailAuthProvider.credential(user.email, currentPassword);
 
-                    setOpen(false);
-                })
-                .catch((error) => {
-                    // An error ocurred
-                    messages.addMessage({ title: 'Password Changed Failed!', msg: error.message, type: 'danger' });
+        reauthenticateWithCredential(user, cred)
+            .then(() => {
+                // User re-authenticated.
+                if (currentPassword === password) {
+                    messages.addMessage({ title: 'Password Changed Failed!', msg: 'Enter new password', type: 'danger' });
+                } else if (password === confirmPassword) {
+                    updatePassword(user, password)
+                        .then(() => {
+                            // Update successful.
+                            messages.addMessage({ title: 'Password Changed!', msg: 'User Account Password Changed', type: 'success' });
 
-                    setOpen(false);
-                });
-        }
-    }
+                            setOpen(false);
+                        })
+                        .catch((error) => {
+                            // An error ocurred
+                            messages.addMessage({ title: 'Password Changed Failed!', msg: error.message, type: 'danger' });
+
+                            setOpen(false);
+                        });
+                } else {
+                    messages.addMessage({ title: 'Error Occured!', msg: 'Confirm password does not match', type: 'danger' });
+                }
+            })
+            .catch((error) => {
+                messages.addMessage({ title: 'Password Changed Failed!', msg: error.message, type: 'danger' });
+            });
+
+        // const auth = getAuth();
+
+        // const user = auth.currentUser;
+        // const newPassword = password;
+
+        // console.log(user.password);
+    };
 
     const onChangeFile = (event) => {
         console.log(event.target.files[0]);
@@ -479,6 +499,14 @@ const Account = () => {
 
     const showNewPasswordHandler = () => {
         setShowNewPassword(!showNewPassword);
+    };
+
+    const showCurrentPasswordHandler = () => {
+        setShowCurrentPassword(!showCurrentPassword);
+    };
+
+    const showPasswordHandler = () => {
+        setShowPassword(!showPassword);
     };
 
     useEffect(async () => {
@@ -651,21 +679,42 @@ const Account = () => {
                     >
                         <DialogTitle>Enter New Password</DialogTitle>
                         <DialogContent>
+                            <FormControl fullWidth sx={{ ...theme.typography.passwordInput, mb: 0, mt: 1 }}>
+                                <InputLabel>Current Password</InputLabel>
+                                <OutlinedInput
+                                    type={showCurrentPassword ? 'text' : 'password'}
+                                    value={currentPassword}
+                                    onChange={handleChangeCurrentPassword}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={showCurrentPasswordHandler}
+                                                edge="end"
+                                                size="large"
+                                            >
+                                                {showCurrentPassword ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+
                             <FormControl fullWidth sx={{ ...theme.typography.passwordInput, mb: 1, mt: 1 }}>
                                 <InputLabel>New Password</InputLabel>
                                 <OutlinedInput
-                                    type={showNewPassword ? 'text' : 'password'}
+                                    type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={handleChangePassword}
                                     endAdornment={
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
-                                                onClick={showNewPasswordHandler}
+                                                onClick={showPasswordHandler}
                                                 edge="end"
                                                 size="large"
                                             >
-                                                {showNewPassword ? <Visibility /> : <VisibilityOff />}
+                                                {showPassword ? <Visibility /> : <VisibilityOff />}
                                             </IconButton>
                                         </InputAdornment>
                                     }
