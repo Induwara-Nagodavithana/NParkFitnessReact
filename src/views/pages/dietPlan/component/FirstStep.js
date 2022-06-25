@@ -13,6 +13,7 @@ import { Label } from '@material-ui/icons';
 import { Chip } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import messages from 'utils/messages';
 
 const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }) => {
     const [foodItem, setFoodItem] = useState();
@@ -27,7 +28,7 @@ const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }
 
     const handleAdd = () => {
         console.log(foodItem);
-        if (foodItem !== undefined && foodItem !== '') {
+        if (foodItem !== undefined && foodItem !== '' && portionType !== null && portionType !== '') {
             const arr = items;
             arr.push({ foodItem, portionType });
             setItems(arr);
@@ -42,6 +43,8 @@ const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }
             setPortionType(null);
             console.log(items);
             console.log(foodItem);
+        } else {
+            messages.addMessage({ title: 'Error Occured!', msg: 'Enter All Data', type: 'danger' });
         }
     };
 
@@ -99,6 +102,7 @@ const FirstStep = ({ mealType, setMealType, items, setItems, amount, setAmount }
                         <TextField
                             fullWidth
                             id="calories"
+                            type="number"
                             label="Amount (cal)"
                             defaultValue={amount}
                             variant="outlined"

@@ -220,12 +220,12 @@ const MemberReport = ({ memberid }) => {
     const [display, setDisplay] = React.useState('none');
     const { state } = useLocation();
     const memberId = state !== null ? state.memberid : 1;
-    const userId = 1;
     function getMemberDetails() {
         // let arr = [];
         HttpCommon.get(`/api/payment/getAllPaymentByMemberId/${memberId}`).then((response) => {
             console.log(response.data.data);
             setMemberData(response.data.data);
+            const { userId } = response.data.data.member;
 
             HttpCommon.get(`/api/bodyDetails/getBodyDetailsByUserId/${userId}`).then((response) => {
                 if (response.data.data !== undefined && response.data.data.bodyDetails.length > 8) {

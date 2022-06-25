@@ -43,10 +43,8 @@ const Membership = () => {
     const navigate = useNavigate();
 
     function getGym() {
-        const link = '/api/gym/getAllGymByUserId/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        gymArray.length = 0;
+        HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`)
             .then((res) => {
                 res.data.data.map((row) => gymArray.push({ label: row.name, value: row.id }));
             })
@@ -56,10 +54,7 @@ const Membership = () => {
     }
 
     function getBranchMembers() {
-        const link = '/api/user/';
-        const key = localStorage.getItem('userID');
-        const url = link + key;
-        HttpCommon.get(url)
+        HttpCommon.get(`/api/user/${localStorage.getItem('userID')}`)
             .then((res) => {
                 setBranchId(res.data.data.branchId);
                 const link2 = '/api/membership/getAllMembershipByBranchId/';
@@ -127,6 +122,7 @@ const Membership = () => {
         const url = link + key;
         HttpCommon.get(url)
             .then((res) => {
+                console.log(res.data.data.memberData);
                 setIsDataAvailable(false);
                 setMemberData(res.data.data.memberData);
             })
@@ -200,7 +196,7 @@ const Membership = () => {
                             options={gymArray}
                             onChange={handleGymSelect}
                             sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Gym" />}
+                            renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                         />
                         <Autocomplete
                             disablePortal
@@ -208,7 +204,7 @@ const Membership = () => {
                             options={branchArray}
                             onChange={handleBranchSelect}
                             sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Branch" />}
+                            renderInput={(params) => <TextField {...params} label="Branch" color="secondary" />}
                         />
                         <Stack direction="row">
                             <Button variant="contained" color="secondary" startIcon={<Search />} size="smaLL" onClick={handleSearch}>
@@ -227,6 +223,7 @@ const Membership = () => {
                     <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} arial-label="member table">
                         <TableHead sx={{ backgroundColor: '#512da8' }}>
                             <TableRow>
+                                <TableCell sx={{ color: 'white' }}>Id</TableCell>
                                 <TableCell sx={{ color: 'white' }}>Name</TableCell>
                                 <TableCell align="center" sx={{ color: 'white' }}>
                                     Expire Date
@@ -242,12 +239,15 @@ const Membership = () => {
                                 memberData.map((row) => (
                                     <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                         <TableCell component="th" scope="row">
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row">
                                             {row.user.firstName.concat(' ', row.user.lastName)}
                                         </TableCell>
                                         {checkDate('Ex', row.expireDate) === true ? (
                                             <Tooltip title="Expierd" arrow>
                                                 <TableCell align="center" sx={{ color: 'red' }}>
-                                                    {row.expireDate}
+                                                    {row.expireDate.toString().slice(0, 10)}
                                                 </TableCell>
                                             </Tooltip>
                                         ) : (
@@ -255,12 +255,12 @@ const Membership = () => {
                                                 {checkDate('Between', row.expireDate) === true ? (
                                                     <Tooltip title="Will Expire within a week" placement="bottom" arrow>
                                                         <TableCell align="center" sx={{ color: '#E7BF1E' }}>
-                                                            {row.expireDate}
+                                                            {row.expireDate.toString().slice(0, 10)}
                                                         </TableCell>
                                                     </Tooltip>
                                                 ) : (
                                                     <>
-                                                        <TableCell align="center">{row.expireDate}</TableCell>
+                                                        <TableCell align="center">{row.expireDate.toString().slice(0, 10)}</TableCell>
                                                     </>
                                                 )}
                                             </>

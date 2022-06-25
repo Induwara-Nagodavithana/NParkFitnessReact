@@ -17,6 +17,7 @@ import * as success from 'assets/images/loading.json';
 import { useTheme } from '@material-ui/core/styles';
 import WeightDetails from '../reports/member-report/WeightDetails';
 import WeightChart from './component/WeightChart';
+import messages from 'utils/messages';
 
 const defaultOptions = {
     loop: true,
@@ -213,15 +214,47 @@ function DietPlan() {
 
     const isStepSkipped = (step) => skipped.has(step);
 
-    const handleNext = () => {
+    const handleNext = (foodItems) => {
         console.log('step up');
+        console.log(foodItems);
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
             newSkipped = new Set(newSkipped.values());
             newSkipped.delete(activeStep);
         }
 
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setActiveStep((prevActiveStep) => {
+            switch (prevActiveStep) {
+                case 0:
+                    if (
+                        prevActiveStep === 0 &&
+                        mealType !== null &&
+                        amount !== undefined &&
+                        amount !== '' &&
+                        items !== null &&
+                        items.length > 0
+                    ) {
+                        prevActiveStep += 1;
+                    } else {
+                        messages.addMessage({ title: 'Error Occured!', msg: 'Enter All Data', type: 'danger' });
+                    }
+                    break;
+
+                case 1:
+                    if (prevActiveStep === 1 && foodItems !== null && foodItems !== undefined && foodItems.length > 0) {
+                        prevActiveStep += 1;
+                    } else {
+                        messages.addMessage({ title: 'Error Occured!', msg: 'Please Select A Diet Plan Suggestion', type: 'danger' });
+                    }
+                    break;
+
+                default:
+                    prevActiveStep += 1;
+                    break;
+            }
+
+            return prevActiveStep;
+        });
         setSkipped(newSkipped);
     };
 
@@ -294,6 +327,7 @@ function DietPlan() {
                         <Button
                             variant="contained"
                             color="secondary"
+                            type="number"
                             startIcon={<Search />}
                             size="large"
                             onClick={handleSearch}

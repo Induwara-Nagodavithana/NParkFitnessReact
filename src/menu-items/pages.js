@@ -45,6 +45,14 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
+                    id: 'gym',
+                    title: 'Gym',
+                    type: 'item',
+                    url: '/pages/gym',
+                    icon: IconBike,
+                    breadcrumbs: false
+                },
+                {
                     id: 'employee-management',
                     title: 'Employee Managment',
                     type: 'item',
@@ -75,42 +83,6 @@ function pagesRoute() {
                     icon: IconReportAnalytics,
                     children: [
                         {
-                            id: 'member-report',
-                            title: 'Member Report',
-                            type: 'item',
-                            url: '/pages/report/memberReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'trainer-report',
-                            title: 'Trainer Report',
-                            type: 'item',
-                            url: '/pages/report/trainerReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'branch-report',
-                            title: 'Branch Report',
-                            type: 'item',
-                            url: '/pages/report/branchReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'gym-report',
-                            title: 'Gym Report',
-                            type: 'item',
-                            url: '/pages/report/gymReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
                             id: 'admin-report',
                             title: 'Admin Report',
                             type: 'item',
@@ -120,10 +92,10 @@ function pagesRoute() {
                             breadcrumbs: false
                         },
                         {
-                            id: 'payment-report',
-                            title: 'Payment Report',
+                            id: 'subPayment-report',
+                            title: 'Sub Payment Report',
                             type: 'item',
-                            url: '/pages/report/paymentReport',
+                            url: '/pages/report/subPaymentReport',
                             external: true,
                             target: true,
                             breadcrumbs: false
@@ -212,68 +184,6 @@ function pagesRoute() {
                     url: '/pages/calorieCal',
                     icon: IconToolsKitchen2,
                     breadcrumbs: false
-                },
-                {
-                    id: 'report',
-                    title: 'Reports',
-                    type: 'collapse',
-                    icon: IconReportAnalytics,
-                    children: [
-                        {
-                            id: 'member-report',
-                            title: 'Member Report',
-                            type: 'item',
-                            url: '/pages/report/memberReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'trainer-report',
-                            title: 'Trainer Report',
-                            type: 'item',
-                            url: '/pages/report/trainerReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'branch-report',
-                            title: 'Branch Report',
-                            type: 'item',
-                            url: '/pages/report/branchReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'gym-report',
-                            title: 'Gym Report',
-                            type: 'item',
-                            url: '/pages/report/gymReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'admin-report',
-                            title: 'Admin Report',
-                            type: 'item',
-                            url: '/pages/report/adminReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'payment-report',
-                            title: 'Payment Report',
-                            type: 'item',
-                            url: '/pages/report/paymentReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        }
-                    ]
                 }
             ];
         case 'Manager':
@@ -357,77 +267,6 @@ function pagesRoute() {
                     url: '/pages/calorieCal',
                     icon: IconToolsKitchen2,
                     breadcrumbs: false
-                },
-                {
-                    id: 'report',
-                    title: 'Reports',
-                    type: 'collapse',
-                    icon: IconReportAnalytics,
-                    children: [
-                        {
-                            id: 'member-report',
-                            title: 'Member Report',
-                            type: 'item',
-                            url: '/pages/report/memberReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'trainer-report',
-                            title: 'Trainer Report',
-                            type: 'item',
-                            url: '/pages/report/trainerReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'branch-report',
-                            title: 'Branch Report',
-                            type: 'item',
-                            url: '/pages/report/branchReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'gym-report',
-                            title: 'Gym Report',
-                            type: 'item',
-                            url: '/pages/report/gymReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'admin-report',
-                            title: 'Admin Report',
-                            type: 'item',
-                            url: '/pages/report/adminReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'price',
-                            title: 'Price',
-                            type: 'item',
-                            url: '/pages/price',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'payment-report',
-                            title: 'Payment Report',
-                            type: 'item',
-                            url: '/pages/report/paymentReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        }
-                    ]
                 }
             ];
         case 'Trainer':
@@ -487,77 +326,6 @@ function pagesRoute() {
                     url: '/pages/calorieCal',
                     icon: IconToolsKitchen2,
                     breadcrumbs: false
-                },
-                {
-                    id: 'report',
-                    title: 'Reports',
-                    type: 'collapse',
-                    icon: IconReportAnalytics,
-                    children: [
-                        {
-                            id: 'member-report',
-                            title: 'Member Report',
-                            type: 'item',
-                            url: '/pages/report/memberReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'trainer-report',
-                            title: 'Trainer Report',
-                            type: 'item',
-                            url: '/pages/report/trainerReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'branch-report',
-                            title: 'Branch Report',
-                            type: 'item',
-                            url: '/pages/report/branchReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'gym-report',
-                            title: 'Gym Report',
-                            type: 'item',
-                            url: '/pages/report/gymReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'admin-report',
-                            title: 'Admin Report',
-                            type: 'item',
-                            url: '/pages/report/adminReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'payment-report',
-                            title: 'Payment Report',
-                            type: 'item',
-                            url: '/pages/report/paymentReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'price',
-                            title: 'Price',
-                            type: 'item',
-                            url: '/pages/price',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        }
-                    ]
                 }
             ];
         default:
@@ -601,68 +369,6 @@ function pagesRoute() {
                     url: '/pages/calorieCal',
                     icon: IconToolsKitchen2,
                     breadcrumbs: false
-                },
-                {
-                    id: 'report',
-                    title: 'Reports',
-                    type: 'collapse',
-                    icon: IconReportAnalytics,
-                    children: [
-                        {
-                            id: 'member-report',
-                            title: 'Member Report',
-                            type: 'item',
-                            url: '/pages/report/memberReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'trainer-report',
-                            title: 'Trainer Report',
-                            type: 'item',
-                            url: '/pages/report/trainerReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'branch-report',
-                            title: 'Branch Report',
-                            type: 'item',
-                            url: '/pages/report/branchReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'gym-report',
-                            title: 'Gym Report',
-                            type: 'item',
-                            url: '/pages/report/gymReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'admin-report',
-                            title: 'Admin Report',
-                            type: 'item',
-                            url: '/pages/report/adminReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        },
-                        {
-                            id: 'payment-report',
-                            title: 'Payment Report',
-                            type: 'item',
-                            url: '/pages/report/paymentReport',
-                            external: true,
-                            target: true,
-                            breadcrumbs: false
-                        }
-                    ]
                 },
                 {
                     id: 'services',

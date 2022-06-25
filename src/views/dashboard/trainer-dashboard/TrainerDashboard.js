@@ -194,11 +194,11 @@ const TrainerDashboard = () => {
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} sm={12} md={12} lg={6}>
-                                <MemberCard isLoading={isLoading} data={memberData} />
+                                <MemberCard isLoading={isLoading} data={memberData.slice(0, 5)} isViewAll />
                             </Grid>
 
                             <Grid item xs={12} sm={12} md={12} lg={6}>
-                                <ServiceCard isLoading={isLoading} data={serviceData} />
+                                <ServiceCard isLoading={isLoading} data={{ serviceType: serviceData.serviceType.slice(0, 5) }} isViewAll />
                             </Grid>
                         </Grid>
                     </Grid>

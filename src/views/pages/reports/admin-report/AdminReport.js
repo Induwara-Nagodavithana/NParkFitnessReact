@@ -180,7 +180,7 @@ const Report = ({
                     gutterBottom
                     variant="h3"
                 >
-                    Gym Report
+                    Admin Report
                 </Typography>
                 <Typography variant="h5" fontSize="14px" textAlign="center" marginBottom="40px">
                     NPartFitness

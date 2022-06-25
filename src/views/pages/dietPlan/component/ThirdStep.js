@@ -148,32 +148,59 @@ const ThirdStep = ({
         setSelectedFoodData(list);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         console.log('Save');
-        setDataLoading(true);
+        let isVaild = true;
+        await Promise.all(
+            selectedFoodData.map((element) => {
+                if (
+                    element.name === '' ||
+                    element.name === ' ' ||
+                    element.name === undefined ||
+                    element.amount === '' ||
+                    element.amount === 0 ||
+                    element.amount < 0.5 ||
+                    element.amount === undefined ||
+                    element.calorie === '' ||
+                    element.calorie === 0 ||
+                    element.calorie < 0.5 ||
+                    element.calorie === undefined
+                ) {
+                    isVaild = false;
+                } else {
+                    element.name = element.name.charAt(0).toUpperCase() + element.name.slice(1);
+                }
+                return 0;
+            })
+        );
+        if (selectedFoodData.length > 0 && isVaild) {
+            setDataLoading(true);
 
-        HttpCommon.post(`/api/dietPlan/createDietAndMealItem`, {
-            memberId,
-            mealType,
-            mealData: selectedFoodData
-        }).then((response) => {
-            console.log(response.data.data);
-            if (response.data.success) {
-                getDietPlans();
-                setOpenAddNewDietPlanDialog(false);
-                setSelectedFoodData([]);
-                setItems([]);
-                setActiveStep(0);
-                setAmount();
-                setMealType('');
-                messages.addMessage({ title: 'Saved!', msg: 'Diet Plan Uploaded', type: 'success' });
+            HttpCommon.post(`/api/dietPlan/createDietAndMealItem`, {
+                memberId,
+                mealType,
+                mealData: selectedFoodData
+            }).then((response) => {
+                console.log(response.data.data);
+                if (response.data.success) {
+                    getDietPlans();
+                    setOpenAddNewDietPlanDialog(false);
+                    setSelectedFoodData([]);
+                    setItems([]);
+                    setActiveStep(0);
+                    setAmount();
+                    setMealType('');
+                    messages.addMessage({ title: 'Saved!', msg: 'Diet Plan Uploaded', type: 'success' });
 
-                // window.location.reload(false);
-            } else {
-                messages.addMessage({ title: 'Error!', msg: 'Diet Plan Not Created', type: 'danger' });
-            }
-            setDataLoading(false);
-        });
+                    // window.location.reload(false);
+                } else {
+                    messages.addMessage({ title: 'Error!', msg: 'Diet Plan Not Created', type: 'danger' });
+                }
+                setDataLoading(false);
+            });
+        } else {
+            messages.addMessage({ title: 'Error!', msg: 'Please enter some food items', type: 'danger' });
+        }
     };
 
     const handleRemove = (index) => (event) => {
@@ -252,6 +279,7 @@ const ThirdStep = ({
                                                     fullWidth
                                                     id="outlined-basic"
                                                     label="Amount (g)"
+                                                    type="number"
                                                     variant="outlined"
                                                     value={element.amount}
                                                     onChange={handleAmountChange(index)}
@@ -262,6 +290,7 @@ const ThirdStep = ({
                                                     fullWidth
                                                     id="outlined-basic"
                                                     label="Calorie (cal)"
+                                                    type="number"
                                                     variant="outlined"
                                                     value={element.calorie}
                                                     onChange={handleCalorieChange(index)}

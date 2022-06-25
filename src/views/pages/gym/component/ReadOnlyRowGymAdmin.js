@@ -6,7 +6,7 @@ import { Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router';
 import HttpCommon from 'utils/http-common';
 
-const ReadOnlyRowGym = ({ row, handleEditClick, handleDeleteClick }) => {
+const ReadOnlyRowGymAdmin = ({ row, handleEditClick, handleDeleteClick }) => {
     const navigate = useNavigate();
 
     const handleShowProfile = () => {
@@ -23,16 +23,6 @@ const ReadOnlyRowGym = ({ row, handleEditClick, handleDeleteClick }) => {
                         <Button variant="contained" color="secondary" onClick={handleShowProfile}>
                             Show Gym
                         </Button>
-                        <AnimateButton>
-                            <IconButton aria-label="edit" color="secondary" onClick={(event) => handleEditClick(event, row)}>
-                                <Edit />
-                            </IconButton>
-                        </AnimateButton>
-                        <AnimateButton>
-                            <IconButton aria-label="edit" color="secondary" onClick={(event) => handleDeleteClick(event, row)}>
-                                <Delete />
-                            </IconButton>
-                        </AnimateButton>
                     </Stack>
                 </TableCell>
             </TableRow>
@@ -40,4 +30,4 @@ const ReadOnlyRowGym = ({ row, handleEditClick, handleDeleteClick }) => {
     );
 };
 
-export default ReadOnlyRowGym;
+export default ReadOnlyRowGymAdmin;

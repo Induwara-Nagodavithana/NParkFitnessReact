@@ -224,10 +224,12 @@ const TrainerReport = () => {
     const [scheduleMonthlyCount, setScheduleMonthlyCount] = React.useState(null);
     const [isDataLoading, setDataLoading] = React.useState(true);
     const [display, setDisplay] = React.useState('none');
-
-    const trainerId = 4;
+    const { state } = useLocation();
+    const trainerId = state !== null ? state.trainerId : 1;
+    const branchId = state !== null ? state.branchId : 1;
+    // const trainerId = 4;
     // const userId = 1;
-    const branchId = 1;
+    // const branchId = 1;
     function getTrainerDetails() {
         // let arr = [];
         HttpCommon.post(`/api/schedule/getScheduleCountByTrainerIdAndMonth/${trainerId}`, {

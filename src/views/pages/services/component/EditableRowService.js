@@ -39,6 +39,7 @@ const EditableRow = ({
                         name="name"
                         value={editableServiceName}
                         onChange={handleServiceName}
+                        color="secondary"
                     />
                 </TableCell>
                 <TableCell>
@@ -49,7 +50,15 @@ const EditableRow = ({
                         id="controllable-states-demo"
                         options={status}
                         renderInput={(params) => (
-                            <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="status" />
+                            <TextField
+                                {...params}
+                                label="Status"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="status"
+                                color="secondary"
+                            />
                         )}
                     />
                 </TableCell>
@@ -61,7 +70,15 @@ const EditableRow = ({
                         id="controllable-states-demo"
                         options={bodyparts}
                         renderInput={(params) => (
-                            <TextField {...params} label="Body Part" variant="outlined" fullWidth margin="dense" name="bodyPart" />
+                            <TextField
+                                {...params}
+                                label="Body Part"
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                name="bodyPart"
+                                color="secondary"
+                            />
                         )}
                     />
                 </TableCell>

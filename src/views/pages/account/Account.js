@@ -363,7 +363,9 @@ const Account = () => {
         // if (values.email !== undefined && values.email !== '') {
         //     changeFirebaseEmail();
         // }
-        if (
+        if (values.contactNo.toString().length !== 10) {
+            messages.addMessage({ title: 'Error!', msg: 'Contact number should be only 10 numbers', type: 'danger' });
+        } else if (
             values.firstName !== undefined &&
             values.firstName !== '' &&
             values.lastName !== undefined &&
@@ -628,6 +630,7 @@ const Account = () => {
                                 <TextField
                                     fullWidth
                                     id="outlined-name"
+                                    type="number"
                                     label="ContactNo"
                                     value={values.contactNo}
                                     onChange={handleChange('contactNo')}

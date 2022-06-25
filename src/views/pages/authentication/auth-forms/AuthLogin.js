@@ -246,7 +246,21 @@ const FirebaseLogin = ({ ...others }) => {
                                 localStorage.setItem('type', response.data.data.type),
                                 localStorage.setItem('userID', response.data.data.id)
                             ]);
+                            // if (response.data.data.type === 'Manager' || response.data.data.type === 'Trainer') {
+                            //     if (response.data.data.branchId === null || response.data.data.branchId === 0) {
+                            //         messages.addMessage({
+                            //             title: 'Error Occured!',
+                            //             msg: `This ${response.data.data.type} type client does not assign to a branch. `,
+                            //             type: 'danger'
+                            //         });
+                            //     } else {
+                            //         navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
+                            //     }
+                            // } else {
+                            //     navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
+                            // }
                             navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
+
                             // navigate('/pages/dashboard/admin');
                         } else {
                             messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
@@ -394,11 +408,11 @@ const FirebaseLogin = ({ ...others }) => {
                             </FormControl>
 
                             <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                <InputLabel>Confirm Password</InputLabel>
+                                <InputLabel>Password</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
-                                    label="Confirm Password"
+                                    label="Password"
                                     onChange={(event) => {
                                         console.log(event.target.value);
                                         setPassword(event.target.value);

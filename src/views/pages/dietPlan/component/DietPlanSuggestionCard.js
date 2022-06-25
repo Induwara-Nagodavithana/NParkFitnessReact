@@ -159,7 +159,7 @@ const DietPlanSuggestionCard = ({ dietPlanSuggestionData, setSelectedFoodData, h
 
     const handleSelect = () => {
         setSelectedFoodData(dietPlanSuggestionData);
-        handleNext();
+        handleNext(dietPlanSuggestionData);
     };
 
     useEffect(async () => {

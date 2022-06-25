@@ -84,7 +84,7 @@ const PopularCard = ({ isLoading }) => {
                                     <Grid item>
                                         <Typography variant="h4">Popular Stocks</Typography>
                                     </Grid>
-                                    <Grid item>
+                                    {/* <Grid item>
                                         <MoreHorizOutlinedIcon
                                             fontSize="small"
                                             className={classes.primaryLight}
@@ -112,7 +112,7 @@ const PopularCard = ({ isLoading }) => {
                                             <MenuItem onClick={handleClose}> This Month</MenuItem>
                                             <MenuItem onClick={handleClose}> This Year </MenuItem>
                                         </Menu>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>

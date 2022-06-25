@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 import User1 from 'assets/images/dp.jpg';
 import HttpCommon from 'utils/http-common';
 import { deepOrange, deepPurple } from '@mui/material/colors';
@@ -155,6 +156,11 @@ const ProfileSection = () => {
         setOpen(false);
     };
 
+    const handleReview = (event) => {
+        navigate('/pages/review');
+        setOpen(false);
+    };
+
     function getUserDetails(userId) {
         // let arr = [];
         HttpCommon.get(`/api/user/${userId}`).then((response) => {
@@ -267,7 +273,7 @@ const ProfileSection = () => {
                                                 <Typography variant="subtitle2">{userData.type}</Typography>
                                             </Grid>
                                         </Grid>
-                                        <OutlinedInput
+                                        {/* <OutlinedInput
                                             className={classes.searchControl}
                                             id="input-search-profile"
                                             value={value}
@@ -282,7 +288,7 @@ const ProfileSection = () => {
                                             inputProps={{
                                                 'aria-label': 'weight'
                                             }}
-                                        />
+                                        /> */}
                                         <Divider />
                                         <PerfectScrollbar className={classes.ScrollHeight}>
                                             <List component="nav" className={classes.navContainer}>
@@ -297,12 +303,23 @@ const ProfileSection = () => {
                                                     </ListItemIcon>
                                                     <ListItemText primary={<Typography variant="body2">Account</Typography>} />
                                                 </ListItemButton>
+                                                <ListItemButton
+                                                    className={classes.listItem}
+                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    selected={selectedIndex === 4}
+                                                    onClick={handleReview}
+                                                >
+                                                    <ListItemIcon>
+                                                        <ReviewsIcon stroke={1.5} size="1.3rem" />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={<Typography variant="body2">Reviews</Typography>} />
+                                                </ListItemButton>
                                             </List>
                                             <Divider />
                                             <Card className={classes.card}>
                                                 <CardContent>
                                                     <Grid container spacing={3} direction="column">
-                                                        <Grid item>
+                                                        {/* <Grid item>
                                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                                 <Grid item>
                                                                     <Typography variant="subtitle1">Start DND Mode</Typography>
@@ -317,7 +334,7 @@ const ProfileSection = () => {
                                                                     />
                                                                 </Grid>
                                                             </Grid>
-                                                        </Grid>
+                                                        </Grid> */}
                                                         <Grid item>
                                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                                 <Grid item>

@@ -8,6 +8,10 @@ import messages from 'utils/messages';
 import MainCard from 'ui-component/cards/MainCard';
 
 const gyms = [];
+const statusChoise = [
+    { label: 'Active', value: 'true' },
+    { label: 'Not Active', value: 'false' }
+];
 const MembershipType = () => {
     const [userType, setUserType] = useState();
     const [gymId, setGymId] = useState();
@@ -20,12 +24,15 @@ const MembershipType = () => {
         periodInMonths: '',
         amount: ''
     });
+    const [status, setStatus] = useState();
     const [addNewMembershipTypeDialog, setAddNewMembershipTypeDialog] = useState(false);
     const [editMembershipTypeDialog, setEditMembershipTypeDialog] = useState(false);
     const [showAddButton, setShowAddButton] = useState(false);
+    const [searchButtonDisable, setSearchButtonDisable] = useState(true);
     const navigate = useNavigate();
 
     function getGym() {
+        gyms.length = 0;
         HttpCommon.get(`/api/gym/getAllGymByUserId/${localStorage.getItem('userID')}`).then((res) => {
             res.data.data.map((row) => gyms.push({ label: row.name, value: row.id }));
         });
@@ -78,6 +85,7 @@ const MembershipType = () => {
         if (newValue !== null) {
             console.log(newValue);
             setGymId(newValue.value);
+            setSearchButtonDisable(false);
         }
     };
 
@@ -101,9 +109,11 @@ const MembershipType = () => {
 
         const newFormData = { ...formData };
         newFormData[fieldName] = fieldValue;
-        console.log(newFormData);
         setFormData(newFormData);
-        console.log(formData);
+    };
+
+    const handleStatusChange = (event, newValue) => {
+        setStatus(newValue.value);
     };
 
     const handleAddClick = () => {
@@ -111,6 +121,7 @@ const MembershipType = () => {
         HttpCommon.post(url, {
             type: formData.membershipType,
             description: formData.description,
+            isActive: status,
             amount: formData.amount,
             periodInMonths: formData.duration,
             gymId
@@ -140,6 +151,7 @@ const MembershipType = () => {
             amount: row.amount
         };
 
+        setStatus(row.isActive);
         setEditFormData(formValues);
     };
     const handleEditFormChange = (event) => {
@@ -156,6 +168,7 @@ const MembershipType = () => {
         HttpCommon.put(`/api/membershipType/${editMembershipId}`, {
             type: editFormData.type,
             description: editFormData.description,
+            isActive: status,
             periodInMonths: editFormData.periodInMonths,
             amount: editFormData.amount,
             gymId
@@ -206,9 +219,16 @@ const MembershipType = () => {
                                 options={gyms}
                                 onChange={handleGymSelect}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Gym" />}
+                                renderInput={(params) => <TextField {...params} label="Gym" color="secondary" />}
                             />
-                            <Button size="medium" variant="contained" color="secondary" startIcon={<Search />} onClick={handleSearch}>
+                            <Button
+                                size="medium"
+                                variant="contained"
+                                color="secondary"
+                                startIcon={<Search />}
+                                onClick={handleSearch}
+                                disabled={searchButtonDisable}
+                            >
                                 Search
                             </Button>
                         </Stack>
@@ -234,7 +254,12 @@ const MembershipType = () => {
                                     <Dialog />
                                 ) : (
                                     <Grid align="center" item xs={12} sm={6} md={6} lg={4}>
-                                        <MembershipTypeCard row={row} handleEditClick={handleEditClick} userType={userType} />
+                                        <MembershipTypeCard
+                                            row={row}
+                                            handleEditClick={handleEditClick}
+                                            userType={userType}
+                                            handleSearch={handleSearch}
+                                        />
                                     </Grid>
                                 )}
                             </React.Fragment>
@@ -275,43 +300,15 @@ const MembershipType = () => {
                         onChange={handlAddFormChange}
                         type="number"
                     />
-                    <TextField required fullWidth label="Amount" margin="dense" name="amount" onChange={handlAddFormChange} type="number" />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={handleAddClick}>Add</Button>
-                </DialogActions>
-            </Dialog>
-
-            <Dialog open={addNewMembershipTypeDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Membership Type Details</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        required
-                        fullWidth
-                        label="Membership Type"
-                        margin="dense"
-                        name="membershipType"
-                        onChange={handlAddFormChange}
-                        inputProps={{ maxLength: 255 }}
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        label="Description"
-                        margin="dense"
-                        name="description"
-                        onChange={handlAddFormChange}
-                        inputProps={{ maxLength: 255 }}
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        label="Duration in Months"
-                        margin="dense"
-                        name="duration"
-                        onChange={handlAddFormChange}
-                        type="number"
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        onChange={handleStatusChange}
+                        options={statusChoise}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="status" />
+                        )}
                     />
                     <TextField required fullWidth label="Amount" margin="dense" name="amount" onChange={handlAddFormChange} type="number" />
                 </DialogContent>
@@ -353,6 +350,17 @@ const MembershipType = () => {
                         name="periodInMonths"
                         onChange={handleEditFormChange}
                         type="number"
+                    />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        defaultValue={status ? statusChoise[0] : statusChoise[1]}
+                        onChange={handleStatusChange}
+                        options={statusChoise}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Status" variant="outlined" fullWidth margin="dense" name="status" />
+                        )}
                     />
                     <TextField
                         required
