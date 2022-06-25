@@ -5,7 +5,7 @@
     "engines": {
         "node": "<=16.13.0",
         "npm": "<=8.1.0"
-      },
+    },
     "dependencies": {
         "@date-io/date-fns": "^2.13.1",
         "@devexpress/dx-react-core": "^3.0.2",
@@ -61,7 +61,9 @@
         "redux": "^4.0.5",
         "yup": "^0.32.9"
     },
-    "optionalDependencies": { "fsevents": "*" },
+    "optionalDependencies": {
+        "fsevents": "*"
+    },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",

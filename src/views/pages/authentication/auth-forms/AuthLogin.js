@@ -36,9 +36,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/icons/social-google.svg';
 import app from './firebase';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router';
 import HttpCommon from 'utils/http-common';
 import { Store } from 'react-notifications-component';
@@ -76,70 +74,7 @@ const FirebaseLogin = ({ ...others }) => {
         setShowPassword(!showPassword);
     };
 
-    //google login
-    const googleProvider = new GoogleAuthProvider();
-    const googleHandler = async (event) => {
-        setDataLoading(true);
-        event.preventDefault();
-        let fireUID = '';
-        const userInput = {
-            email
-        };
-        const auth = getAuth(app);
-        signInWithPopup(auth, googleProvider)
-            .then((result) => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                console.log(credential);
-
-                // The signed-in user info.
-                const user = result.user;
-                console.log(user);
-                const token = user.accessToken;
-
-                fireUID = user.uid;
-                userInput.fireUID = fireUID;
-                userInput.email = user.email;
-                console.log(user.uid);
-                dispatch({ type: SET_TOKEN, token: token });
-
-                localStorage.setItem('token', token);
-                HttpCommon.post('/auth/validateUserByFireUIDAndEmail', userInput)
-                    .then(async (response) => {
-                        console.log(response);
-                        setDataLoading(false);
-                        if (response.data.success) {
-                            // localStorage.setItem('type', response.data.data.type);
-                            // localStorage.setItem('userID', response.data.data.id);
-                            await Promise.all([
-                                localStorage.setItem('type', response.data.data.type),
-                                localStorage.setItem('userID', response.data.data.id)
-                            ]);
-                            navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
-                            // navigate('/pages/dashboard/admin');
-                            console.log(token);
-                            console.log(response.data.data.type);
-                            console.log(response.data.data.id);
-                        } else {
-                            messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
-                        }
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                        setDataLoading(false);
-                    });
-            })
-            .catch((error) => {
-                setDataLoading(false);
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode);
-                console.log(errorMessage);
-                messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
-            });
-    };
-
-    //forget Password
+    // forget Password
     const [recoveryEmail, setRecoveryEmail] = useState('');
     const [open, setOpen] = React.useState(false);
 
@@ -214,6 +149,68 @@ const FirebaseLogin = ({ ...others }) => {
         }
     }
 
+    // google login
+    const googleProvider = new GoogleAuthProvider();
+    const googleHandler = async (event) => {
+        setDataLoading(true);
+        event.preventDefault();
+        let fireUID = '';
+        const userInput = {
+            email
+        };
+        const auth = getAuth(app);
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                console.log(credential);
+
+                // The signed-in user info.
+                const { user } = result.user;
+                console.log(user);
+                const token = user.accessToken;
+
+                fireUID = user.uid;
+                userInput.fireUID = fireUID;
+                userInput.email = user.email;
+                console.log(user.uid);
+                dispatch({ type: SET_TOKEN, token });
+
+                localStorage.setItem('token', token);
+                HttpCommon.post('/auth/validateUserByFireUIDAndEmail', userInput)
+                    .then(async (response) => {
+                        console.log(response);
+                        setDataLoading(false);
+                        if (response.data.success) {
+                            // localStorage.setItem('type', response.data.data.type);
+                            // localStorage.setItem('userID', response.data.data.id);
+                            await Promise.all([
+                                localStorage.setItem('type', response.data.data.type),
+                                localStorage.setItem('userID', response.data.data.id)
+                            ]);
+                            navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
+                            // navigate('/pages/dashboard/admin');
+                            console.log(token);
+                            console.log(response.data.data.type);
+                            console.log(response.data.data.id);
+                        } else {
+                            messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
+                        }
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        setDataLoading(false);
+                    });
+            })
+            .catch((error) => {
+                setDataLoading(false);
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+                messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
+            });
+    };
     const onSubmitHandler = (event) => {
         setDataLoading(true);
         event.preventDefault();
@@ -456,7 +453,7 @@ const FirebaseLogin = ({ ...others }) => {
                                 <DialogTitle variant="h3">Reset Password</DialogTitle>
                                 <DialogContent>
                                     <DialogContentText>
-                                        Enter the email associated with your account and we'll send an email with instrauctions to reset
+                                        Enter the email associated with your account and we will send an email with instructions to reset
                                         your password.
                                     </DialogContentText>
                                     <TextField
