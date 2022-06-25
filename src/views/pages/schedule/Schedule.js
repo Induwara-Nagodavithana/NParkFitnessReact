@@ -120,6 +120,9 @@ function Schedule() {
                 .then((res) => {
                     console.log(res.data.data);
                     setScheduleData(res.data.data);
+                    if (res.data.data.length === 0) {
+                        navigate('/pages/membership');
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
