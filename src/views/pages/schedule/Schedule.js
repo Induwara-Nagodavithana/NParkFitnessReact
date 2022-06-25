@@ -118,13 +118,13 @@ function Schedule() {
             console.log(url);
             HttpCommon.get(url)
                 .then((res) => {
-                    console.log(res.data.data);
                     setScheduleData(res.data.data);
-                    if (res.data.data.length === 0) {
+                    /* if (res.data.data.length === 0) {
                         navigate('/pages/membership');
-                    }
+                    }*/
                 })
                 .catch((err) => {
+                    setSchedule(true);
                     console.log(err);
                     messages.addMessage({ title: 'Fail !', msg: err.message, type: 'danger' });
                 });
@@ -224,7 +224,7 @@ function Schedule() {
 
                     Store.addNotification({
                         title: 'Fail !',
-                        message: 'Fail to create schedule',
+                        message: 'Fail to create schedule, This member is not exist',
                         type: 'danger',
                         insert: 'top',
                         container: 'top-right',

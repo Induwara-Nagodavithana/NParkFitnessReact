@@ -15,6 +15,7 @@ const ReadOnlyRowGymAdmin = ({ row, handleEditClick, handleDeleteClick }) => {
     return (
         <>
             <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell align="center">{row.id}</TableCell>
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.CreatedAt.substring(0, 10)}</TableCell>
 
