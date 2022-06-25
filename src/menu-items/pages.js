@@ -45,6 +45,14 @@ function pagesRoute() {
                     breadcrumbs: false
                 },
                 {
+                    id: 'gym',
+                    title: 'Gym',
+                    type: 'item',
+                    url: '/pages/gym',
+                    icon: IconBike,
+                    breadcrumbs: false
+                },
+                {
                     id: 'employee-management',
                     title: 'Employee Managment',
                     type: 'item',

@@ -267,7 +267,7 @@ const ProfileSection = () => {
                                                 <Typography variant="subtitle2">{userData.type}</Typography>
                                             </Grid>
                                         </Grid>
-                                        <OutlinedInput
+                                        {/* <OutlinedInput
                                             className={classes.searchControl}
                                             id="input-search-profile"
                                             value={value}
@@ -282,7 +282,7 @@ const ProfileSection = () => {
                                             inputProps={{
                                                 'aria-label': 'weight'
                                             }}
-                                        />
+                                        /> */}
                                         <Divider />
                                         <PerfectScrollbar className={classes.ScrollHeight}>
                                             <List component="nav" className={classes.navContainer}>
@@ -302,7 +302,7 @@ const ProfileSection = () => {
                                             <Card className={classes.card}>
                                                 <CardContent>
                                                     <Grid container spacing={3} direction="column">
-                                                        <Grid item>
+                                                        {/* <Grid item>
                                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                                 <Grid item>
                                                                     <Typography variant="subtitle1">Start DND Mode</Typography>
@@ -317,7 +317,7 @@ const ProfileSection = () => {
                                                                     />
                                                                 </Grid>
                                                             </Grid>
-                                                        </Grid>
+                                                        </Grid> */}
                                                         <Grid item>
                                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                                 <Grid item>
