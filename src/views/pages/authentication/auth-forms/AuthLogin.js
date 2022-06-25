@@ -166,7 +166,7 @@ const FirebaseLogin = ({ ...others }) => {
                 console.log(credential);
 
                 // The signed-in user info.
-                const { user } = result.user;
+                const { user } = result;
                 console.log(user);
                 const token = user.accessToken;
 
