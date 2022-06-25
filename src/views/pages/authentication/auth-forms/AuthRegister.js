@@ -69,6 +69,8 @@ const FirebaseRegister = ({ ...others }) => {
     const customization = useSelector((state) => state.customization);
     const [isDataLoading, setDataLoading] = React.useState(false);
 
+    const emailRegEx = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+.[A-Za-z]+$/;
+
     const [checked, setChecked] = useState(true);
 
     const [lane, setLane] = useState('');
@@ -93,7 +95,7 @@ const FirebaseRegister = ({ ...others }) => {
     };
     const [showNewPassword, setShowNewPassword] = useState(false);
     const showNewPasswordHandler = () => {
-        setShowNewPassword(!showNewPassword);
+        setShowNewPassword(!showPassword);
     };
 
     const [activeStep, setActiveStep] = React.useState(0);
@@ -143,18 +145,33 @@ const FirebaseRegister = ({ ...others }) => {
         setCompleted({});
     };
 
-    const googleHandler = async () => {
-        console.error('Register');
-    };
-    const changePassword = (value) => {
-        const temp = strengthIndicator(value);
+    // const googleHandler = async () => {
+    //     console.error('Register');
+    // };
+
+    const handleChangePassword = (event) => {
+        setPassword(event.target.value);
+        const temp = strengthIndicator(event.target.value);
         setStrength(temp);
         setLevel(strengthColor(temp));
     };
 
-    useEffect(() => {
-        changePassword('123456');
-    }, []);
+    const handleContactNo = (newValue) => {
+        if (newValue.target.validity.valid) {
+            setContactNumber(newValue.target.value);
+        } else {
+            messages.addMessage({ title: 'Error Occured!', msg: 'Only enter numbers', type: 'danger' });
+        }
+    };
+
+    // const handleEmail = (event) => {
+    //     if (email.validity.valid) {
+    //         console.log(email.validity.valid);
+    //         setContactNumber(email);
+    //     } else {
+    //         messages.addMessage({ title: 'Error Occured!', msg: 'Only enter numbers', type: 'danger' });
+    //     }
+    // };
 
     const addUserHandler = async (event) => {
         event.preventDefault();
@@ -204,35 +221,48 @@ const FirebaseRegister = ({ ...others }) => {
                 console.log(errorMessage);
                 messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
             });
+    };
 
-        // setTimeout(async () => {
-        //     newUser.fireUID = fireUID;
-        //     console.log(newUser);
-
-        //     const response = await fetch('http://localhost:3005/auth/signUp', {
-        //         method: 'POST',
-        //         body: JSON.stringify(newUser),
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     });
-        //     const data = await response.json();
-        //     console.log(data);
-        //     console.log(newUser);
-        // }, 5000);
-
-        // setFName('');
-        // setLName('');
-        // setEmail('');
-        // setNewPassword('');
-        // setPassword('');
-        // setContactNumber('');
-        // setGender('');
-        // setBirthday(null);
-        // setLane('');
-        // setProvince('');
-        // setStreet('');
-        // setCity('');
+    //  validating next step
+    const Validation = () => {
+        switch (activeStep) {
+            case 0:
+                if (fName === '' || lName === '') {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
+                    setActiveStep(0);
+                } else if (password === '' || email === '') {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
+                    setActiveStep(0);
+                } else if (!emailRegEx.test(email)) {
+                    messages.addMessage({ title: 'Fail !', msg: 'Invalid Email', type: 'danger' });
+                    setActiveStep(0);
+                } else if (password !== newPassword) {
+                    messages.addMessage({ title: 'Fail !', msg: 'Confirm Password did not match.', type: 'danger' });
+                    setActiveStep(0);
+                    setPassword('');
+                    setNewPassword('');
+                } else if (password === newPassword && email !== '') {
+                    handleComplete();
+                    handleNext();
+                }
+                break;
+            case 1:
+                if (birthday !== '' && contactNumber !== '' && street !== '' && lane !== '' && city !== '' && province !== '') {
+                    handleComplete();
+                } else {
+                    messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
+                }
+                break;
+            case 2:
+                if (checked === true) {
+                    handleComplete();
+                } else {
+                    messages.addMessage({ title: 'Fail !', msg: 'Cannot sign up without agreeing terms and conditions', type: 'danger' });
+                }
+                break;
+            default:
+                messages.addMessage({ title: 'Fail !', msg: 'Active Step Not Found.', type: 'danger' });
+        }
     };
 
     const GetStep = ({ step }) => {
@@ -288,10 +318,8 @@ const FirebaseRegister = ({ ...others }) => {
                             <InputLabel>Password</InputLabel>
                             <OutlinedInput
                                 type={showNewPassword ? 'text' : 'password'}
-                                value={newPassword}
-                                onChange={(event) => {
-                                    setNewPassword(event.target.value);
-                                }}
+                                value={password}
+                                onChange={handleChangePassword}
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -309,10 +337,10 @@ const FirebaseRegister = ({ ...others }) => {
                         <FormControl fullWidth sx={{ ...theme.typography.customInput, mb: 1 }}>
                             <InputLabel>Confirm Password</InputLabel>
                             <OutlinedInput
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
+                                type={showNewPassword ? 'text' : 'password'}
+                                value={newPassword}
                                 onChange={(event) => {
-                                    setPassword(event.target.value);
+                                    setNewPassword(event.target.value);
                                 }}
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -376,9 +404,7 @@ const FirebaseRegister = ({ ...others }) => {
                                 value={contactNumber}
                                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                                 margin="normal"
-                                onChange={(newValue) => {
-                                    setContactNumber(newValue.target.value);
-                                }}
+                                onChange={handleContactNo}
                                 sx={{ ...theme.typography.customInput }}
                             />
                         </FormControl>
@@ -529,7 +555,18 @@ const FirebaseRegister = ({ ...others }) => {
 
                             <Box sx={{ mt: 2 }}>
                                 <AnimateButton>
-                                    <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="secondary">
+                                    <Button
+                                        onClick={() => {
+                                            messages.addMessage({ title: 'Success !', msg: 'Account Created', type: 'success' });
+                                        }}
+                                        disableElevation
+                                        fullWidth
+                                        size="large"
+                                        type="submit"
+                                        variant="contained"
+                                        color="secondary"
+                                        disabled={!checked}
+                                    >
                                         Sign up
                                     </Button>
                                 </AnimateButton>
@@ -622,246 +659,32 @@ const FirebaseRegister = ({ ...others }) => {
                                 Back
                             </Button>
                             <Box sx={{ flex: '1 1 auto' }} />
-                            <Button onClick={handleNext} sx={{ mr: 1 }}>
+                            {/* <Button onClick={handleNext} sx={{ mr: 1 }} disabled={activeStep === 2}>
                                 Next
-                            </Button>
+                            </Button> */}
                             {activeStep !== steps.length &&
                                 (completed[activeStep] ? (
-                                    <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                                        Step {activeStep + 1} already completed
-                                    </Typography>
+                                    // <Typography variant="caption" sx={{ display: 'inline-block' }}>
+                                    //     Step {activeStep + 1} already completed
+                                    // </Typography>
+                                    <Button
+                                        onClick={() => {
+                                            Validation();
+                                        }}
+                                        sx={{ mr: 1 }}
+                                        disabled={activeStep === 2}
+                                    >
+                                        Next
+                                    </Button>
                                 ) : (
-                                    <Button onClick={handleComplete}>
-                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                    <Button onClick={Validation} disabled={activeStep === 2}>
+                                        {completedSteps() === totalSteps() - 1 ? '' : 'Next'}
                                     </Button>
                                 ))}
                         </Box>
                     </>
                 )}
             </div>
-
-            {/* <form noValidate {...others} onSubmit={addUserHandler}>
-                <Grid container spacing={matchDownSM ? 0 : 2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="First Name"
-                            margin="normal"
-                            value={fName}
-                            type="text"
-                            sx={{ ...theme.typography.customInput }}
-                            onChange={(event) => {
-                                setFName(event.target.value);
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Last Name"
-                            margin="normal"
-                            value={lName}
-                            type="text"
-                            sx={{ ...theme.typography.customInput }}
-                            onChange={(event) => {
-                                setLName(event.target.value);
-                            }}
-                        />
-                    </Grid>
-                </Grid>
-                <FormControl fullWidth>
-                    <TextField
-                        label="Email"
-                        type="email"
-                        margin="normal"
-                        value={email}
-                        onChange={(event) => {
-                            setEmail(event.target.value);
-                        }}
-                        sx={{ ...theme.typography.customInput }}
-                        // error
-                        // helperText={error ? 'Unvalid email' : null}
-                    />
-                </FormControl>
-                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                    <InputLabel>Password</InputLabel>
-                    <OutlinedInput
-                        type={showNewPassword ? 'text' : 'password'}
-                        value={newPassword}
-                        onChange={(event) => {
-                            setNewPassword(event.target.value);
-                        }}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={showNewPasswordHandler}
-                                    edge="end"
-                                    size="large"
-                                >
-                                    {showNewPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                    />
-                </FormControl>
-                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                    <InputLabel>Confirm Password</InputLabel>
-                    <OutlinedInput
-                        type={showNewPassword ? 'text' : 'password'}
-                        value={newPassword}
-                        onChange={(event) => {
-                            setPassword(event.target.value);
-                        }}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton aria-label="toggle password visibility" onClick={showPasswordHandler} edge="end" size="large">
-                                    {showNewPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                    />
-                </FormControl>
-
-                {strength !== 0 && (
-                    <FormControl fullWidth>
-                        <Box sx={{ mb: 2 }}>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item>
-                                    <Box style={{ backgroundColor: level?.color }} sx={{ width: 85, height: 8, borderRadius: '7px' }} />
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="subtitle1" fontSize="0.75rem">
-                                        {level?.label}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </FormControl>
-                )}
-                <FormControl>
-                    <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-                    <RadioGroup
-                        row
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        value={gender}
-                        name="radio-buttons-group"
-                        onChange={(event) => {
-                            setGender(event.target.value);
-                        }}
-                    >
-                        <FormControlLabel value="male" control={<Radio />} label="Male" />
-                        <FormControlLabel value="female" control={<Radio />} label="Female" />
-                        <FormControlLabel value="other" control={<Radio />} label="Other" />
-                    </RadioGroup>
-                </FormControl>
-
-                <FormControl fullWidth>
-                    <TextField
-                        label="Contact Number"
-                        type="text"
-                        value={contactNumber}
-                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                        margin="normal"
-                        onChange={(newValue) => {
-                            setContactNumber(newValue.target.value);
-                        }}
-                        sx={{ ...theme.typography.customInput }}
-                    />
-                </FormControl>
-
-                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                    <LocalizationProvider fullWidth sx={{ ...theme.typography.customInput }} dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                            label="Date of Birth"
-                            value={birthday}
-                            onChange={(newValue) => {
-                                setBirthday(newValue.toLocaleDateString('en-CA'));
-                            }}
-                            renderInput={(params) => <TextField sx={{ ...theme.typography.customInput }} {...params} />}
-                        />
-                    </LocalizationProvider>
-
-                    <FormControl fullWidth>
-                        <FormLabel>Address</FormLabel>
-                        <TextField
-                            label="Street"
-                            type="text"
-                            margin="normal"
-                            value={street}
-                            onChange={(event) => {
-                                setStreet(event.target.value);
-                            }}
-                            sx={{ ...theme.typography.customInput }}
-                        />
-                        <TextField
-                            label="Lane"
-                            type="text"
-                            margin="normal"
-                            value={lane}
-                            onChange={(event) => {
-                                setLane(event.target.value);
-                            }}
-                            sx={{ ...theme.typography.customInput }}
-                        />
-                        <TextField
-                            label="City"
-                            type="text"
-                            margin="normal"
-                            value={city}
-                            onChange={(event) => {
-                                setCity(event.target.value);
-                            }}
-                            sx={{ ...theme.typography.customInput }}
-                        />
-                        <TextField
-                            label="Province"
-                            type="text"
-                            margin="normal"
-                            value={province}
-                            onChange={(event) => {
-                                setProvince(event.target.value);
-                            }}
-                            sx={{ ...theme.typography.customInput }}
-                        />
-                    </FormControl>
-                </FormControl>
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={checked}
-                                    onChange={(event) => setChecked(event.target.checked)}
-                                    name="checked"
-                                    color="primary"
-                                />
-                            }
-                            label={
-                                <Typography variant="subtitle1">
-                                    Agree with &nbsp;
-                                    <Typography variant="subtitle1" component={Link} to="#">
-                                        Terms & Condition.
-                                    </Typography>
-                                </Typography>
-                            }
-                        />
-                    </Grid>
-                </Grid>
-
-                <Box sx={{ mt: 3 }}>
-                    <FormHelperText error />
-                </Box>
-                
-
-                <Box sx={{ mt: 2 }}>
-                    <AnimateButton>
-                        <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="secondary">
-                            Sign up
-                        </Button>
-                    </AnimateButton>
-                </Box>
-            </form> */}
         </div>
     );
 };

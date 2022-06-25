@@ -25,13 +25,18 @@ import {
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/icons/social-google.svg';
 import app from './firebase';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router';
 import HttpCommon from 'utils/http-common';
 import { Store } from 'react-notifications-component';
@@ -64,14 +69,44 @@ const FirebaseLogin = ({ ...others }) => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
 
-    const googleHandler = async () => {
-        console.error('Login');
-    };
-
     const [showPassword, setShowPassword] = useState(false);
     const showPasswordHandler = () => {
         setShowPassword(!showPassword);
     };
+
+    // forget Password
+    const [recoveryEmail, setRecoveryEmail] = useState('');
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function sendRecoveryEmail() {
+        const auth = getAuth();
+
+        if (recoveryEmail !== '') {
+            sendPasswordResetEmail(auth, recoveryEmail)
+                .then(() => {
+                    // Password reset email sent!
+                    messages.addMessage({ title: 'Success', msg: 'Password recover instructions sent!', type: 'success' });
+                    setOpen(false);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log(errorCode);
+                    console.log(errorMessage);
+                    messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
+                });
+        } else {
+            messages.addMessage({ title: 'Error Occured!', msg: 'Please enter your email first!', type: 'danger' });
+        }
+    }
 
     function navigateDashboard(type, subscriptionStatus) {
         switch (type) {
@@ -114,6 +149,68 @@ const FirebaseLogin = ({ ...others }) => {
         }
     }
 
+    // google login
+    const googleProvider = new GoogleAuthProvider();
+    const googleHandler = async (event) => {
+        setDataLoading(true);
+        event.preventDefault();
+        let fireUID = '';
+        const userInput = {
+            email
+        };
+        const auth = getAuth(app);
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                console.log(credential);
+
+                // The signed-in user info.
+                const { user } = result;
+                console.log(user);
+                const token = user.accessToken;
+
+                fireUID = user.uid;
+                userInput.fireUID = fireUID;
+                userInput.email = user.email;
+                console.log(user.uid);
+                dispatch({ type: SET_TOKEN, token });
+
+                localStorage.setItem('token', token);
+                HttpCommon.post('/auth/validateUserByFireUIDAndEmail', userInput)
+                    .then(async (response) => {
+                        console.log(response);
+                        setDataLoading(false);
+                        if (response.data.success) {
+                            // localStorage.setItem('type', response.data.data.type);
+                            // localStorage.setItem('userID', response.data.data.id);
+                            await Promise.all([
+                                localStorage.setItem('type', response.data.data.type),
+                                localStorage.setItem('userID', response.data.data.id)
+                            ]);
+                            navigateDashboard(response.data.data.type, response.data.data.subscriptionStatus);
+                            // navigate('/pages/dashboard/admin');
+                            console.log(token);
+                            console.log(response.data.data.type);
+                            console.log(response.data.data.id);
+                        } else {
+                            messages.addMessage({ title: 'Error Occured!', msg: 'Entered User Cannot Find In Server', type: 'danger' });
+                        }
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        setDataLoading(false);
+                    });
+            })
+            .catch((error) => {
+                setDataLoading(false);
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+                messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
+            });
+    };
     const onSubmitHandler = (event) => {
         setDataLoading(true);
         event.preventDefault();
@@ -179,31 +276,6 @@ const FirebaseLogin = ({ ...others }) => {
                 console.log(errorMessage);
                 messages.addMessage({ title: 'Error Occured!', msg: errorMessage, type: 'danger' });
             });
-        // setTimeout(async () => {
-        //     userInput.fireUID = fireUID;
-        //     HttpCommon.post('/auth/validateUserByFireUIDAndEmail',userInput).then(async (response) => {
-        //         console.log(response);
-        //        if (response.data.success) {
-        //         navigate('/dashboard/admin');
-        //        } else {
-
-        //        }
-        //     });
-        //     // const response = await fetch('http://localhost:3005/auth/validateUserByFireUIDAndEmail', {
-        //     //     method: 'POST',
-        //     //     body: JSON.stringify(userInput),
-        //     //     headers: {
-        //     //         'Content-Type': 'application/json'
-        //     //     }
-        //     // });
-        //     // const data = await response.json();
-        //     // console.log(data);
-        //     // navigate('/dashboard/admin');
-        //     // console.log(userInput);
-        // }, 5000);
-
-        // setEmail('');
-        // setPassword('');
     };
 
     useEffect(() => {
@@ -368,11 +440,42 @@ const FirebaseLogin = ({ ...others }) => {
                                     }
                                     label="Remember me"
                                 />
-                                <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
+                                <Typography
+                                    variant="subtitle1"
+                                    color="secondary"
+                                    sx={{ textDecoration: 'none', cursor: 'pointer' }}
+                                    onClick={handleClickOpen}
+                                >
                                     Forgot Password?
                                 </Typography>
                             </Stack>
-
+                            <Dialog open={open} onClose={handleClose}>
+                                <DialogTitle variant="h3">Reset Password</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        Enter the email associated with your account and we will send an email with instructions to reset
+                                        your password.
+                                    </DialogContentText>
+                                    <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="email"
+                                        label="Email Address"
+                                        type="email"
+                                        fullWidth
+                                        variant="filled"
+                                        onChange={(event) => {
+                                            setRecoveryEmail(event.target.value);
+                                        }}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={sendRecoveryEmail} type="button">
+                                        Send Instructions
+                                    </Button>
+                                    <Button onClick={handleClose}>Cancel</Button>
+                                </DialogActions>
+                            </Dialog>
                             <Box sx={{ mt: 2 }}>
                                 <AnimateButton>
                                     <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="secondary">
