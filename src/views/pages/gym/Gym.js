@@ -386,6 +386,7 @@ function Gym() {
                         <Table sx={{ minWidth: 650, backgroundColor: '#f3e5f5' }} size="small" aria-label="a dense table">
                             <TableHead sx={{ backgroundColor: '#512da8' }}>
                                 <TableRow>
+                                <TableCell align="center" sx={{ color: 'white' }}>Gym ID</TableCell>
                                     <TableCell align="center" sx={{ color: 'white' }}>Gym Name</TableCell>
                                     <TableCell align="center" sx={{ color: 'white' }}>Created At</TableCell>
                                     <TableCell align="center" sx={{ color: 'white' }} />
