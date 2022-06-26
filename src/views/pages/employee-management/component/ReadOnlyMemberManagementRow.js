@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import HttpCommon from 'utils/http-common';
 import messages from 'utils/messages';
 
-const ReadOnlyRow = ({ row, userType, handleViewEditClick, handleSearch, nullBranchStaff, setIsEdit }) => {
+const ReadOnlyRow = ({ row, userType, handleViewEditClick, handleSearch, nullBranchStaff, setIsEdit, showDataToManager }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleEditClick = (row) => (event) => {
@@ -28,7 +28,11 @@ const ReadOnlyRow = ({ row, userType, handleViewEditClick, handleSearch, nullBra
             branchId: null
         })
             .then((res) => {
-                handleSearch();
+                if (userType === 'Owner') {
+                    handleSearch();
+                } else {
+                    showDataToManager();
+                }
                 messages.addMessage({ title: 'Edit Successfully !', msg: 'Subscription Type Edited Successfully', type: 'success' });
             })
             .catch((error) => {

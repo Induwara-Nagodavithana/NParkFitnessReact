@@ -657,6 +657,7 @@ function ManageEmployee() {
                                                 handleSearch={handleSearch}
                                                 nullBranchStaff={nullBranchStaff}
                                                 setIsEdit={setIsEdit}
+                                                showDataToManager={showDataToManager}
                                             />
                                         )}
                                     </React.Fragment>
