@@ -443,7 +443,9 @@ const Account = () => {
         reauthenticateWithCredential(user, cred)
             .then(() => {
                 // User re-authenticated.
-                if (currentPassword === password) {
+                if (password === '' || confirmPassword === '') {
+                    messages.addMessage({ title: 'Password Changed Failed!', msg: 'Fields cannot be empty', type: 'danger' });
+                } else if (currentPassword === password) {
                     messages.addMessage({ title: 'Password Changed Failed!', msg: 'Enter new password', type: 'danger' });
                 } else if (password === confirmPassword) {
                     updatePassword(user, password)
