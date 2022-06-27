@@ -78,7 +78,7 @@ function ManageEmployee() {
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [birthday, setBirthday] = React.useState(null);
-    const [genderValue, setGenderValue] = React.useState('Male');
+    const [genderValue, setGenderValue] = React.useState('');
     const [contactNo, setContactNo] = React.useState('');
     const [employeeType, setEmployeeType] = React.useState('');
     const [street, setStreet] = React.useState('');
@@ -517,7 +517,7 @@ function ManageEmployee() {
                 }
                 break;
             case 1:
-                if (firstName !== '' && lastName !== '' && birthday !== '') {
+                if (firstName !== '' && lastName !== '' && birthday !== null && genderValue !== '') {
                     handleNext();
                 } else {
                     messages.addMessage({ title: 'Fail !', msg: 'Field cannot be empty.', type: 'danger' });
@@ -657,6 +657,7 @@ function ManageEmployee() {
                                                 handleSearch={handleSearch}
                                                 nullBranchStaff={nullBranchStaff}
                                                 setIsEdit={setIsEdit}
+                                                showDataToManager={showDataToManager}
                                             />
                                         )}
                                     </React.Fragment>

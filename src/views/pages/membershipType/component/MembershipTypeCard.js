@@ -163,7 +163,13 @@ const MembershipTypeCard = ({ row, handleEditClick, userType, handleSearch }) =>
                             <Grid container direction="row" justifyContent="flex-end" spacing={2}>
                                 <Grid item>
                                     <AnimateButton>
-                                        <Button type="button" variant="contained" className={classes.button} onClick={handleDeleteClick}>
+                                        <Button
+                                            type="button"
+                                            variant="contained"
+                                            color="secondary"
+                                            className={classes.button}
+                                            onClick={handleDeleteClick}
+                                        >
                                             Delete
                                         </Button>
                                     </AnimateButton>
@@ -173,6 +179,7 @@ const MembershipTypeCard = ({ row, handleEditClick, userType, handleSearch }) =>
                                         <Button
                                             type="button"
                                             variant="contained"
+                                            color="secondary"
                                             className={classes.button}
                                             onClick={(event) => handleEditClick(event, row)}
                                         >
