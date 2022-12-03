@@ -147,6 +147,7 @@ const ProfileSection = () => {
     };
 
     const handleLogOut = (event) => {
+        
         localStorage.clear();
         navigate('/', { replace: true });
     };
